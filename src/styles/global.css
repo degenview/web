@@ -95,6 +95,9 @@ body {
 /* Inverse pill: white on black, black on white. Same as TradingView's "Get started". */
 .btn-primary { background: var(--inverse); color: var(--inverse-ink); }
 .btn-primary:hover { background: var(--inverse-hover); }
+/* Blue to purple call-to-action, like the gradient button on TradingView's pricing page. */
+.btn-gradient { background: linear-gradient(90deg, #2962ff 25%, var(--purple)); color: #fff; box-shadow: 0 10px 30px -10px rgb(41 98 255 / .7); }
+.btn-gradient:hover { filter: brightness(1.12); }
 .btn-ghost { border: 1px solid var(--border); background: transparent; }
 .btn-ghost:hover { border-color: var(--muted); background: var(--surface); }
 
