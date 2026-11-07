@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Fallback so download links pick up new releases even without a dispatch from the app repo.
+  schedule:
+    - cron: '17 */6 * * *'
   # The app repo's release workflow can dispatch `release` here to refresh download links.
   repository_dispatch:
     types: [release]
