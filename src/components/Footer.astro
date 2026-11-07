@@ -1,0 +1,22 @@
+---
+import { REPO_URL, RELEASES_URL } from '../data/platforms';
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-line/70 py-12 text-sm text-muted">
+  <div class="container-x flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+    <div class="max-w-md space-y-2">
+      <p class="font-semibold text-fg">DegenView</p>
+      <p>Free, open-source market dashboard. © {year} Nico Oelgart, GPL-3.0-only.</p>
+      <p class="text-xs">Not affiliated with TradingView or any listed data provider. All trademarks belong to their owners. Not financial advice.</p>
+    </div>
+    <nav aria-label="Footer" class="flex flex-wrap gap-x-6 gap-y-2">
+      <a class="hover:text-fg" href="/download/">Download</a>
+      <a class="hover:text-fg" href="/why-free/">Why free</a>
+      <a class="hover:text-fg" href="/faq/">FAQ</a>
+      <a class="hover:text-fg" href={RELEASES_URL} rel="noopener">Releases</a>
+      <a class="hover:text-fg" href={REPO_URL} rel="noopener">GitHub</a>
+      <a class="hover:text-fg" href={`${REPO_URL}/blob/main/LICENSE.md`} rel="noopener">License</a>
+    </nav>
+  </div>
+</footer>

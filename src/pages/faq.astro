@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Faq from '../components/Faq.astro';
+import { faq } from '../data/faq';
+
+const description =
+  'Answers about DegenView: is it free, do you need an account, where Pine Scripts go, how to get stock data, supported platforms and first-launch warnings.';
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+---
+
+<Base title="DegenView FAQ – Free, Local Pine Script & More" description={description} path="/faq/" jsonLd={jsonLd}>
+  <Header slot="header" />
+  <div class="container-x max-w-3xl py-20">
+    <h1 class="text-center text-4xl font-extrabold tracking-tight sm:text-6xl">Questions, answered</h1>
+    <div class="mt-12"><Faq /></div>
+  </div>
+  <Footer slot="footer" />
+</Base>

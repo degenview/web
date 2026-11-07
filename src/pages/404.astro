@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Base title="Page not found – DegenView" description="That page doesn’t exist." path="/404" noindex>
+  <Header slot="header" />
+  <div class="container-x py-32 text-center">
+    <p class="font-mono text-sm text-down">404</p>
+    <h1 class="mt-3 text-4xl font-extrabold tracking-tight sm:text-6xl">This chart is delisted.</h1>
+    <p class="mt-4 text-lg text-muted">The page you’re after doesn’t exist.</p>
+    <a href="/" class="btn btn-primary mt-8">Back to home</a>
+  </div>
+  <Footer slot="footer" />
+</Base>

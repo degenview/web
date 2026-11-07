@@ -1,0 +1,33 @@
+---
+import { Image } from 'astro:assets';
+import binance from '../assets/sources/binance.svg';
+import coinbase from '../assets/sources/coinbase.svg';
+import coingecko from '../assets/sources/coingecko.png';
+import dexscreener from '../assets/sources/dexscreener.png';
+import polymarket from '../assets/sources/polymarket.png';
+import kalshi from '../assets/sources/kalshi.png';
+import cmc from '../assets/sources/coinmarketcap.svg';
+import alpaca from '../assets/sources/alpaca.png';
+
+const sources = [
+  { name: 'Binance', img: binance }, { name: 'Coinbase', img: coinbase }, { name: 'CoinGecko', img: coingecko },
+  { name: 'DEXScreener', img: dexscreener }, { name: 'Polymarket', img: polymarket }, { name: 'Kalshi', img: kalshi },
+  { name: 'CoinMarketCap', img: cmc }, { name: 'Alpaca', img: alpaca },
+];
+---
+
+<section aria-labelledby="sources-h" class="border-y border-line/70 py-10">
+  <div class="container-x">
+    <h2 id="sources-h" class="mb-6 text-center text-xs font-semibold uppercase tracking-[0.2em] text-muted">Data from the sources you already use</h2>
+    <ul class="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
+      {
+        sources.map((s) => (
+          <li class="flex items-center gap-2.5 text-sm font-medium text-muted">
+            <Image src={s.img} alt="" width={28} height={28} class="size-7 rounded-md object-contain" loading="lazy" />
+            {s.name}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

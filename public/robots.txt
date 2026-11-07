@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://degenview.app/sitemap-index.xml

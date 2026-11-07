@@ -1,0 +1,21 @@
+---
+import { PLATFORMS, LATEST_URL } from '../data/platforms';
+---
+
+<ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  {
+    PLATFORMS.map((p) => (
+      <li>
+        <a href={LATEST_URL} data-dl-card={p.id}
+          class="card group flex h-full flex-col gap-1 p-5 transition-colors hover:border-accent-text data-selected:border-accent data-selected:ring-2 data-selected:ring-accent/40">
+          <span class="text-lg font-semibold">{p.os}</span>
+          <span class="text-sm text-muted">{p.os === 'macOS' ? p.short : `${p.short}`}</span>
+          <span class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-accent-text">
+            Download .{p.ext}
+            <svg viewBox="0 0 24 24" class="size-4 transition-transform group-hover:translate-y-0.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14" /></svg>
+          </span>
+        </a>
+      </li>
+    ))
+  }
+</ul>

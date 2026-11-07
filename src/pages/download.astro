@@ -1,0 +1,46 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import DownloadButton from '../components/DownloadButton.astro';
+import PlatformCards from '../components/PlatformCards.astro';
+import { getRelease } from '../data/release';
+import { RELEASES_URL } from '../data/platforms';
+
+const release = await getRelease();
+const description =
+  'Download DegenView for macOS (Apple Silicon and Intel), Windows or Linux. Free, open source and no account needed, with install notes.';
+---
+
+<Base title="Download DegenView – macOS, Windows & Linux" description={description} path="/download/">
+  <Header slot="header" />
+  <div class="container-x max-w-4xl py-20">
+    <h1 class="text-balance text-4xl font-extrabold tracking-tight sm:text-6xl">Download DegenView</h1>
+    <p class="mt-4 text-lg text-muted">Latest release <span class="font-mono" data-dl-version>{release.tag ?? ''}</span>. Free and open source.</p>
+    <div class="mt-8"><DownloadButton showNote /></div>
+    <div class="mt-12"><PlatformCards /></div>
+    <p class="mt-4 text-sm text-muted">Older versions and release notes: <a class="font-medium text-accent-text underline underline-offset-4" href={RELEASES_URL} rel="noopener">GitHub Releases</a>.</p>
+
+    <section id="install" class="mt-20 space-y-6" aria-labelledby="install-h">
+      <h2 id="install-h" class="text-3xl font-bold tracking-tight">Install</h2>
+
+      <div class="card p-6">
+        <h3 class="text-xl font-semibold">macOS</h3>
+        <p class="mt-3 text-muted">Unzip and drag <code class="font-mono text-fg">DegenView.app</code> to <code class="font-mono text-fg">/Applications</code>.</p>
+      </div>
+
+      <div class="card p-6">
+        <h3 class="text-xl font-semibold">Windows</h3>
+        <p class="mt-3 text-muted">Extract the zip and run <code class="font-mono text-fg">degenview.exe</code>. If SmartScreen appears (the build isn’t code-signed yet), click <b class="text-fg">More info → Run anyway</b>. Windows on ARM runs the x64 build via emulation.</p>
+      </div>
+
+      <div class="card p-6">
+        <h3 class="text-xl font-semibold">Linux</h3>
+        <pre class="mt-3 overflow-x-auto rounded-xl border border-line bg-bg p-4 font-mono text-sm"><code>tar xzf DegenView-*-linux-x64.tar.gz
+./degenview</code></pre>
+        <p class="mt-3 text-sm text-muted">x64 only for now. Needs a working OpenGL/EGL stack and X11 or Wayland.</p>
+      </div>
+    </section>
+  </div>
+  <Footer slot="footer" />
+</Base>

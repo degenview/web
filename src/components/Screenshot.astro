@@ -1,0 +1,54 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  slug: string;
+  alt: string;
+  priority?: boolean;
+  class?: string;
+  parallax?: number;
+  parallaxScroll?: boolean;
+}
+const { slug, alt, priority = false, class: className = '', parallax, parallaxScroll = false } = Astro.props;
+
+// Screenshots are optional: drop `<slug>-dark.png` / `<slug>-light.png` into src/assets/screens/.
+const shots = import.meta.glob<{ default: ImageMetadata }>('/src/assets/screens/*.{png,jpg,jpeg,webp}', { eager: true });
+const find = (variant: string) =>
+  Object.entries(shots).find(([path]) => new RegExp(`/${slug}-${variant}\\.(png|jpe?g|webp)$`).test(path))?.[1].default;
+
+const dark = find('dark');
+const light = find('light') ?? dark;
+const darkImg = dark ?? light;
+const widths = [640, 960, 1280, 1920];
+const sizes = '(min-width: 1024px) 720px, 100vw';
+---
+
+<figure class:list={['window card overflow-hidden shadow-2xl shadow-black/20', className]} data-parallax={parallax} data-parallax-scroll={parallaxScroll || undefined}>
+  <div class="flex items-center gap-1.5 border-b border-line bg-chrome px-4 py-3" aria-hidden="true">
+    <span class="size-2.5 rounded-full bg-[#ff5f57]"></span>
+    <span class="size-2.5 rounded-full bg-[#febc2e]"></span>
+    <span class="size-2.5 rounded-full bg-[#28c840]"></span>
+  </div>
+  {
+    darkImg && light ? (
+      <>
+        <Image src={light} alt={alt} widths={widths} sizes={sizes} class="shot-light block h-auto w-full"
+          loading={priority ? 'eager' : 'lazy'} fetchpriority={priority ? 'high' : 'auto'} decoding={priority ? 'sync' : 'async'} />
+        <Image src={darkImg} alt={alt} widths={widths} sizes={sizes} class="shot-dark h-auto w-full"
+          loading={priority ? 'eager' : 'lazy'} fetchpriority={priority ? 'high' : 'auto'} decoding={priority ? 'sync' : 'async'} />
+      </>
+    ) : (
+      <div class="relative grid aspect-[16/10] place-items-center bg-bg" role="img" aria-label={`${alt} (screenshot coming soon)`}>
+        <svg class="absolute inset-0 size-full opacity-60" viewBox="0 0 160 100" preserveAspectRatio="none" aria-hidden="true">
+          <g fill="none" stroke="var(--grid)" stroke-width="0.3">
+            {Array.from({ length: 9 }, (_, i) => <path d={`M0 ${(i + 1) * 10}H160`} />)}
+            {Array.from({ length: 15 }, (_, i) => <path d={`M${(i + 1) * 10} 0V100`} />)}
+          </g>
+          <path d="M0 78 L18 66 L34 72 L52 50 L70 58 L90 34 L110 42 L130 20 L160 28" fill="none" stroke="var(--accent)" stroke-width="0.8" stroke-linejoin="round" />
+        </svg>
+        <span class="relative rounded-full border border-line bg-surface px-4 py-1.5 font-mono text-xs text-muted">screenshot coming soon</span>
+      </div>
+    )
+  }
+</figure>

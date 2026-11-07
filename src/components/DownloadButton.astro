@@ -1,0 +1,29 @@
+---
+import { PLATFORMS, LATEST_URL } from '../data/platforms';
+interface Props { size?: 'lg' | 'sm'; showNote?: boolean }
+const { size = 'lg', showNote = false } = Astro.props;
+---
+
+<div class="inline-flex flex-col items-center gap-2">
+  <div class="flex flex-wrap items-stretch justify-center gap-2">
+    <a href={LATEST_URL} data-dl-button
+      class:list={['btn btn-primary', size === 'lg' ? 'px-6 py-3.5 text-base' : 'px-4 py-2 text-sm']}>
+      <svg viewBox="0 0 24 24" class="size-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14" /></svg>
+      <span class="flex flex-col items-start text-left leading-tight">
+        <span data-dl-label>Download</span>
+        {size === 'lg' && <span data-dl-sub class="text-xs font-medium opacity-70">Free · macOS · Windows · Linux</span>}
+      </span>
+    </a>
+    {size === 'lg' && (
+    <label class="relative inline-flex">
+      <span class="sr-only">Choose platform</span>
+      <select data-dl-select class="btn btn-ghost h-full cursor-pointer appearance-none pr-9 text-sm font-medium">
+        <option value="" disabled>Platform…</option>
+        {PLATFORMS.map((p) => <option value={p.id}>{p.label}</option>)}
+      </select>
+      <svg viewBox="0 0 24 24" class="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+    </label>
+    )}
+  </div>
+  {showNote && <p data-dl-note hidden class="text-sm text-muted" aria-live="polite"></p>}
+</div>

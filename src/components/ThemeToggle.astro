@@ -1,0 +1,18 @@
+---
+const options = [
+  { id: 'system', label: 'System theme', d: 'M4 5h16v11H4zM9 20h6M12 16v4' },
+  { id: 'light', label: 'Light theme', d: 'M12 4V2m0 20v-2m8-8h2M2 12h2m13.7-5.7 1.4-1.4M4.9 19.1l1.4-1.4m0-11.4L4.9 4.9m14.2 14.2-1.4-1.4M12 8a4 4 0 100 8 4 4 0 000-8z' },
+  { id: 'dark', label: 'Dark theme', d: 'M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z' },
+];
+---
+
+<div role="group" aria-label="Color theme" class="inline-flex rounded-full border border-line bg-surface p-0.5">
+  {
+    options.map((o) => (
+      <button type="button" data-theme-option={o.id} aria-label={o.label} title={o.label}
+        class="grid size-8 place-items-center rounded-full text-muted transition-colors hover:text-fg aria-pressed:bg-chrome aria-pressed:text-fg">
+        <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={o.d} /></svg>
+      </button>
+    ))
+  }
+</div>
