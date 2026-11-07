@@ -51,7 +51,6 @@ const sections: { id: string; title: string; body: string[] }[] = [
     id: 'contact',
     title: 'Contact and updates',
     body: [
-      'DegenView is an open source project by Nico Oelgart. For questions about this policy, open an issue on the project’s GitHub page.',
       'We may update this policy when the law or the site changes. The date at the top shows when it last changed, and updates are posted on this page.',
     ],
   },
@@ -195,7 +194,14 @@ const consentSteps: [string, string][] = [
         <section aria-labelledby={`${s.id}-h`} class="border-b border-line/60 py-14 last:border-b-0">
           <p class="font-mono text-sm text-accent-text">{String(i + 5).padStart(2, '0')}</p>
           <h2 id={`${s.id}-h`} class="display mt-2 text-3xl sm:text-4xl">{s.title}</h2>
-          <p class="mt-5 text-lg text-muted">{s.body[0]}</p>
+          {s.id === 'contact' ? (
+            <p class="mt-5 text-lg text-muted">
+              DegenView is an open source project by Nico Oelgart. For questions about this policy,{' '}
+              <a class="text-accent-text underline underline-offset-4" href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer">open an issue on the project’s GitHub page<span class="sr-only"> (opens in a new tab)</span></a>.
+            </p>
+          ) : (
+            <p class="mt-5 text-lg text-muted">{s.body[0]}</p>
+          )}
           {s.id === 'app' && (
             <div class="card mt-8 overflow-x-auto">
               <table class="w-full min-w-[40rem] text-left text-sm">
@@ -230,7 +236,7 @@ const consentSteps: [string, string][] = [
               </table>
             </div>
           )}
-          {s.body.slice(1).map((p) => <p class="mt-6 text-lg text-muted">{p}</p>)}
+          {(s.id === 'contact' ? s.body : s.body.slice(1)).map((p) => <p class="mt-6 text-lg text-muted">{p}</p>)}
           {s.id === 'contact' && (
             <a href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer" class="btn btn-ghost mt-6">Open a GitHub issue<span class="sr-only"> (opens in a new tab)</span></a>
           )}
