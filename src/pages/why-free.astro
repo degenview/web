@@ -9,12 +9,9 @@ const description =
   'A free, open source TradingView alternative with no premium tier: unlimited watchlists, multi-chart layouts, indicators, alerts, replay and scripting.';
 
 const manifesto: [string, string][] = [
-  ['The basics aren’t premium.', 'Watchlists, indicators, alerts and replay are what a charting app is. They are not upsells.'],
-  ['Your scripts are yours.', 'Pine Script runs on your machine, and the source never leaves it.'],
-  ['Software should be readable.', 'It’s open source under the GPL-3.0. If you wonder what it does, go and read it.'],
-  ['No account is the best account.', 'Download it, open it, chart. That’s the whole onboarding.'],
-  ['Free means free.', 'No tiers, no trial clock, no “upgrade to unlock”.'],
-  ['Be honest about trade-offs.', 'We’re not affiliated with TradingView, and they do plenty better. We say so.'],
+  ['Free and open source.', 'No tiers, no trial clock, no “upgrade to unlock”. The source is public under the GPL-3.0, so you can read it, build it and change it.'],
+  ['No SaaS for the basics.', 'Charts, watchlists, indicators, alerts, replay and Pine Script run on your machine. You shouldn’t need a subscription, or someone else’s server, for the basics.'],
+  ['Private by default.', 'No analytics, no telemetry, no account. Your watchlists, portfolios and scripts stay on your device. Anything that leaves it, like iCloud sync or a webhook, is something you switch on yourself.'],
 ];
 ---
 
@@ -33,21 +30,21 @@ const manifesto: [string, string][] = [
     </div>
     <section aria-labelledby="manifesto-h" class="mx-auto mt-20 max-w-3xl">
       <p class="text-center text-sm font-semibold text-accent-text">the manifesto</p>
-      <h2 id="manifesto-h" class="display mt-3 text-center text-3xl sm:text-5xl">Six things <span class="gradient-text">we believe</span></h2>
+      <h2 id="manifesto-h" class="display mt-3 text-center text-3xl sm:text-5xl">Three things <span class="gradient-text">we believe</span></h2>
       <ol class="mt-12 divide-y divide-line/60 border-y border-line/60">
         {
           manifesto.map(([t, d], i) => (
             <li class="flex gap-5 py-7 sm:gap-8 sm:py-8">
               <span class="pt-1 font-mono text-sm text-accent-text">0{i + 1}</span>
               <div>
-                <h3 class="display text-2xl sm:text-3xl">{t}</h3>
-                <p class="mt-2 text-lg text-muted">{d}</p>
+                <h3 class="display text-3xl sm:text-4xl">{t}</h3>
+                <p class="mt-3 text-lg text-muted sm:text-xl">{d}</p>
               </div>
             </li>
           ))
         }
       </ol>
-      <p class="display mt-10 text-center text-2xl sm:text-4xl">Charts should be free. <span class="gradient-text">So we made them free.</span></p>
+      <p class="display mt-10 text-center text-2xl sm:text-4xl">Free, local, and <span class="gradient-text">none of anyone’s business.</span></p>
     </section>
 
     <div class="mt-24 text-center">
