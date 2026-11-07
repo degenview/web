@@ -82,14 +82,43 @@ export async function initDownloads() {
       n.textContent = detected.note ?? '';
       n.hidden = !detected.note;
     });
-    document.querySelectorAll<HTMLAnchorElement>('[data-dl-card]').forEach((a) => {
-      const id = a.dataset.dlCard as PlatformId;
-      a.href = release.urls[id];
-      a.toggleAttribute('data-selected', id === current);
-    });
-    document.querySelectorAll<HTMLElement>('[data-dl-version]').forEach((v) => {
+    document.querySelectorAll<HTMLElement>('[data-dl-version],[data-dl-tag]').forEach((v) => {
       if (release.tag) v.textContent = release.tag;
     });
+
+    // Download page: one row per file, grouped by OS and architecture.
+    document.querySelectorAll<HTMLAnchorElement>('[data-dl-file]').forEach((a) => {
+      const p = PLATFORMS.find((x) => x.id === a.dataset.platform)!;
+      const f = FORMATS[p.os].find((x) => x.suffix === a.dataset.suffix)!;
+      a.href = assetUrl(release.tag, p, f);
+    });
+    document.querySelectorAll<HTMLElement>('[data-dl-os-card]').forEach((c) => c.toggleAttribute('data-selected', c.dataset.dlOsCard === platform?.os));
+    document.querySelectorAll<HTMLElement>('[data-dl-arch]').forEach((g) => {
+      const match = g.dataset.platform === current;
+      g.toggleAttribute('data-selected', match);
+      g.querySelector<HTMLElement>('[data-dl-recommended]')?.toggleAttribute('hidden', !match);
+    });
+    // Hero call to action: the detected platform's default file, or a link down to the full list.
+    document.querySelectorAll<HTMLAnchorElement>('[data-dl-primary]').forEach((a) => {
+      const label = a.querySelector<HTMLElement>('[data-dl-primary-label]');
+      const meta = document.querySelector<HTMLElement>('[data-dl-primary-meta]');
+      const file = platform && document.querySelector<HTMLAnchorElement>(`[data-dl-file][data-platform="${platform.id}"][data-default]`);
+      a.querySelectorAll<HTMLElement>('[data-os-icon]').forEach((i) => (i.hidden = i.dataset.osIcon !== platform?.os));
+      if (platform && file) {
+        a.href = file.href;
+        a.removeAttribute('data-anchor');
+        if (label) label.textContent = `Download for ${platform.os}`;
+        if (meta) meta.textContent = file.dataset.meta ?? '';
+      } else {
+        a.href = '#all';
+        if (label) label.textContent = 'Choose your download';
+        if (meta) meta.textContent = '';
+      }
+    });
+    // A newer release than the one this page was built for: its sizes and checksums are not on the page.
+    const stale = !!release.tag && release.tag !== (root.dataset.releaseTag || null);
+    document.querySelectorAll<HTMLElement>('[data-dl-static]').forEach((e) => (e.hidden = stale));
+    document.querySelectorAll<HTMLElement>('[data-dl-stale]').forEach((e) => (e.hidden = !stale));
   };
 
   // One menu open at a time; close on outside click, Escape or after picking a file.
