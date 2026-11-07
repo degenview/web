@@ -172,7 +172,7 @@ const jsonLd = [
         }
       </ul>
       <p class="mt-6 text-center text-sm text-muted">
-        Prices are TradingView’s, in euros, as listed on its <a class="text-accent-text underline underline-offset-4" href={PRICING_URL} rel="nofollow noopener">pricing page</a> in {CHECKED}. They change and vary by region, so check there before you decide.
+        Prices are TradingView’s, in euros, as listed on its <a class="text-accent-text underline underline-offset-4" href={PRICING_URL} target="_blank" rel="nofollow noopener noreferrer">pricing page<span class="sr-only"> (opens in a new tab)</span></a> in {CHECKED}. They change and vary by region, so check there before you decide.
       </p>
     </div>
   </section>
@@ -220,12 +220,13 @@ const jsonLd = [
               ))
             }
           </ul>
-          <a href={PRICING_URL} rel="nofollow noopener" class="btn btn-ghost mt-10 w-full">See TradingView’s plans</a>
+          <a href={PRICING_URL} target="_blank" rel="nofollow noopener noreferrer" class="btn btn-ghost mt-10 w-full">See TradingView’s plans<span class="sr-only"> (opens in a new tab)</span></a>
         </div>
       </div>
-      <p class="mt-6 text-center text-sm text-muted">
-        <span class="inline-flex items-center gap-1.5"><svg viewBox="0 0 24 24" class="size-4 text-[#f5a524]" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12" /></svg> limit on the free plan</span>
-        · TradingView figures last checked {CHECKED}.
+      <p class="mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center text-sm text-muted">
+        <span class="inline-flex items-center gap-1.5"><svg viewBox="0 0 24 24" class="size-4 shrink-0 text-[#f5a524]" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12" /></svg>Limit on the free plan</span>
+        <span aria-hidden="true">·</span>
+        <span>TradingView figures last checked {CHECKED}</span>
       </p>
     </div>
   </section>
