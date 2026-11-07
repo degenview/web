@@ -1,0 +1,249 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { REPO_URL } from '../data/platforms';
+
+const description =
+  'How degenview.app handles cookies and analytics: nothing is tracked without your consent, and the DegenView desktop app has no analytics or telemetry.';
+const UPDATED = 'November 2026';
+
+const storage: [string, string, string][] = [
+  ['theme', 'Remembers whether you picked light, dark or system.', 'Local storage, until you clear it'],
+  ['dv_analytics_consent', 'Remembers whether you accepted or declined analytics.', 'Local storage, until you clear it'],
+  ['Google cookies', 'Only if you accept analytics: set by Google Tag Manager and the tags in it to measure visits.', 'Set by Google, see their policy'],
+];
+
+const sections: { id: string; title: string; body: string[] }[] = [
+  {
+    id: 'legal',
+    title: 'Legal bases for processing',
+    body: [
+      'Where the law requires it, such as in the EEA and the UK, analytics are only used with your consent. Elsewhere they may rest on legitimate interests or on your consent. Analytics are switched off by default.',
+    ],
+  },
+  {
+    id: 'third',
+    title: 'Third-party services',
+    body: [
+      'Analytics, if you accept them, are handled by Google through Google Tag Manager under Google’s own privacy policy, and your data may be processed outside your country.',
+      'This site is hosted on GitHub Pages. To serve it, and to show the current version on the download buttons and fetch the download files, your browser talks to GitHub (github.com and api.github.com), which can see technical data such as your IP address under GitHub’s privacy statement. Fonts and images are served from this site itself, not from Google or other third parties.',
+    ],
+  },
+  {
+    id: 'retention',
+    title: 'Data retention and your rights',
+    body: [
+      'We don’t keep personal data about visitors ourselves. Analytics data is kept by Google for the period set in our Google configuration and is deleted or anonymized when no longer needed.',
+      'Depending on where you live, you may have the right to access, correct or delete personal data, to object to processing, and to withdraw consent at any time. Because this site doesn’t store personal data itself, you may need to contact Google or GitHub for requests about data they process. You can also lodge a complaint with your data protection authority.',
+    ],
+  },
+  {
+    id: 'app',
+    title: 'The DegenView desktop app',
+    body: [
+      'This policy covers this website. The DegenView desktop app has no analytics or telemetry and needs no account. To do its job, it connects directly from your computer to the services listed below. Your watchlists, portfolios and Pine scripts stay on your device unless you send them somewhere yourself, for example to an AI provider you set up.',
+      'These services are run by other companies, not by us. When you use DegenView you use their data and services, and by doing so you agree to their terms of service and privacy policies. We don’t control them and aren’t responsible for how they handle data. Some need an account or API key of your own, such as Alpaca and the AI providers.',
+      'If you use the AI assistant, the text you send, which can include your script, goes to the provider you chose. Providers you run yourself, such as a local model, keep it on your machine.',
+    ],
+  },
+  {
+    id: 'contact',
+    title: 'Contact and updates',
+    body: [
+      'We may update this policy when the law or the site changes. The date at the top shows when it last changed, and updates are posted on this page.',
+    ],
+  },
+];
+
+type Provider = { name: string; use: string; terms?: string; privacy?: string; site?: string };
+const marketData: Provider[] = [
+  { name: 'Binance', use: 'Crypto prices and charts', terms: 'https://www.binance.com/en/terms', privacy: 'https://www.binance.com/en/privacy' },
+  { name: 'Coinbase', use: 'Crypto prices and charts', terms: 'https://www.coinbase.com/legal/user_agreement', privacy: 'https://www.coinbase.com/legal/privacy' },
+  { name: 'CoinGecko', use: 'Coin lists, prices and charts', terms: 'https://www.coingecko.com/en/terms', privacy: 'https://www.coingecko.com/en/privacy' },
+  { name: 'GeckoTerminal', use: 'DEX pool charts. Operated by CoinGecko, whose terms apply', terms: 'https://www.coingecko.com/en/terms', privacy: 'https://www.coingecko.com/en/privacy' },
+  { name: 'DEXScreener', use: 'DEX pairs and prices', terms: 'https://dexscreener.com/terms-and-conditions', privacy: 'https://dexscreener.com/privacy-policy' },
+  { name: 'CoinMarketCap', use: 'Market indices such as Fear & Greed. Optional API key', terms: 'https://coinmarketcap.com/terms/', privacy: 'https://coinmarketcap.com/privacy/' },
+  { name: 'Polymarket', use: 'Prediction markets', terms: 'https://polymarket.com/tos', privacy: 'https://polymarket.com/privacy' },
+  { name: 'Kalshi', use: 'Prediction markets', terms: 'https://kalshi-public-docs.s3.amazonaws.com/kalshi-data-terms-of-service.pdf', privacy: 'https://kalshi.com/privacy-policy' },
+  { name: 'Alpaca', use: 'US stocks, with your own free API keys', terms: 'https://alpaca.markets/disclosures', privacy: 'https://alpaca.markets/privacy' },
+  { name: 'Bitstamp', use: 'Bitcoin price history for currency conversion', terms: 'https://www.bitstamp.net/terms-of-use/', privacy: 'https://www.bitstamp.net/privacy-policy/' },
+];
+const otherServices: Provider[] = [
+  { name: 'GitHub', use: 'Checking for and downloading updates', terms: 'https://docs.github.com/en/site-policy/github-terms/github-terms-of-service', privacy: 'https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement' },
+  { name: 'X', use: 'Previews of X posts you add as cards', terms: 'https://x.com/en/tos', privacy: 'https://x.com/en/privacy' },
+  { name: 'OpenAI', use: 'AI assistant, only if you add your own API key', terms: 'https://openai.com/policies/terms-of-use', privacy: 'https://openai.com/policies/privacy-policy' },
+  { name: 'Anthropic', use: 'AI assistant, only if you add your own API key', terms: 'https://www.anthropic.com/legal/commercial-terms', privacy: 'https://www.anthropic.com/legal/privacy' },
+  { name: 'OpenRouter', use: 'AI assistant, only if you add your own API key', terms: 'https://openrouter.ai/terms', privacy: 'https://openrouter.ai/privacy' },
+  { name: 'Apple iCloud', use: 'Optional sync between your Macs', terms: 'https://www.apple.com/legal/internet-services/icloud/', privacy: 'https://www.apple.com/legal/privacy/' },
+];
+const providerGroups: [string, Provider[]][] = [
+  ['Market data', marketData],
+  ['Services you switch on or use', otherServices],
+];
+
+const consentSteps: [string, string][] = [
+  ['M5 13l4 4L19 7', 'You can accept or decline analytics on your first visit.'],
+  ['M6 6l12 12M18 6 6 18', 'No analytics cookies are used and nothing from Google loads without your consent.'],
+  ['M12 4v12m0 0 4-4m-4 4-4-4M5 20h14', 'Your choice is stored on your device so we can remember it.'],
+  ['M4 12h16', 'If you decline, no analytics tracking takes place.'],
+];
+---
+
+<Base
+  title="Privacy Policy – DegenView"
+  description={description}
+  path="/privacy-policy/"
+  breadcrumbs={[['Home', '/'], ['Privacy policy', '/privacy-policy/']]}
+>
+  <Header slot="header" />
+
+  <section class="relative overflow-hidden border-b border-line/50 pb-16 pt-16 sm:pt-24">
+    <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+      <div class="absolute left-1/2 top-[-12rem] h-[30rem] w-[52rem] -translate-x-1/2 rounded-full blur-3xl" style="background: radial-gradient(closest-side, var(--glow-a), transparent)"></div>
+    </div>
+    <div class="container-x max-w-3xl text-center">
+      <p class="text-sm font-semibold text-accent-text">your privacy</p>
+      <h1 class="display mt-4 text-5xl sm:text-7xl">Cookies &amp; <span class="gradient-text">analytics</span></h1>
+      <p class="mx-auto mt-6 max-w-2xl text-lg text-muted">
+        This website doesn’t collect or store personal data from visitors itself. If you allow it, it uses cookies and similar technologies to understand how the site is used.
+      </p>
+      <p class="mt-6 inline-flex items-center gap-2 rounded-full border border-line bg-surface/70 px-4 py-1.5 text-sm text-muted">
+        <svg viewBox="0 0 24 24" class="size-4 text-up" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.500 3 7.500 7 9 4-1.500 7-4.500 7-9V6z" /><path d="m9 12 2 2 4-4" /></svg>
+        Last updated: {UPDATED}
+      </p>
+    </div>
+  </section>
+
+  <div class="container-x max-w-3xl py-16">
+    <!-- 01 -->
+    <section aria-labelledby="storage-h" class="border-b border-line/60 pb-14">
+      <p class="font-mono text-sm text-accent-text">01</p>
+      <h2 id="storage-h" class="display mt-2 text-3xl sm:text-4xl">Types of storage we use</h2>
+      <div class="mt-8 grid gap-4 sm:grid-cols-2">
+        <div class="card p-6">
+          <h3 class="text-lg font-semibold">Strictly necessary</h3>
+          <p class="mt-2 text-muted">Needed for the site to work the way you set it up: your theme and your cookie choice. This is stored in your browser only.</p>
+          <p class="mt-4 inline-flex rounded-full border border-line px-3 py-1 text-xs text-muted">No consent required</p>
+        </div>
+        <div class="card p-6">
+          <h3 class="text-lg font-semibold">Analytics (optional)</h3>
+          <p class="mt-2 text-muted">Used to measure traffic and understand how visitors use the site. If you accept, they may process IP addresses, device and browser information, and which pages you view.</p>
+          <p class="mt-4 inline-flex rounded-full border border-line px-3 py-1 text-xs text-muted">Off until you accept</p>
+        </div>
+      </div>
+
+      <div class="card mt-6 overflow-x-auto">
+        <table class="w-full min-w-[34rem] text-left text-sm">
+          <caption class="sr-only">What is stored in your browser</caption>
+          <thead>
+            <tr class="border-b border-line text-muted">
+              <th scope="col" class="px-5 py-3 font-medium">Name</th>
+              <th scope="col" class="px-5 py-3 font-medium">Purpose</th>
+              <th scope="col" class="px-5 py-3 font-medium">Duration</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-line/60">
+            {
+              storage.map(([n, p, d]) => (
+                <tr>
+                  <th scope="row" class="px-5 py-3 align-top font-mono text-[13px] font-medium">{n}</th>
+                  <td class="px-5 py-3 align-top text-muted">{p}</td>
+                  <td class="px-5 py-3 align-top text-muted">{d}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 02..: prose sections, with consent and preferences after legal bases -->
+    <section aria-labelledby="legal-h" class="border-b border-line/60 py-14">
+      <p class="font-mono text-sm text-accent-text">02</p>
+      <h2 id="legal-h" class="display mt-2 text-3xl sm:text-4xl">{sections[0].title}</h2>
+      {sections[0].body.map((p) => <p class="mt-5 text-lg text-muted">{p}</p>)}
+    </section>
+
+    <section aria-labelledby="consent-h" class="border-b border-line/60 py-14">
+      <p class="font-mono text-sm text-accent-text">03</p>
+      <h2 id="consent-h" class="display mt-2 text-3xl sm:text-4xl">How consent works</h2>
+      <ul class="mt-8 grid gap-3 sm:grid-cols-2">
+        {
+          consentSteps.map(([icon, text]) => (
+            <li class="card flex gap-4 p-5">
+              <span class="grid size-9 shrink-0 place-items-center rounded-lg border border-line bg-chrome text-muted">
+                <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icon} /></svg>
+              </span>
+              <span class="text-muted">{text}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section aria-labelledby="manage-h" class="border-b border-line/60 py-14">
+      <p class="font-mono text-sm text-accent-text">04</p>
+      <h2 id="manage-h" class="display mt-2 text-3xl sm:text-4xl">Managing preferences</h2>
+      <p class="mt-5 text-lg text-muted">You can change or withdraw your consent at any time.</p>
+      <button type="button" data-cookie-settings class="btn btn-gradient mt-6">Open cookie settings</button>
+    </section>
+
+    {
+      sections.slice(1).map((s, i) => (
+        <section aria-labelledby={`${s.id}-h`} class="border-b border-line/60 py-14 last:border-b-0">
+          <p class="font-mono text-sm text-accent-text">{String(i + 5).padStart(2, '0')}</p>
+          <h2 id={`${s.id}-h`} class="display mt-2 text-3xl sm:text-4xl">{s.title}</h2>
+          {s.id === 'contact' ? (
+            <p class="mt-5 text-lg text-muted">
+              DegenView is an open source project by Nico Oelgart. For questions about this policy,{' '}
+              <a class="text-accent-text underline underline-offset-4" href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer">open an issue on the project’s GitHub page<span class="sr-only"> (opens in a new tab)</span></a>.
+            </p>
+          ) : (
+            <p class="mt-5 text-lg text-muted">{s.body[0]}</p>
+          )}
+          {s.id === 'app' && (
+            <div class="card mt-8 overflow-x-auto">
+              <table class="w-full min-w-[40rem] text-left text-sm">
+                <caption class="sr-only">Services the desktop app connects to, with their terms and privacy policies</caption>
+                <thead>
+                  <tr class="border-b border-line text-muted">
+                    <th scope="col" class="px-5 py-3 font-medium">Service</th>
+                    <th scope="col" class="px-5 py-3 font-medium">Used for</th>
+                    <th scope="col" class="px-5 py-3 font-medium">Terms</th>
+                    <th scope="col" class="px-5 py-3 font-medium">Privacy</th>
+                  </tr>
+                </thead>
+                {providerGroups.map(([group, list]) => (
+                  <tbody class="divide-y divide-line/60 border-t border-line">
+                    <tr><th colspan="4" scope="colgroup" class="bg-chrome/40 px-5 py-2 text-xs font-semibold uppercase tracking-wider text-muted">{group}</th></tr>
+                    {list.map((r) => (
+                      <tr>
+                        <th scope="row" class="px-5 py-3 align-top font-medium">{r.name}</th>
+                        <td class="px-5 py-3 align-top text-muted">{r.use}</td>
+                        {r.site ? (
+                          <td colspan="2" class="px-5 py-3 align-top"><a class="text-accent-text underline underline-offset-4" href={r.site} target="_blank" rel="noopener noreferrer">Terms and privacy on {new URL(r.site).hostname}<span class="sr-only"> (opens in a new tab)</span></a></td>
+                        ) : (
+                          <>
+                            <td class="px-5 py-3 align-top"><a class="text-accent-text underline underline-offset-4" href={r.terms} target="_blank" rel="noopener noreferrer">Terms<span class="sr-only"> of {r.name} (opens in a new tab)</span></a></td>
+                            <td class="px-5 py-3 align-top"><a class="text-accent-text underline underline-offset-4" href={r.privacy} target="_blank" rel="noopener noreferrer">Privacy<span class="sr-only"> policy of {r.name} (opens in a new tab)</span></a></td>
+                          </>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                ))}
+              </table>
+            </div>
+          )}
+          {(s.id === 'contact' ? s.body : s.body.slice(1)).map((p) => <p class="mt-6 text-lg text-muted">{p}</p>)}
+          {s.id === 'contact' && (
+            <a href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer" class="btn btn-ghost mt-6">Open a GitHub issue<span class="sr-only"> (opens in a new tab)</span></a>
+          )}
+        </section>
+      ))
+    }
+  </div>
+
+  <Footer slot="footer" />
+</Base>

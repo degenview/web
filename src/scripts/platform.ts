@@ -1,7 +1,7 @@
-import { PLATFORMS, releaseFromTag, REPO, LATEST_URL, type PlatformId, type ReleaseInfo } from '../data/platforms';
-
-const KEY = 'platform';
-const ids = PLATFORMS.map((p) => p.id) as string[];
+import {
+  PLATFORMS, FORMATS, assetUrl, pickTag, releaseFromTag, REPO,
+  type PlatformId, type ReleaseInfo,
+} from '../data/platforms';
 
 export interface Detection {
   id: PlatformId | null;
@@ -25,36 +25,26 @@ export async function detectPlatform(): Promise<Detection> {
   const plat = uaData?.platform ?? navigator.platform ?? '';
 
   if (/mac/i.test(plat) || /Mac OS X|Macintosh/.test(ua)) {
-    if (arch === 'x86') return { id: 'macos-x64', note: null };
-    // Safari/Firefox hide the CPU; every Mac since late 2020 is Apple Silicon.
-    return { id: 'macos-arm64', note: arch === 'arm' ? null : 'Intel Mac? Pick “macOS (Intel)”.' };
+    // Safari/Firefox hide the CPU; every Mac since late 2020 is Apple Silicon. Intel users pick it in the menu.
+    return { id: arch === 'x86' ? 'macos-x64' : 'macos-arm64', note: null };
   }
   if (/win/i.test(plat) || /Windows/.test(ua)) {
-    return { id: 'windows-x64', note: arch === 'arm' ? 'Windows on ARM runs the x64 build via emulation.' : null };
+    return { id: arch === 'arm' ? 'windows-arm64' : 'windows-x64', note: null };
   }
   if (/linux|x11|cros/i.test(plat + ua)) {
-    if (arch === 'arm' || /aarch64|arm/i.test(ua)) return { id: null, note: 'No ARM Linux build yet — x64 only.' };
-    return { id: 'linux-x64', note: null };
+    return { id: arch === 'arm' || /aarch64|arm/i.test(ua) ? 'linux-arm64' : 'linux-x64', note: null };
   }
   return { id: null, note: null };
 }
 
-function stored(): PlatformId | null {
-  try {
-    const v = localStorage.getItem(KEY);
-    if (v && ids.includes(v)) return v as PlatformId;
-  } catch {}
-  return null;
-}
-
 async function refreshRelease(initial: ReleaseInfo): Promise<ReleaseInfo> {
   try {
-    const res = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`, {
+    const res = await fetch(`https://api.github.com/repos/${REPO}/releases?per_page=5`, {
       headers: { Accept: 'application/vnd.github+json' },
     });
     if (!res.ok) return initial;
-    const { tag_name } = (await res.json()) as { tag_name?: string };
-    return tag_name ? releaseFromTag(tag_name) : initial;
+    const tag = pickTag((await res.json()) as { tag_name?: string; draft?: boolean }[]);
+    return tag ? releaseFromTag(tag) : initial;
   } catch {
     return initial;
   }
@@ -62,49 +52,92 @@ async function refreshRelease(initial: ReleaseInfo): Promise<ReleaseInfo> {
 
 export async function initDownloads() {
   const root = document.documentElement;
-  const initialTag = root.dataset.releaseTag || null;
-  let release = releaseFromTag(initialTag);
-  let detected = await detectPlatform();
-  let current: PlatformId | null = stored() ?? detected.id;
+  let release = releaseFromTag(root.dataset.releaseTag || null);
+  const detected = await detectPlatform();
+  const current = detected.id;
 
   const render = () => {
     const platform = PLATFORMS.find((p) => p.id === current);
-    const href = platform ? release.urls[platform.id] : LATEST_URL;
-    document.querySelectorAll<HTMLAnchorElement>('[data-dl-button]').forEach((a) => {
-      a.href = href;
-      const label = a.querySelector('[data-dl-label]');
-      if (label) label.textContent = platform ? `Download for ${platform.label.replace(/ \(.*\)/, '')}` : 'Download';
-      const sub = a.querySelector('[data-dl-sub]');
-      if (sub) sub.textContent = platform ? `${platform.short} · ${release.tag ?? 'latest'}` : 'Choose your platform';
+
+    // Per-OS menus: fill links, highlight the detected OS, put the detected arch first and badge it.
+    document.querySelectorAll<HTMLElement>('[data-dl-menu]').forEach((menu) => {
+      const isCurrentOs = menu.dataset.dlMenu === platform?.os;
+      menu.toggleAttribute('data-selected', isCurrentOs);
+      const panel = menu.querySelector<HTMLElement>('[role=menu]')!;
+      const items = [...panel.querySelectorAll<HTMLAnchorElement>('[data-dl-item]')];
+      for (const a of items) {
+        const p = PLATFORMS.find((x) => x.id === a.dataset.platform)!;
+        const f = FORMATS[p.os].find((x) => x.suffix === a.dataset.suffix)!;
+        a.href = assetUrl(release.tag, p, f);
+        const match = isCurrentOs && p.id === current;
+        a.querySelector<HTMLElement>('[data-dl-rec]')!.hidden = !match || f !== p.formats[0];
+      }
+      if (isCurrentOs) {
+        const rank = (a: HTMLElement) => (a.dataset.platform === current ? 0 : 1);
+        items.sort((a, b) => rank(a) - rank(b)).forEach((a) => panel.append(a));
+      }
     });
-    document.querySelectorAll<HTMLSelectElement>('[data-dl-select]').forEach((s) => {
-      s.value = current ?? '';
-    });
+
     document.querySelectorAll<HTMLElement>('[data-dl-note]').forEach((n) => {
-      const msg = stored() ? null : detected.note;
-      n.textContent = msg ?? '';
-      n.hidden = !msg;
+      n.textContent = detected.note ?? '';
+      n.hidden = !detected.note;
     });
-    document.querySelectorAll<HTMLAnchorElement>('[data-dl-card]').forEach((a) => {
-      const id = a.dataset.dlCard as PlatformId;
-      a.href = release.urls[id];
-      a.toggleAttribute('data-selected', id === current);
-    });
-    document.querySelectorAll<HTMLElement>('[data-dl-version]').forEach((v) => {
+    document.querySelectorAll<HTMLElement>('[data-dl-version],[data-dl-tag]').forEach((v) => {
       if (release.tag) v.textContent = release.tag;
     });
+
+    // Download page: one row per file, grouped by OS and architecture.
+    document.querySelectorAll<HTMLAnchorElement>('[data-dl-file]').forEach((a) => {
+      const p = PLATFORMS.find((x) => x.id === a.dataset.platform)!;
+      const f = FORMATS[p.os].find((x) => x.suffix === a.dataset.suffix)!;
+      a.href = assetUrl(release.tag, p, f);
+    });
+    document.querySelectorAll<HTMLElement>('[data-dl-os-card]').forEach((c) => c.toggleAttribute('data-selected', c.dataset.dlOsCard === platform?.os));
+    document.querySelectorAll<HTMLElement>('[data-dl-arch]').forEach((g) => {
+      const match = g.dataset.platform === current;
+      g.toggleAttribute('data-selected', match);
+      g.querySelector<HTMLElement>('[data-dl-recommended]')?.toggleAttribute('hidden', !match);
+    });
+    // Hero call to action: the detected platform's default file, or a link down to the full list.
+    document.querySelectorAll<HTMLAnchorElement>('[data-dl-primary]').forEach((a) => {
+      const label = a.querySelector<HTMLElement>('[data-dl-primary-label]');
+      const meta = document.querySelector<HTMLElement>('[data-dl-primary-meta]');
+      const file = platform && document.querySelector<HTMLAnchorElement>(`[data-dl-file][data-platform="${platform.id}"][data-default]`);
+      a.querySelectorAll<HTMLElement>('[data-os-icon]').forEach((i) => (i.hidden = i.dataset.osIcon !== platform?.os));
+      if (platform && file) {
+        a.href = file.href;
+        a.removeAttribute('data-anchor');
+        if (label) label.textContent = `Download for ${platform.os}`;
+        if (meta) meta.textContent = file.dataset.meta ?? '';
+      } else {
+        a.href = '#all';
+        if (label) label.textContent = 'Choose your download';
+        if (meta) meta.textContent = '';
+      }
+    });
+    // A newer release than the one this page was built for: its sizes and checksums are not on the page.
+    const stale = !!release.tag && release.tag !== (root.dataset.releaseTag || null);
+    document.querySelectorAll<HTMLElement>('[data-dl-static]').forEach((e) => (e.hidden = stale));
+    document.querySelectorAll<HTMLElement>('[data-dl-stale]').forEach((e) => (e.hidden = !stale));
   };
 
-  document.querySelectorAll<HTMLSelectElement>('[data-dl-select]').forEach((s) =>
-    s.addEventListener('change', () => {
-      if (!ids.includes(s.value)) return;
-      current = s.value as PlatformId;
-      try {
-        localStorage.setItem(KEY, current);
-      } catch {}
-      render();
-    }),
-  );
+  // One menu open at a time; close on outside click, Escape or after picking a file.
+  const menus = [...document.querySelectorAll<HTMLDetailsElement>('[data-dl-menu]')];
+  const closeAll = (except?: Element | null) => menus.forEach((m) => m !== except && m.removeAttribute('open'));
+  menus.forEach((m) => {
+    m.addEventListener('toggle', () => m.open && closeAll(m));
+    m.addEventListener('click', (e) => {
+      if ((e.target as Element).closest('[data-dl-item]')) setTimeout(() => m.removeAttribute('open'), 0);
+    });
+  });
+  document.addEventListener('click', (e) => closeAll((e.target as Element).closest('[data-dl-menu]')));
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const open = menus.find((m) => m.open);
+    if (!open) return;
+    open.removeAttribute('open');
+    open.querySelector<HTMLElement>('summary')?.focus();
+  });
 
   render();
   const fresh = await refreshRelease(release);

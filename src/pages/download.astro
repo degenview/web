@@ -2,45 +2,405 @@
 import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import DownloadButton from '../components/DownloadButton.astro';
-import PlatformCards from '../components/PlatformCards.astro';
+import PlatformIcon from '../components/PlatformIcon.astro';
+import CodeBlock from '../components/CodeBlock.astro';
 import { getRelease } from '../data/release';
-import { RELEASES_URL } from '../data/platforms';
+import { OS_NAMES, PLATFORMS, REPO_URL, RELEASES_URL, assetUrl, type OsName, type Platform } from '../data/platforms';
 
 const release = await getRelease();
+const tag = release.tag;
+const T = tag ?? '<version>';
 const description =
-  'Download DegenView for macOS (Apple Silicon and Intel), Windows or Linux. Free, open source and no account needed, with install notes.';
+  'Download DegenView, the free, open source TradingView alternative, for macOS, Windows or Linux. No account needed, with install steps and checksums.';
+
+const date = (iso?: string) => (iso ? new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }) : undefined);
+const size = (bytes?: number) => (bytes ? `${(bytes / 1024 / 1024).toFixed(bytes >= 100 * 1024 * 1024 ? 0 : 1)} MB` : undefined);
+const asset = (p: Platform, i: number) => tag ? release.assets[`DegenView-${tag}-${p.id}${p.formats[i].suffix}`] : undefined;
+const fileName = (p: Platform, i: number) => `DegenView-${T}-${p.id}${p.formats[i].suffix}`;
+
+const status = !tag ? null : /-rc\./.test(tag) ? 'Release candidate' : release.prerelease ? 'Pre-release' : 'Stable';
+const published = date(release.published);
+
+const osInfo: Record<OsName, { needs: string }> = {
+  macOS: { needs: 'macOS 14 Sonoma or later' },
+  Windows: { needs: 'Windows on x64 or ARM64' },
+  Linux: { needs: 'glibc 2.35 or newer (Ubuntu 22.04, Debian 12, Fedora 36+), or use the Flatpak' },
+};
+const archHint: Record<string, string> = {
+  'macos-arm64': 'Apple Silicon (M1 and later)',
+  'macos-x64': 'Intel',
+  'windows-x64': 'x64 (Intel and AMD)',
+  'windows-arm64': 'ARM64 (Snapdragon X, Windows on ARM)',
+  'linux-x64': 'x64',
+  'linux-arm64': 'ARM64',
+};
+
+// Checksums by OS, for the verify section. Empty when GitHub didn't report them at build time.
+const checksums = OS_NAMES.map((os) => ({
+  os,
+  rows: PLATFORMS.filter((p) => p.os === os).flatMap((p) =>
+    p.formats.map((_f, i) => ({ name: fileName(p, i), sha: asset(p, i)?.sha256 })),
+  ).filter((r) => r.sha),
+})).filter((g) => g.rows.length);
+
+const faqs: [string, string][] = [
+  [
+    'Which Mac do I have: Apple Silicon or Intel?',
+    'Open the Apple menu and choose About This Mac. A chip named “Apple M1”, “M2” and so on means Apple Silicon. “Intel” means Intel. Every Mac sold since late 2020 is Apple Silicon.',
+  ],
+  [
+    'x64 or ARM64 on Windows?',
+    'Most PCs are x64. Pick ARM64 only on a Windows on ARM machine such as a Snapdragon X laptop. The x64 build also runs there, but emulated.',
+  ],
+  [
+    'Tarball or Flatpak on Linux?',
+    'The tarball runs on any recent distro and updates itself from inside the app when it sits in a folder you own. The Flatpak runs sandboxed (network, display and GPU only) and suits older distros such as RHEL 9, but it can’t update itself, so you download the next one from here.',
+  ],
+  [
+    'Windows shows a SmartScreen warning. Is it safe?',
+    'The Windows builds are not code-signed yet, so SmartScreen may ask you to approve the first launch. Choose “More info”, then “Run anyway”. The source and the build workflow are public, and you can compare the file’s checksum with the one on this page.',
+  ],
+  [
+    'Does DegenView update itself?',
+    'Yes on macOS, on Windows (installer and portable zip) and for the Linux tarball in a writable folder. A Flatpak bundle has no remote, so it does not.',
+  ],
+  [
+    'Do I need an account?',
+    'No. Download it and open it. The only exception is US stock data, which needs your own free Alpaca API keys.',
+  ],
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'DegenView',
+    applicationCategory: 'FinanceApplication',
+    operatingSystem: 'macOS, Windows, Linux',
+    softwareRequirements: 'macOS 14 or later; Windows on x64 or ARM64; Linux with glibc 2.35 or later, or Flatpak',
+    isAccessibleForFree: true,
+    license: 'https://www.gnu.org/licenses/gpl-3.0.html',
+    ...(tag ? { softwareVersion: tag.replace(/^v/, '') } : {}),
+    ...(release.published ? { datePublished: release.published } : {}),
+    downloadUrl: release.htmlUrl,
+    installUrl: 'https://degenview.app/download/',
+    releaseNotes: release.htmlUrl,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  },
+];
+
+const arrow = 'M12 4v12m0 0 5-5m-5 5-5-5M5 20h14';
 ---
 
-<Base title="Download DegenView – macOS, Windows & Linux" description={description} path="/download/">
+<Base
+  title="Download DegenView – Free TradingView Alternative"
+  description={description}
+  path="/download/"
+  jsonLd={jsonLd}
+  breadcrumbs={[['Home', '/'], ['Download', '/download/']]}
+>
   <Header slot="header" />
-  <div class="container-x max-w-4xl py-20">
-    <h1 class="text-balance text-4xl font-extrabold tracking-tight sm:text-6xl">Download DegenView</h1>
-    <p class="mt-4 text-lg text-muted">Latest release <span class="font-mono" data-dl-version>{release.tag ?? ''}</span>. Free and open source.</p>
-    <div class="mt-8"><DownloadButton showNote /></div>
-    <div class="mt-12"><PlatformCards /></div>
-    <p class="mt-4 text-sm text-muted">Older versions and release notes: <a class="font-medium text-accent-text underline underline-offset-4" href={RELEASES_URL} rel="noopener">GitHub Releases</a>.</p>
 
-    <section id="install" class="mt-20 space-y-6" aria-labelledby="install-h">
-      <h2 id="install-h" class="text-3xl font-bold tracking-tight">Install</h2>
+  <!-- Hero -->
+  <section class="relative overflow-hidden border-b border-line/50 pb-20 pt-16 sm:pt-24">
+    <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+      <div class="absolute left-1/2 top-[-12rem] h-[34rem] w-[60rem] -translate-x-1/2 rounded-full blur-3xl" style="background: radial-gradient(closest-side, var(--glow-a), transparent)"></div>
+      <div class="absolute right-[-12rem] top-40 h-[28rem] w-[36rem] rounded-full blur-3xl" style="background: radial-gradient(closest-side, var(--glow-b), transparent)"></div>
+      <svg class="absolute inset-0 size-full [mask-image:radial-gradient(ellipse_at_top,black,transparent_65%)]" aria-hidden="true">
+        <defs><pattern id="dl-grid" width="56" height="56" patternUnits="userSpaceOnUse"><path d="M56 0H0V56" fill="none" stroke="var(--grid)" /></pattern></defs>
+        <rect width="100%" height="100%" fill="url(#dl-grid)" />
+      </svg>
+    </div>
+    <div class="container-x max-w-4xl text-center">
+      <p class="text-sm font-semibold text-accent-text">download</p>
+      <h1 class="display mt-4 text-5xl sm:text-7xl">Download <span class="gradient-text">DegenView</span></h1>
+      <p class="mx-auto mt-5 max-w-2xl text-lg text-muted sm:text-xl">Free and open source for macOS, Windows and Linux. No account, no trial, no catch.</p>
 
-      <div class="card p-6">
-        <h3 class="text-xl font-semibold">macOS</h3>
-        <p class="mt-3 text-muted">Unzip and drag <code class="font-mono text-fg">DegenView.app</code> to <code class="font-mono text-fg">/Applications</code>.</p>
+      <div class="mt-10 flex flex-col items-center gap-3">
+        <a href="#all" data-dl-primary class="btn btn-gradient gap-3 px-9 py-4 text-lg">
+          {OS_NAMES.map((os) => <span data-os-icon={os} hidden><PlatformIcon os={os} class="size-6" /></span>)}
+          <span data-dl-primary-label>Choose your download</span>
+        </a>
+        <p class="min-h-5 text-sm text-muted" data-dl-primary-meta></p>
+        <p class="text-sm text-muted" data-dl-note hidden></p>
+        <a href="#all" class="text-sm font-medium text-accent-text underline-offset-4 hover:underline">Other platforms and formats</a>
       </div>
 
-      <div class="card p-6">
-        <h3 class="text-xl font-semibold">Windows</h3>
-        <p class="mt-3 text-muted">Extract the zip and run <code class="font-mono text-fg">degenview.exe</code>. If SmartScreen appears (the build isn’t code-signed yet), click <b class="text-fg">More info → Run anyway</b>. Windows on ARM runs the x64 build via emulation.</p>
+      <ul class="mt-10 flex flex-wrap items-center justify-center gap-2.5 text-sm">
+        {tag && (
+          <li class="inline-flex items-center gap-2 rounded-full border border-line bg-surface/70 py-1.5 pl-1.5 pr-4 text-muted backdrop-blur">
+            <span class="rounded-full bg-chrome px-2.5 py-0.5 font-mono text-xs font-semibold text-fg" data-dl-version>{tag}</span>
+            {status && <span class:list={[status === 'Stable' ? 'text-up' : 'text-[#f5a524]']}>{status}</span>}
+          </li>
+        )}
+        {published && <li class="rounded-full border border-line bg-surface/70 px-4 py-1.5 text-muted backdrop-blur" data-dl-static>Released {published}</li>}
+        <li class="rounded-full border border-line bg-surface/70 px-4 py-1.5 text-muted backdrop-blur">Open source · GPL-3.0</li>
+        <li class="rounded-full border border-line bg-surface/70 px-4 py-1.5 text-muted backdrop-blur">Signed and notarized on macOS</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- All downloads -->
+  <section id="all" aria-labelledby="all-h" class="py-24">
+    <div class="container-x">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="text-sm font-semibold text-accent-text">all downloads</p>
+        <h2 id="all-h" class="display mt-3 text-4xl sm:text-6xl">Pick your <span class="gradient-text">platform</span></h2>
+        <p class="mt-5 text-lg text-muted">Every build comes as an installer or archive. File sizes are for this release.</p>
       </div>
 
-      <div class="card p-6">
-        <h3 class="text-xl font-semibold">Linux</h3>
-        <pre class="mt-3 overflow-x-auto rounded-xl border border-line bg-bg p-4 font-mono text-sm"><code>tar xzf DegenView-*-linux-x64.tar.gz
-./degenview</code></pre>
-        <p class="mt-3 text-sm text-muted">x64 only for now. Needs a working OpenGL/EGL stack and X11 or Wayland.</p>
+      <ul class="mt-14 grid gap-5 lg:grid-cols-3">
+        {
+          OS_NAMES.map((os) => (
+            <li data-dl-os-card={os} class="card flex min-w-0 flex-col p-6 transition-colors data-[selected]:border-accent data-[selected]:ring-2 data-[selected]:ring-accent/30">
+              <div class="flex items-center gap-3">
+                <PlatformIcon os={os} class="size-8" />
+                <h3 class="display text-3xl">{os}</h3>
+              </div>
+              <p class="mt-2 min-h-10 text-sm text-muted">{osInfo[os].needs}</p>
+              <div class="mt-3 space-y-1">
+                {
+                  PLATFORMS.filter((p) => p.os === os).map((p) => (
+                    <div data-dl-arch data-platform={p.id} class="-mx-3 rounded-xl border border-transparent p-3 transition-colors data-[selected]:border-line data-[selected]:bg-chrome/40">
+                      <div class="flex items-center justify-between gap-3">
+                        <p class="text-sm font-semibold">{archHint[p.id]}</p>
+                        <span data-dl-recommended hidden class="rounded-full bg-[var(--inverse)] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--inverse-ink)]">Recommended</span>
+                      </div>
+                      <ul class="mt-3 space-y-2">
+                        {
+                          p.formats.map((f, i) => (
+                            <li>
+                              <a
+                                href={assetUrl(tag, p, f)}
+                                data-dl-file
+                                data-platform={p.id}
+                                data-suffix={f.suffix}
+                                data-default={i === 0 ? '' : undefined}
+                                data-meta={[p.short, `.${f.ext}`, size(asset(p, i)?.size)].filter(Boolean).join(' · ')}
+                                class="group flex items-center justify-between gap-4 rounded-lg border border-line bg-bg px-4 py-3 transition-colors hover:border-accent-text"
+                              >
+                                <span class="min-w-0">
+                                  <span class="block font-medium">{f.name}</span>
+                                  <span class="block font-mono text-xs text-muted">.{f.ext}<span data-dl-static>{size(asset(p, i)?.size) ? ` · ${size(asset(p, i)?.size)}` : ''}</span></span>
+                                </span>
+                                <svg viewBox="0 0 24 24" class="size-5 shrink-0 text-muted transition-transform group-hover:translate-y-0.5 group-hover:text-fg" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={arrow} /></svg>
+                              </a>
+                            </li>
+                          ))
+                        }
+                      </ul>
+                    </div>
+                  ))
+                }
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-8 text-center text-sm text-muted">
+        Older versions and release notes live on <a class="font-medium text-accent-text underline underline-offset-4" href={RELEASES_URL} target="_blank" rel="noopener noreferrer">GitHub Releases<span class="sr-only"> (opens in a new tab)</span></a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- Install -->
+  <section id="install" aria-labelledby="install-h" class="border-t border-line/50 py-24">
+    <div class="container-x">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="text-sm font-semibold text-accent-text">install</p>
+        <h2 id="install-h" class="display mt-3 text-4xl sm:text-6xl">Up and running <span class="gradient-text">in a minute</span></h2>
       </div>
-    </section>
-  </div>
+
+      <div class="mt-14 grid gap-5 lg:grid-cols-2">
+        <div data-dl-os-card="macOS" class="card min-w-0 p-6 data-[selected]:border-accent data-[selected]:ring-2 data-[selected]:ring-accent/30">
+          <h3 class="flex items-center gap-3 text-2xl font-semibold"><PlatformIcon os="macOS" class="size-6" />macOS</h3>
+          <ol class="mt-5 space-y-4 text-muted [counter-reset:step] [&>li]:relative [&>li]:pl-9 [&>li]:before:absolute [&>li]:before:left-0 [&>li]:before:top-0 [&>li]:before:grid [&>li]:before:size-6 [&>li]:before:place-items-center [&>li]:before:rounded-full [&>li]:before:border [&>li]:before:border-line [&>li]:before:bg-chrome [&>li]:before:font-mono [&>li]:before:text-xs [&>li]:before:text-fg [&>li]:before:content-[counter(step)] [&>li]:[counter-increment:step]">
+            <li>Download the <code class="font-mono text-fg">.dmg</code> that matches your Mac.</li>
+            <li>Open it and drag <b class="text-fg">DegenView</b> onto the Applications shortcut.</li>
+            <li>Launch it from Applications.</li>
+            <li>Keep it in Applications. It updates itself from inside the app.</li>
+          </ol>
+        </div>
+
+        <div data-dl-os-card="Windows" class="card min-w-0 p-6 data-[selected]:border-accent data-[selected]:ring-2 data-[selected]:ring-accent/30">
+          <h3 class="flex items-center gap-3 text-2xl font-semibold"><PlatformIcon os="Windows" class="size-6" />Windows</h3>
+          <ol class="mt-5 space-y-4 text-muted [counter-reset:step] [&>li]:relative [&>li]:pl-9 [&>li]:before:absolute [&>li]:before:left-0 [&>li]:before:top-0 [&>li]:before:grid [&>li]:before:size-6 [&>li]:before:place-items-center [&>li]:before:rounded-full [&>li]:before:border [&>li]:before:border-line [&>li]:before:bg-chrome [&>li]:before:font-mono [&>li]:before:text-xs [&>li]:before:text-fg [&>li]:before:content-[counter(step)] [&>li]:[counter-increment:step]">
+            <li>Download the <code class="font-mono text-fg">-setup.exe</code> for your PC.</li>
+            <li>Run it. It installs for your user only, with no admin rights, adds a Start menu entry and an uninstaller, and keeps your data if you remove it.</li>
+            <li>If SmartScreen appears, choose <b class="text-fg">More info → Run anyway</b>. The build isn’t code-signed yet.</li>
+            <li>Prefer portable? Unzip the <code class="font-mono text-fg">.zip</code> into a folder you own. Both update themselves.</li>
+          </ol>
+        </div>
+
+        <div data-dl-os-card="Linux" class="card min-w-0 p-6 data-[selected]:border-accent data-[selected]:ring-2 data-[selected]:ring-accent/30 lg:col-span-2">
+          <h3 class="flex items-center gap-3 text-2xl font-semibold"><PlatformIcon os="Linux" class="size-6" />Linux</h3>
+          <div class="mt-5 grid gap-8 lg:grid-cols-2">
+            <div class="min-w-0">
+              <p class="text-sm font-semibold">Tarball, any recent distro</p>
+              <div class="mt-3"><CodeBlock label="terminal" code={`tar xzf DegenView-${T}-linux-x64.tar.gz\n./degenview`} /></div>
+              <p class="mt-4 text-sm text-muted">Want a launcher and dock icon? From the extracted folder:</p>
+              <div class="mt-3"><CodeBlock label="launcher" code={`install -Dm755 degenview "$HOME/.local/bin/degenview"\ninstall -Dm644 degenview.png "$HOME/.local/share/icons/hicolor/512x512/apps/degenview.png"\ninstall -Dm644 degenview.desktop "$HOME/.local/share/applications/degenview.desktop"`} /></div>
+              <p class="mt-4 text-sm text-muted">In a folder you own, the app updates itself.</p>
+            </div>
+            <div class="min-w-0">
+              <p class="text-sm font-semibold">Flatpak, sandboxed</p>
+              <div class="mt-3"><CodeBlock label="flatpak" code={`flatpak install --user DegenView-${T}-linux-x64.flatpak\nflatpak run es.nico.degenview`} /></div>
+              <p class="mt-4 text-sm text-muted">A bundle has no remote, so <code class="font-mono text-fg">flatpak update</code> won’t find newer versions. Download the next one from here.</p>
+              <p class="mt-4 text-sm text-muted">Needs OpenGL/EGL and X11 or Wayland. On ARM machines, use <code class="font-mono text-fg">arm64</code> in the file name.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Verify -->
+  <section id="verify" aria-labelledby="verify-h" class="border-t border-line/50 py-24">
+    <div class="container-x max-w-4xl">
+      <div class="text-center">
+        <p class="text-sm font-semibold text-accent-text">verify</p>
+        <h2 id="verify-h" class="display mt-3 text-4xl sm:text-6xl">Trust, but <span class="gradient-text">verify</span></h2>
+        <p class="mx-auto mt-5 max-w-2xl text-lg text-muted">DegenView is open source and every release is built by a public workflow. Compare your download’s SHA-256 checksum with the one below.</p>
+      </div>
+
+      <div class="mt-12 grid gap-4 md:grid-cols-2">
+        <div class="min-w-0">
+          <p class="mb-2 text-sm font-semibold">macOS and Linux</p>
+          <CodeBlock label="terminal" code={`shasum -a 256 DegenView-${T}-macos-arm64.dmg\n# or, on Linux\nsha256sum DegenView-${T}-linux-x64.tar.gz`} />
+        </div>
+        <div class="min-w-0">
+          <p class="mb-2 text-sm font-semibold">Windows (PowerShell)</p>
+          <CodeBlock label="powershell" code={`Get-FileHash .\\DegenView-${T}-windows-x64-setup.exe -Algorithm SHA256`} />
+        </div>
+      </div>
+
+      <div class="mt-8" data-dl-static>
+        {
+          checksums.length > 0 ? (
+            <div class="space-y-3">
+              {checksums.map((g) => (
+                <details class="group rounded-xl border border-line bg-surface">
+                  <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 font-semibold [&::-webkit-details-marker]:hidden">
+                    <span class="flex items-center gap-3"><PlatformIcon os={g.os} class="size-5" />{g.os} checksums</span>
+                    <svg viewBox="0 0 24 24" class="size-5 text-muted transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+                  </summary>
+                  <ul class="divide-y divide-line/60 border-t border-line/60">
+                    {g.rows.map((r) => (
+                      <li class="flex flex-col gap-2 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+                        <div class="min-w-0">
+                          <p class="truncate font-mono text-xs text-muted">{r.name}</p>
+                          <p class="mt-1 break-all font-mono text-[13px] text-fg">{r.sha}</p>
+                        </div>
+                        <button type="button" data-copy={r.sha} class="shrink-0 self-start rounded-lg border border-line px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:border-muted hover:text-fg sm:self-center" aria-label={`Copy checksum for ${r.name}`}>Copy</button>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              ))}
+            </div>
+          ) : (
+            <p class="text-center text-sm text-muted">Checksums are listed on the <a class="font-medium text-accent-text underline underline-offset-4" href={release.htmlUrl} target="_blank" rel="noopener noreferrer">release page<span class="sr-only"> (opens in a new tab)</span></a>.</p>
+          )
+        }
+      </div>
+      <p class="mt-8 hidden text-center text-sm text-muted" data-dl-stale>A newer release is out. Its checksums are on the <a class="font-medium text-accent-text underline underline-offset-4" href={RELEASES_URL} target="_blank" rel="noopener noreferrer">release page<span class="sr-only"> (opens in a new tab)</span></a>.</p>
+    </div>
+  </section>
+
+  <!-- Release + source -->
+  <section aria-labelledby="rel-h" class="border-t border-line/50 py-24">
+    <div class="container-x">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="text-sm font-semibold text-accent-text">releases and source</p>
+        <h2 id="rel-h" class="display mt-3 text-4xl sm:text-6xl">Read it. <span class="gradient-text">Build it.</span></h2>
+      </div>
+
+      <div class="mt-14 grid gap-5 lg:grid-cols-2">
+        {
+          tag && (
+        <div class="card min-w-0 p-7">
+          <h3 class="text-2xl font-semibold">This release</h3>
+          <>
+                <p class="mt-3 flex flex-wrap items-center gap-2 text-muted">
+                  <span class="font-mono text-fg">{tag}</span>
+                  {status && <span class="rounded-full border border-line px-2.5 py-0.5 text-xs">{status}</span>}
+                  {published && <span>· {published}</span>}
+                </p>
+                <p class="mt-3 text-muted">{status === 'Stable' ? '' : `This is a ${status?.toLowerCase()}, so you may hit rough edges. `}Release notes list every change since the last one.</p>
+                <a href={release.htmlUrl} target="_blank" rel="noopener noreferrer" class="btn btn-ghost mt-6">Release notes on GitHub<span class="sr-only"> (opens in a new tab)</span></a>
+              </>
+          {
+            release.previous.length > 0 && (
+              <div class="mt-8 border-t border-line pt-6">
+                <p class="text-sm font-semibold">Previous releases</p>
+                <ul class="mt-3 divide-y divide-line/60 text-sm">
+                  {release.previous.map((r) => (
+                    <li>
+                      <a href={r.url} target="_blank" rel="noopener noreferrer" class="flex items-center justify-between gap-4 py-2.5 text-muted transition-colors hover:text-fg">
+                        <span class="font-mono text-fg">{r.tag}</span>
+                        <span>{date(r.published) ?? ''}</span>
+                        <span class="sr-only"> (opens in a new tab)</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          }
+        </div>
+          )
+        }
+
+        <div class:list={['card min-w-0 p-7', !tag && 'lg:col-span-2 lg:mx-auto lg:w-full lg:max-w-2xl']}>
+          <h3 class="text-2xl font-semibold">Build from source</h3>
+          <p class="mt-3 text-muted">GPL-3.0, written in Rust. You need Rust 1.95 or newer.</p>
+          <div class="mt-5"><CodeBlock label="terminal" code={`git clone ${REPO_URL}.git\ncd degenview\ncargo build --release`} /></div>
+          <p class="mt-4 text-sm text-muted">The binary lands at <code class="font-mono text-fg">target/release/degenview</code>. On macOS, <code class="font-mono text-fg">./tools/bundle.sh</code> builds a Finder-launchable app.</p>
+          <a href={REPO_URL} target="_blank" rel="noopener noreferrer" class="btn btn-ghost mt-6"><PlatformIcon os="GitHub" class="size-5" />View on GitHub<span class="sr-only"> (opens in a new tab)</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="help" aria-labelledby="dlfaq-h" class="border-t border-line/50 py-24">
+    <div class="container-x max-w-3xl">
+      <h2 id="dlfaq-h" class="display text-center text-4xl sm:text-6xl">Before you <span class="gradient-text">download</span></h2>
+      <div class="mt-12 divide-y divide-line rounded-[14px] border border-line bg-surface">
+        {
+          faqs.map(([q, a]) => (
+            <details class="group p-6">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold [&::-webkit-details-marker]:hidden">
+                {q}
+                <svg viewBox="0 0 24 24" class="size-5 shrink-0 text-muted transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+              </summary>
+              <p class="mt-3 text-muted">{a}</p>
+            </details>
+          ))
+        }
+      </div>
+      <p class="mt-6 text-center text-sm text-muted">
+        Something not working? <a class="font-medium text-accent-text underline underline-offset-4" href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer">Open an issue on GitHub<span class="sr-only"> (opens in a new tab)</span></a>
+        or read the <a class="font-medium text-accent-text underline underline-offset-4" href="/faq/">full FAQ</a>.
+      </p>
+    </div>
+  </section>
+
   <Footer slot="footer" />
+
+  <script>
+    // Copy buttons for commands and checksums.
+    document.addEventListener('click', async (e) => {
+      const btn = (e.target as Element).closest<HTMLButtonElement>('[data-copy]');
+      if (!btn) return;
+      const original = btn.textContent;
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copy ?? '');
+        btn.textContent = 'Copied';
+      } catch {
+        btn.textContent = 'Press ⌘/Ctrl+C';
+      }
+      setTimeout(() => (btn.textContent = original), 1800);
+    });
+  </script>
 </Base>

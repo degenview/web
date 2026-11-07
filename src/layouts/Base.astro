@@ -2,6 +2,8 @@
 import '../styles/global.css';
 import themeInline from '../scripts/theme-inline.js?raw';
 import { getRelease } from '../data/release';
+import CookieConsent from '../components/CookieConsent.astro';
+import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 
 interface Props {
   title: string;
@@ -9,14 +11,20 @@ interface Props {
   path?: string;
   jsonLd?: object[];
   noindex?: boolean;
+  /** Trail for a BreadcrumbList, home first: `[['Home', '/'], ['FAQ', '/faq/']]`. */
+  breadcrumbs?: [string, string][];
 }
 const SITE = 'https://degenview.app';
-const { title, description, path = '/', jsonLd = [], noindex = false } = Astro.props;
+const { title, description, path = '/', jsonLd = [], noindex = false, breadcrumbs } = Astro.props;
 const canonical = new URL(path, SITE).href;
 const ogImage = `${SITE}/og.png`;
+const ogAlt = 'DegenView: the free, open source TradingView alternative';
+const crumbs = breadcrumbs && {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: breadcrumbs.map(([name, href], i) => ({ '@type': 'ListItem', position: i + 1, name, item: new URL(href, SITE).href })),
+};
 const release = await getRelease();
-const keywords =
-  'crypto charts, stock charts, MCP server, prediction markets, Pine Script, TradingView alternative, multiple watchlists, price alerts, bar replay, paper trading, portfolio tracker, Polymarket, Kalshi, open source, desktop app';
 ---
 
 <!doctype html>
@@ -26,12 +34,11 @@ const keywords =
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="keywords" content={keywords} />
     <meta name="author" content="Nico Oelgart" />
     <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large'} />
     <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content="#f6f6f7" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#161d21" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
     <meta name="color-scheme" content="light dark" />
 
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
@@ -48,21 +55,25 @@ const keywords =
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="DegenView: where multiple watchlists is not a premium feature" />
+    <meta property="og:image:alt" content={ogAlt} />
+    <meta property="og:locale" content="en_US" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogAlt} />
 
+    <link rel="preload" as="font" type="font/woff2" href={interLatin} crossorigin />
     <script is:inline set:html={themeInline}></script>
-    {jsonLd.map((d) => <script is:inline type="application/ld+json" set:html={JSON.stringify(d)} />)}
+    {[...jsonLd, ...(crumbs ? [crumbs] : [])].map((d) => <script is:inline type="application/ld+json" set:html={JSON.stringify(d)} />)}
     <slot name="head" />
   </head>
   <body class="min-h-screen antialiased">
-    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-accent-ink">Skip to content</a>
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-white">Skip to content</a>
     <slot name="header" />
     <main id="main"><slot /></main>
     <slot name="footer" />
+    <CookieConsent />
     <script>
       import { initThemeToggle } from '../scripts/theme';
       import { initDownloads } from '../scripts/platform';

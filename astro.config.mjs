@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://degenview.app',
   trailingSlash: 'ignore',
+  redirects: { '/why-free': '/' },
   integrations: [sitemap()],
   vite: { plugins: [tailwindcss()] },
 });

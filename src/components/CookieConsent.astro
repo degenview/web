@@ -1,0 +1,109 @@
+---
+// A small consent card in the bottom-left corner. Google Tag Manager is only requested after the visitor accepts;
+// until then (and after declining) nothing from Google loads. The choice is kept in localStorage, and the footer's
+// "Cookie settings" button opens the card again. Consent Mode defaults are set to "denied" before anything else.
+---
+
+<div
+  id="cookie-consent"
+  role="dialog"
+  aria-modal="false"
+  aria-labelledby="cookie-consent-title"
+  aria-describedby="cookie-consent-text"
+  hidden
+  class="fixed bottom-4 left-4 z-40 w-[min(22rem,calc(100vw-2rem))] rounded-2xl border border-line bg-surface/95 p-4 text-sm shadow-[0_20px_60px_-20px_rgb(0_0_0/.7)] backdrop-blur-xl transition duration-300 data-[leaving]:translate-y-2 data-[leaving]:opacity-0 starting:translate-y-2 starting:opacity-0"
+>
+  <p id="cookie-consent-title" class="font-semibold">Cookies, but only if you say so</p>
+  <p id="cookie-consent-text" class="mt-1.5 text-muted">
+    We’d like to use cookies to measure visits to this site.{' '}
+    <a href="/privacy-policy/" class="whitespace-nowrap font-medium text-fg underline underline-offset-4">Privacy policy</a>
+  </p>
+  <div class="mt-4 grid grid-cols-2 gap-2">
+    <button type="button" id="cookie-reject" class="rounded-lg border border-line px-3 py-2 font-medium transition-colors hover:border-muted hover:bg-chrome">Decline</button>
+    <button type="button" id="cookie-accept" class="rounded-lg bg-[var(--inverse)] px-3 py-2 font-medium text-[var(--inverse-ink)] transition-colors hover:bg-[var(--inverse-hover)]">Accept</button>
+  </div>
+</div>
+
+<script>
+  const GTM_ID = 'GTM-NGCV3ZVG';
+  const STORAGE_KEY = 'dv_analytics_consent';
+
+  type Consent = 'granted' | 'denied';
+  const w = window as unknown as { dataLayer: unknown[]; gtag: (...args: unknown[]) => void };
+
+  w.dataLayer = w.dataLayer || [];
+  // Must push `arguments`, not an array: that is the shape the Tag Manager library reads.
+  w.gtag = function () {
+    // eslint-disable-next-line prefer-rest-params
+    w.dataLayer.push(arguments);
+  };
+
+  // Everything starts denied, before any Google script exists on the page.
+  w.gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    security_storage: 'granted',
+  });
+
+  const banner = document.getElementById('cookie-consent')!;
+  const read = (): Consent | null => {
+    try {
+      const v = localStorage.getItem(STORAGE_KEY);
+      return v === 'granted' || v === 'denied' ? v : null;
+    } catch {
+      return null;
+    }
+  };
+  const save = (v: Consent) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, v);
+    } catch {
+      /* private mode: the choice just lasts for this page */
+    }
+  };
+
+  let loaded = false;
+  const loadTagManager = () => {
+    if (loaded) return;
+    loaded = true;
+    w.gtag('js', new Date());
+    // The standard Tag Manager start event, so page-view triggers fire.
+    w.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`;
+    document.head.appendChild(s);
+  };
+
+  const show = () => {
+    banner.hidden = false;
+    banner.removeAttribute('data-leaving');
+  };
+  const hide = () => {
+    banner.setAttribute('data-leaving', '');
+    setTimeout(() => (banner.hidden = true), 300);
+  };
+
+  const choose = (v: Consent) => {
+    save(v);
+    w.gtag('consent', 'update', { analytics_storage: v, security_storage: 'granted' });
+    if (v === 'granted') loadTagManager();
+    hide();
+  };
+
+  document.getElementById('cookie-accept')!.addEventListener('click', () => choose('granted'));
+  document.getElementById('cookie-reject')!.addEventListener('click', () => choose('denied'));
+  document.addEventListener('click', (e) => {
+    if ((e.target as Element).closest('[data-cookie-settings]')) show();
+  });
+
+  const stored = read();
+  if (stored === 'granted') {
+    w.gtag('consent', 'update', { analytics_storage: 'granted', security_storage: 'granted' });
+    loadTagManager();
+  } else if (stored === null) {
+    show();
+  }
+</script>

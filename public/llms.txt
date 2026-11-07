@@ -1,0 +1,15 @@
+# DegenView
+
+> DegenView is a free, open source TradingView alternative for the desktop (macOS, Windows, Linux). It has multi-chart layouts for crypto, stocks and prediction markets, a local Pine Script v6 engine, alerts with webhooks, bar replay, paper trading, portfolio tracking and an optional MCP server for AI assistants. No account is needed. Licensed GPL-3.0-only.
+
+DegenView is an independent project and is not affiliated with TradingView.
+
+## Pages
+- [Home](https://degenview.app/): overview and feature tour
+- [TradingView alternative](https://degenview.app/tradingview-alternative/): how DegenView compares with TradingView, including what TradingView does better
+- [Download](https://degenview.app/download/): installers for macOS, Windows and Linux
+- [FAQ](https://degenview.app/faq/): accounts, data sources, Pine Script, platforms
+- [Privacy policy](https://degenview.app/privacy-policy/): cookies and analytics
+
+## Source
+- [GitHub](https://github.com/degenview/degenview): source code and releases

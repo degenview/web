@@ -1,0 +1,82 @@
+---
+// A floating pill under the header that appears once the hero is behind you and jumps between the
+// home page's sections, highlighting the one you're in.
+const sections = [
+  ['markets', 'Markets'],
+  ['pine-script', 'Pine Script'],
+  ['mcp', 'MCP'],
+  ['portfolio', 'Portfolio'],
+  ['paper-trading', 'Paper trading'],
+  ['replay', 'Replay'],
+  ['chart-types', 'Chart types'],
+  ['more', 'More'],
+  ['download', 'Download'],
+];
+---
+
+<div data-section-nav class="pointer-events-none fixed inset-x-0 top-[4.75rem] z-30 flex justify-center px-4 transition-[opacity,transform] duration-300 data-[hidden]:-translate-y-2 data-[hidden]:opacity-0" data-hidden inert>
+  <nav
+    aria-label="Sections"
+    class="pointer-events-auto max-w-full overflow-x-auto rounded-full border border-line bg-bg/80 p-1.5 shadow-[0_12px_40px_-12px_rgb(0_0_0/.6)] backdrop-blur-xl [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+  >
+    <ul class="flex w-max items-center gap-0.5">
+      {
+        sections.map(([id, label]) => (
+          <li>
+            <a
+              href={`#${id}`}
+              data-section-link={id}
+              class="block whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium text-muted transition-colors hover:text-fg data-[active]:bg-[var(--inverse)] data-[active]:text-[var(--inverse-ink)]"
+            >{label}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</div>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-section-nav]');
+  const nav = bar?.querySelector('nav');
+  if (bar && nav) {
+    const links = [...bar.querySelectorAll<HTMLAnchorElement>('[data-section-link]')];
+    const targets = links
+      .map((a) => ({ a, el: document.getElementById(a.dataset.sectionLink!) }))
+      .filter((t): t is { a: HTMLAnchorElement; el: HTMLElement } => !!t.el);
+    // Where the content of a section should land under the header and the bar.
+    const LINE = 150;
+    const contentTop = (el: HTMLElement) => el.getBoundingClientRect().top + scrollY + parseFloat(getComputedStyle(el).paddingTop) - LINE;
+
+    let current: HTMLAnchorElement | null = null;
+    const update = () => {
+      const show = scrollY > innerHeight * 0.7;
+      bar.toggleAttribute('data-hidden', !show);
+      bar.toggleAttribute('inert', !show);
+
+      let active: HTMLAnchorElement | null = null;
+      for (const { a, el } of targets) if (contentTop(el) - 40 <= scrollY) active = a;
+      // At the very bottom the last section wins, even when it is too short to reach its own line.
+      if (targets.length && scrollY + innerHeight >= document.documentElement.scrollHeight - 4) active = targets[targets.length - 1].a;
+      if (active === current) return;
+      current?.removeAttribute('data-active');
+      current?.removeAttribute('aria-current');
+      active?.setAttribute('data-active', '');
+      active?.setAttribute('aria-current', 'location');
+      current = active;
+      if (active) nav.scrollTo({ left: active.offsetLeft - (nav.clientWidth - active.offsetWidth) / 2, behavior: 'smooth' });
+    };
+
+    links.forEach((a) =>
+      a.addEventListener('click', (e) => {
+        const el = document.getElementById(a.dataset.sectionLink!);
+        if (!el) return;
+        e.preventDefault();
+        scrollTo({ top: contentTop(el), behavior: 'smooth' });
+        history.replaceState(null, '', `#${el.id}`);
+      }),
+    );
+    addEventListener('scroll', update, { passive: true });
+    addEventListener('resize', update);
+    update();
+  }
+</script>

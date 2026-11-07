@@ -1,27 +1,22 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/brand/logo.png';
-import ThemeToggle from './ThemeToggle.astro';
-import DownloadButton from './DownloadButton.astro';
 import { REPO_URL } from '../data/platforms';
+import PlatformIcon from './PlatformIcon.astro';
 ---
 
-<header class="sticky top-0 z-40 border-b border-line/70 bg-bg/75 backdrop-blur-xl">
+<header class="sticky top-0 z-40 border-b border-line/50 bg-bg/80 backdrop-blur-xl">
   <div class="container-x flex h-16 items-center justify-between gap-4">
-    <a href="/" class="flex items-center gap-2.5 font-bold tracking-tight" aria-label="DegenView home">
-      <Image src={logo} alt="" width={32} height={32} class="size-8 rounded-lg" loading="eager" />
+    <a href="/" class="flex items-center gap-2.5 font-semibold tracking-tight" aria-label="DegenView home">
+      <Image src={logo} alt="" width={64} height={64} class="size-8" loading="eager" />
       <span class="text-lg">DegenView</span>
     </a>
-    <nav aria-label="Primary" class="hidden items-center gap-7 text-sm font-medium text-muted md:flex">
-      <a class="hover:text-fg" href="/#features">Features</a>
-      <a class="hover:text-fg" href="/why-free/">Why free</a>
-      <a class="hover:text-fg" href="/download/">Download</a>
-      <a class="hover:text-fg" href="/faq/">FAQ</a>
-      <a class="hover:text-fg" href={REPO_URL} rel="noopener">GitHub</a>
+    <nav aria-label="Primary" class="hidden items-center gap-1 text-sm font-medium md:flex">
+      <a class="rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href="/#features">Features</a>
+      <a class="rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href="/tradingview-alternative/">TradingView alternative</a>
+      <a class="rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href="/download/">Download</a>
+      <a class="rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href="/faq/">FAQ</a>
+      <a class="inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href={REPO_URL} target="_blank" rel="noopener noreferrer"><PlatformIcon os="GitHub" class="size-4" />GitHub<span class="sr-only"> (opens in a new tab)</span></a>
     </nav>
-    <div class="flex items-center gap-3">
-      <ThemeToggle />
-      <div class="hidden sm:block"><DownloadButton size="sm" /></div>
-    </div>
   </div>
 </header>

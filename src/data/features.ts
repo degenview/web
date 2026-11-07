@@ -6,6 +6,8 @@ export interface Feature {
   bullets: string[];
   /** What the screenshot should show (also used as alt text). */
   alt: string;
+  /** The screenshot is a full app window with its own title bar and rounded corners: skip the site's card frame. */
+  framed?: boolean;
 }
 
 export const features: Feature[] = [
@@ -21,35 +23,35 @@ export const features: Feature[] = [
       'Polymarket + Kalshi, plus CoinMarketCap Fear & Greed and Altcoin Season',
       'Same symbol from different sources? Both stay. 1H to 1Y timeframes',
     ],
-    alt: 'DegenView charting BTC, a US stock and a Polymarket event side by side',
+    alt: 'DegenView with BTC, ETH and SOL charts and a Polymarket probability chart in one multi-chart layout',
+    framed: true,
   },
   {
     slug: 'pine-script',
-    eyebrow: 'Pine Script v6',
+    eyebrow: 'Local Pine Script v6 engine',
     title: 'Write Pine Script. Run it on your own machine.',
     blurb:
-      'Write TradingView-style scripts and run them right on your machine. No account needed, and your source never leaves your device.',
+      'Write TradingView-compatible scripts and run them right on your machine. No account needed, and your source never leaves your device.',
     bullets: [
-      'Plots, shapes, backgrounds and candle colors rendered right on the chart',
-      'Typed input.* controls that re-run the script live',
-      'Script Manager with editor, diagnostics and a live preview chart',
-      'alert() fires real alerts on live bars',
+      'Made for vibe coding: clear diagnostics and an MCP server let your AI assistant write, check and fix scripts with you',
+      'A real step debugger with breakpoints, watches and a call stack. No more debugging Pine scripts like a caveman with log.info()',
+      'Built-in profiler that shows where your script spends its time',
     ],
     alt: 'DegenView Script Manager with a Pine Script editor and live preview chart',
   },
   {
-    slug: 'charts',
-    eyebrow: 'Charts & analysis',
-    title: 'Hand-drawn candles. Zero chart-library baggage.',
+    slug: 'mcp',
+    eyebrow: 'MCP server',
+    title: 'Let your AI assistant work your charts.',
     blurb:
-      'Fast, crisp candles with all the tools you need to mark them up.',
+      'Connect an AI assistant or automation tool to DegenView through MCP.',
     bullets: [
-      'Volume, RSI, EMA, Bollinger Bands and Supertrend',
-      'Trend lines, Fibonacci retracements and brush strokes with undo/redo',
-      'Ruler for percent, price, duration and bar count',
-      'Crosshair synced across every chart in a tab, drag the Y-axis to rescale',
+      'Say “draw support and resistance levels” and watch them land on your live chart. Your assistant can even snapshot the chart to check its own work',
+      'List your workspaces and charts, and add new charts and indicators',
+      'Create, edit, pause and delete price alerts',
+      'Read your Pine scripts, diagnostics and reports, and edit script source',
     ],
-    alt: 'Candlestick chart with RSI, Bollinger Bands, a Fibonacci retracement and a trend line',
+    alt: 'An AI assistant in a terminal drawing support and resistance levels on a DegenView chart through MCP',
   },
   {
     slug: 'portfolio',
@@ -63,35 +65,7 @@ export const features: Feature[] = [
       'Portfolio history from 1D to ALL',
       'CSV import/export, including CoinMarketCap exports',
     ],
-    alt: 'Portfolio view with allocation chart, P&L and transaction ledger',
-  },
-  {
-    slug: 'alerts',
-    eyebrow: 'Alerts',
-    title: 'Alerts that don’t need a subscription.',
-    blurb:
-      'Absolute or percentage crosses, once or repeating, evaluated locally. No account and no remote service in the loop.',
-    bullets: [
-      'Price alerts plus Pine Script alert() notifications',
-      'In-app banners and desktop notifications, independently configurable',
-      'macOS: signed bundles keep price alerts and webhooks running after you quit',
-      'Alerts center with search and filters for active, triggered and paused',
-    ],
-    alt: 'Alerts center listing active and triggered price alerts',
-  },
-  {
-    slug: 'mcp',
-    eyebrow: 'MCP server',
-    title: 'Let your AI assistant work your charts.',
-    blurb:
-      'Connect an AI assistant or automation tool to DegenView through MCP. It’s optional, off by default, and you decide exactly what each connection can do.',
-    bullets: [
-      'List your workspaces and charts, and add new charts and indicators',
-      'Create, edit, pause and delete price alerts',
-      'Read your Pine scripts, diagnostics and reports, and edit script source',
-      'Read and Write permissions you set per connection, revocable any time',
-    ],
-    alt: 'DegenView MCP server settings with connected clients and their permissions',
+    alt: 'DegenView portfolio overview with value chart, allocation donut, P&L cards and top holdings',
   },
   {
     slug: 'paper-trading',
@@ -104,7 +78,8 @@ export const features: Feature[] = [
       'Position and order markers drawn on the chart',
       'Survives restarts, stays on your device',
     ],
-    alt: 'Order ticket and paper positions with markers on a chart',
+    alt: 'DegenView paper trading with a long BTC position marked on the chart and the positions table below',
+    framed: true,
   },
   {
     slug: 'replay',
@@ -114,52 +89,64 @@ export const features: Feature[] = [
       'Watch how price action actually unfolded. Pick any moment in history and replay it at the speed you want, with zero lookahead, on every chart at once. Review your calls, test your read, learn from the tape.',
     bullets: [
       'Start anywhere: click a candle on the chart or pick an exact date and time',
-      'Autoplay, pause or step one bar at a time, and scrub the timeline to jump around',
       'Multiple speeds, with selectable replay intervals',
       'One shared clock keeps every chart in the tab moving together',
       'Practice entries with the paper-trading ticket against the replayed price',
     ],
     alt: 'Bar replay controls with a timeline scrubber and speed selector over a historical chart',
   },
-  {
-    slug: 'layouts',
-    eyebrow: 'Dashboard',
-    title: 'Your layout. Every time you open it.',
-    blurb:
-      'Stack charts vertically or tile them in columns, save named views, keep a favorites watchlist, and pick up exactly where you left off.',
-    bullets: [
-      'Vertical stacks or multi-column grids with drag-to-reorder',
-      'Saved views remember tickers, timeframe, zoom, indicators and appearance',
-      'App-wide, reorderable favorites sidebar, plus as many named saved views as you like',
-      'macOS: native tabs and windows you can drag, detach and merge',
-    ],
-    alt: 'Multi-column chart grid with favorites sidebar and saved views',
-  },
-  {
-    slug: 'themes',
-    eyebrow: 'Appearance',
-    title: 'Light, dark, or whatever your OS says.',
-    blurb: 'System, Light and Dark themes, because your eyes (and your 3 a.m. charts) deserve options.',
-    bullets: ['Follows your system appearance automatically', 'Charts, editors and sheets all re-skin together'],
-    alt: 'DegenView in light and dark themes side by side',
-  },
 ];
 
-export const notPremium: { name: string; note?: string }[] = [
-  { name: 'Multiple watchlists' },
-  { name: 'Multi-chart layouts' },
-  { name: 'Indicators', note: 'RSI, EMA, Bollinger, Supertrend' },
-  { name: 'Price alerts' },
-  { name: 'Bar replay', note: 'Multiple speeds, synced charts' },
-  { name: 'Scripting engine', note: 'Pine Script, local' },
-  { name: 'Portfolio tracking' },
-  { name: 'Paper trading' },
-];
+/** Features without a screenshot of their own: a short list under the showcase sections. */
+export interface Extra {
+  /** Picks the illustration in MoreFeatures. */
+  slug: 'no-account' | 'watchlists' | 'tools' | 'indicators' | 'alerts' | 'webhooks' | 'ai' | 'icloud';
+  title: string;
+  text: string;
+  /** Shown as a footnote under the list when the item carries an asterisk. */
+  note?: string;
+}
 
-export const altTaglines = [
-  'Where alerts don’t need a subscription.',
-  'Where your scripts never leave your laptop.',
-  'Where indicators don’t come with a price tag.',
-  'Where replay is not a paid add-on.',
-  'Where your data isn’t someone else’s product.',
+export const extras: Extra[] = [
+  {
+    slug: 'no-account',
+    title: 'No account. No signup.*',
+    text: 'Open the app and use it. There’s no email to verify, no trial to start, and no “welcome back!” to dismiss.',
+    note: 'Alpaca is the exception: its free US stock data needs an Alpaca account and your own API keys. That’s their rule, not ours.',
+  },
+  {
+    slug: 'watchlists',
+    title: 'Unlimited watchlists',
+    text: 'Make as many as you like. “Upgrade to add another list” was never a feature.',
+  },
+  {
+    slug: 'tools',
+    title: 'The charting tools you already love',
+    text: 'The drawing toolbox TradingView users have muscle memory for, minus the plan comparison table.',
+  },
+  {
+    slug: 'indicators',
+    title: 'As many indicators as your CPU can handle',
+    text: 'Volume, RSI, EMA, Bollinger Bands, Supertrend and your own Pine scripts. Keep stacking them until your fans file a complaint.',
+  },
+  {
+    slug: 'alerts',
+    title: 'Price alerts',
+    text: 'A market app that tells you when the price moves. Revolutionary, we know.',
+  },
+  {
+    slug: 'webhooks',
+    title: 'Webhook alerts',
+    text: 'Price alerts and Pine alert() calls can hit a webhook you configure. Wire them to a bot, Discord, or whatever you’re into.',
+  },
+  {
+    slug: 'ai',
+    title: 'AI help for Pine Script',
+    text: 'A built-in coding assistant for your scripts. It writes the first draft, you take the credit.',
+  },
+  {
+    slug: 'icloud',
+    title: 'iCloud sync on macOS',
+    text: 'Opt in and your setup follows you between Macs through your own iCloud, not a server of ours.',
+  },
 ];
