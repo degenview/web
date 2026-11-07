@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import logo from '../assets/brand/logo.png';
 import { REPO_URL } from '../data/platforms';
+import PlatformIcon from './PlatformIcon.astro';
 ---
 
 <header class="sticky top-0 z-40 border-b border-line/50 bg-bg/80 backdrop-blur-xl">
@@ -15,7 +16,7 @@ import { REPO_URL } from '../data/platforms';
       <a class="rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href="/tradingview-alternative/">TradingView alternative</a>
       <a class="rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href="/download/">Download</a>
       <a class="rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href="/faq/">FAQ</a>
-      <a class="rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href={REPO_URL} target="_blank" rel="noopener noreferrer">GitHub<span class="sr-only"> (opens in a new tab)</span></a>
+      <a class="inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href={REPO_URL} target="_blank" rel="noopener noreferrer"><PlatformIcon os="GitHub" class="size-4" />GitHub<span class="sr-only"> (opens in a new tab)</span></a>
     </nav>
   </div>
 </header>
