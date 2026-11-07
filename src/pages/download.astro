@@ -158,10 +158,10 @@ const arrow = 'M12 4v12m0 0 5-5m-5 5-5-5M5 20h14';
                 <h3 class="display text-3xl">{os}</h3>
               </div>
               <p class="mt-2 min-h-10 text-sm text-muted">{osInfo[os].needs}</p>
-              <div class="mt-6 space-y-6">
+              <div class="mt-3 space-y-1">
                 {
                   PLATFORMS.filter((p) => p.os === os).map((p) => (
-                    <div data-dl-arch data-platform={p.id} class="rounded-xl border border-transparent data-[selected]:border-line data-[selected]:bg-chrome/40 data-[selected]:p-3 data-[selected]:-m-3">
+                    <div data-dl-arch data-platform={p.id} class="-mx-3 rounded-xl border border-transparent p-3 transition-colors data-[selected]:border-line data-[selected]:bg-chrome/40">
                       <div class="flex items-center justify-between gap-3">
                         <p class="text-sm font-semibold">{archHint[p.id]}</p>
                         <span data-dl-recommended hidden class="rounded-full bg-[var(--inverse)] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--inverse-ink)]">Recommended</span>
