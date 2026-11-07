@@ -9,6 +9,7 @@ DegenView is an independent project and is not affiliated with TradingView.
 - [TradingView alternative](https://degenview.app/tradingview-alternative/): how DegenView compares with TradingView, including what TradingView does better
 - [Download](https://degenview.app/download/): installers for macOS, Windows and Linux
 - [FAQ](https://degenview.app/faq/): accounts, data sources, Pine Script, platforms
+- [Privacy policy](https://degenview.app/privacy-policy/): cookies and analytics
 
 ## Source
 - [GitHub](https://github.com/degenview/degenview): source code and releases
