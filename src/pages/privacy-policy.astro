@@ -42,7 +42,9 @@ const sections: { id: string; title: string; body: string[] }[] = [
     id: 'app',
     title: 'The DegenView desktop app',
     body: [
-      'This policy covers this website. The DegenView desktop app has no analytics or telemetry and needs no account. It connects directly to the services you choose to use, such as market data providers, and to GitHub to look for updates. Your watchlists, portfolios and Pine scripts stay on your device.',
+      'This policy covers this website. The DegenView desktop app has no analytics or telemetry and needs no account. To do its job, it connects directly from your computer to the services listed below. Your watchlists, portfolios and Pine scripts stay on your device unless you send them somewhere yourself, for example to an AI provider you set up.',
+      'These services are run by other companies, not by us. When you use DegenView you use their data and services, and by doing so you agree to their terms of service and privacy policies. We don’t control them and aren’t responsible for how they handle data. Some need an account or API key of your own, such as Alpaca and the AI providers.',
+      'If you use the AI assistant, the text you send, which can include your script, goes to the provider you chose. Providers you run yourself, such as a local model, keep it on your machine.',
     ],
   },
   {
@@ -53,6 +55,32 @@ const sections: { id: string; title: string; body: string[] }[] = [
       'We may update this policy when the law or the site changes. The date at the top shows when it last changed, and updates are posted on this page.',
     ],
   },
+];
+
+type Provider = { name: string; use: string; terms?: string; privacy?: string; site?: string };
+const marketData: Provider[] = [
+  { name: 'Binance', use: 'Crypto prices and charts', terms: 'https://www.binance.com/en/terms', privacy: 'https://www.binance.com/en/privacy' },
+  { name: 'Coinbase', use: 'Crypto prices and charts', terms: 'https://www.coinbase.com/legal/user_agreement', privacy: 'https://www.coinbase.com/legal/privacy' },
+  { name: 'CoinGecko', use: 'Coin lists, prices and charts', terms: 'https://www.coingecko.com/en/terms', privacy: 'https://www.coingecko.com/en/privacy' },
+  { name: 'GeckoTerminal', use: 'DEX pool charts. Operated by CoinGecko, whose terms apply', terms: 'https://www.coingecko.com/en/terms', privacy: 'https://www.coingecko.com/en/privacy' },
+  { name: 'DEXScreener', use: 'DEX pairs and prices', terms: 'https://dexscreener.com/terms-and-conditions', privacy: 'https://dexscreener.com/privacy-policy' },
+  { name: 'CoinMarketCap', use: 'Market indices such as Fear & Greed. Optional API key', terms: 'https://coinmarketcap.com/terms/', privacy: 'https://coinmarketcap.com/privacy/' },
+  { name: 'Polymarket', use: 'Prediction markets', terms: 'https://polymarket.com/tos', privacy: 'https://polymarket.com/privacy' },
+  { name: 'Kalshi', use: 'Prediction markets', site: 'https://kalshi.com' },
+  { name: 'Alpaca', use: 'US stocks, with your own free API keys', terms: 'https://alpaca.markets/disclosures', privacy: 'https://alpaca.markets/privacy' },
+  { name: 'Bitstamp', use: 'Bitcoin price history for currency conversion', terms: 'https://www.bitstamp.net/terms-of-use/', privacy: 'https://www.bitstamp.net/privacy-policy/' },
+];
+const otherServices: Provider[] = [
+  { name: 'GitHub', use: 'Checking for and downloading updates', terms: 'https://docs.github.com/en/site-policy/github-terms/github-terms-of-service', privacy: 'https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement' },
+  { name: 'X', use: 'Previews of X posts you add as cards', terms: 'https://x.com/en/tos', privacy: 'https://x.com/en/privacy' },
+  { name: 'OpenAI', use: 'AI assistant, only if you add your own API key', terms: 'https://openai.com/policies/terms-of-use', privacy: 'https://openai.com/policies/privacy-policy' },
+  { name: 'Anthropic', use: 'AI assistant, only if you add your own API key', terms: 'https://www.anthropic.com/legal/commercial-terms', privacy: 'https://www.anthropic.com/legal/privacy' },
+  { name: 'OpenRouter', use: 'AI assistant, only if you add your own API key', terms: 'https://openrouter.ai/terms', privacy: 'https://openrouter.ai/privacy' },
+  { name: 'Apple iCloud', use: 'Optional sync between your Macs', terms: 'https://www.apple.com/legal/internet-services/icloud/', privacy: 'https://www.apple.com/legal/privacy/' },
+];
+const providerGroups: [string, Provider[]][] = [
+  ['Market data', marketData],
+  ['Services you switch on or use', otherServices],
 ];
 
 const consentSteps: [string, string][] = [
@@ -167,7 +195,42 @@ const consentSteps: [string, string][] = [
         <section aria-labelledby={`${s.id}-h`} class="border-b border-line/60 py-14 last:border-b-0">
           <p class="font-mono text-sm text-accent-text">{String(i + 5).padStart(2, '0')}</p>
           <h2 id={`${s.id}-h`} class="display mt-2 text-3xl sm:text-4xl">{s.title}</h2>
-          {s.body.map((p) => <p class="mt-5 text-lg text-muted">{p}</p>)}
+          <p class="mt-5 text-lg text-muted">{s.body[0]}</p>
+          {s.id === 'app' && (
+            <div class="card mt-8 overflow-x-auto">
+              <table class="w-full min-w-[40rem] text-left text-sm">
+                <caption class="sr-only">Services the desktop app connects to, with their terms and privacy policies</caption>
+                <thead>
+                  <tr class="border-b border-line text-muted">
+                    <th scope="col" class="px-5 py-3 font-medium">Service</th>
+                    <th scope="col" class="px-5 py-3 font-medium">Used for</th>
+                    <th scope="col" class="px-5 py-3 font-medium">Terms</th>
+                    <th scope="col" class="px-5 py-3 font-medium">Privacy</th>
+                  </tr>
+                </thead>
+                {providerGroups.map(([group, list]) => (
+                  <tbody class="divide-y divide-line/60 border-t border-line">
+                    <tr><th colspan="4" scope="colgroup" class="bg-chrome/40 px-5 py-2 text-xs font-semibold uppercase tracking-wider text-muted">{group}</th></tr>
+                    {list.map((r) => (
+                      <tr>
+                        <th scope="row" class="px-5 py-3 align-top font-medium">{r.name}</th>
+                        <td class="px-5 py-3 align-top text-muted">{r.use}</td>
+                        {r.site ? (
+                          <td colspan="2" class="px-5 py-3 align-top"><a class="text-accent-text underline underline-offset-4" href={r.site} target="_blank" rel="noopener noreferrer">Terms and privacy on {new URL(r.site).hostname}<span class="sr-only"> (opens in a new tab)</span></a></td>
+                        ) : (
+                          <>
+                            <td class="px-5 py-3 align-top"><a class="text-accent-text underline underline-offset-4" href={r.terms} target="_blank" rel="noopener noreferrer">Terms<span class="sr-only"> of {r.name} (opens in a new tab)</span></a></td>
+                            <td class="px-5 py-3 align-top"><a class="text-accent-text underline underline-offset-4" href={r.privacy} target="_blank" rel="noopener noreferrer">Privacy<span class="sr-only"> policy of {r.name} (opens in a new tab)</span></a></td>
+                          </>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                ))}
+              </table>
+            </div>
+          )}
+          {s.body.slice(1).map((p) => <p class="mt-6 text-lg text-muted">{p}</p>)}
           {s.id === 'contact' && (
             <a href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer" class="btn btn-ghost mt-6">Open a GitHub issue<span class="sr-only"> (opens in a new tab)</span></a>
           )}
