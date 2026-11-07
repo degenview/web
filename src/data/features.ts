@@ -149,22 +149,3 @@ export const extras: Extra[] = [
     text: 'Opt in and your setup follows you between Macs through your own iCloud, not a server of ours.',
   },
 ];
-
-export const notPremium: { name: string; note?: string }[] = [
-  { name: 'Multiple watchlists' },
-  { name: 'Multi-chart layouts' },
-  { name: 'Indicators', note: 'RSI, EMA, Bollinger, Supertrend' },
-  { name: 'Price alerts' },
-  { name: 'Bar replay', note: 'Multiple speeds, synced charts' },
-  { name: 'Scripting engine', note: 'Pine Script, local' },
-  { name: 'Portfolio tracking' },
-  { name: 'Paper trading' },
-];
-
-export const altTaglines = [
-  'Where alerts don’t need a subscription.',
-  'Where your scripts never leave your laptop.',
-  'Where indicators don’t come with a price tag.',
-  'Where replay is not a paid add-on.',
-  'Where your data isn’t someone else’s product.',
-];
