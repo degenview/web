@@ -45,7 +45,7 @@ const poster = clip && posterSrc ? await getImage({ src: posterSrc, width: Math.
             data-shot-video
             class="block h-auto w-full"
             src={clip}
-            poster={poster?.src}
+            data-poster={poster?.src}
             width={posterSrc?.width}
             height={posterSrc?.height}
             muted
@@ -60,12 +60,13 @@ const poster = clip && posterSrc ? await getImage({ src: posterSrc, width: Math.
         </button>
         <dialog data-shot-dialog class="m-auto w-[min(96vw,1600px)] max-w-none overflow-visible bg-transparent p-0 backdrop:bg-black/85 backdrop:backdrop-blur-sm" aria-label={alt}>
           <div class="relative">
-            <video data-shot-big class="block h-auto max-h-[88vh] w-full rounded-xl bg-black object-contain shadow-2xl" poster={poster?.src} controls loop playsinline preload="none"></video>
+            <video data-shot-big class="block h-auto max-h-[88vh] w-full rounded-xl bg-black object-contain shadow-2xl" data-poster={poster?.src} controls loop playsinline preload="none"></video>
             <button type="button" data-shot-close class="absolute right-2 top-2 grid size-10 place-items-center rounded-lg bg-black/60 text-white backdrop-blur hover:bg-black/80" aria-label="Close player">
               <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
             </button>
           </div>
         </dialog>
+        <figcaption class="sr-only">{alt}</figcaption>
       </>
     ) : darkImg && light ? (
       <>
@@ -120,14 +121,27 @@ const poster = clip && posterSrc ? await getImage({ src: posterSrc, width: Math.
     { threshold: 0.25 },
   );
 
+  // Posters of clips further down the page load shortly before they scroll into view, not with the page.
+  const posterIO = new IntersectionObserver(
+    (entries) => entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      const v = e.target as HTMLVideoElement;
+      if (v.dataset.poster) v.poster = v.dataset.poster;
+      posterIO.unobserve(v);
+    }),
+    { rootMargin: '900px 0px' },
+  );
+
   document.querySelectorAll<HTMLElement>('figure:has([data-shot-open])').forEach((fig) => {
     const dialog = fig.querySelector<HTMLDialogElement>('dialog[data-shot-dialog]')!;
     const small = fig.querySelector<HTMLVideoElement>('video[data-shot-video]');
     const big = fig.querySelector<HTMLVideoElement>('video[data-shot-big]');
+    if (small) posterIO.observe(small);
     if (small && !reduce) io.observe(small);
 
     fig.querySelector('[data-shot-open]')!.addEventListener('click', () => {
       if (small && big) {
+        if (!big.poster && big.dataset.poster) big.poster = big.dataset.poster;
         if (!big.src) big.src = small.currentSrc || small.src;
         big.currentTime = small.currentTime;
         small.pause();

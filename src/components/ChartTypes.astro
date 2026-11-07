@@ -285,7 +285,7 @@ const items = raw.map(([name, desc, svg]) => ({
               items.map((it, i) => (
                 <li data-ct-item data-active={i === 0 ? '' : undefined} class="group">
                   <button type="button" data-ct-select={i} class="flex h-[4.25rem] w-full items-center text-left" aria-current={i === 0 ? 'true' : undefined}>
-                    <span class="display whitespace-nowrap text-3xl text-fg/30 transition-colors duration-300 group-hover:text-fg/60 group-data-[active]:text-fg sm:text-4xl">{it.name}</span>
+                    <span class="display whitespace-nowrap text-3xl text-fg/45 transition-colors duration-300 group-hover:text-fg/60 group-data-[active]:text-fg sm:text-4xl">{it.name}</span>
                   </button>
                   <div class="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-500 group-data-[active]:grid-rows-[1fr] group-data-[active]:opacity-100">
                     <div class="overflow-hidden"><p class="pb-4 text-base text-muted sm:text-lg">{it.desc}</p></div>

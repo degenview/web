@@ -1,0 +1,165 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import DownloadButton from '../components/DownloadButton.astro';
+
+const description =
+  'DegenView vs TradingView: a free, open source desktop alternative with local Pine Script v6, unlimited watchlists, alerts and replay. macOS, Windows, Linux.';
+
+// TradingView figures are from its public pricing page. Re-check them before changing this date.
+const CHECKED = 'November 2026';
+const PRICING_URL = 'https://www.tradingview.com/pricing/';
+
+const rows: [string, string, string][] = [
+  ['Price', 'Free. No tiers, no trial.', 'Free Basic plan; paid plans from about €13/month billed annually'],
+  ['Source code', 'Open source (GPL-3.0)', 'Closed source'],
+  ['Indicators per chart', 'As many as your CPU can handle', '2 on the free plan'],
+  ['Charts per tab', 'Multi-chart layouts', '1 on the free plan'],
+  ['Watchlists', 'Unlimited', '1 watchlist of up to 30 symbols on the free plan'],
+  ['Active price alerts', 'No plan limit', '3 on the free plan'],
+  ['Pine Script', 'Pine Script v6 engine that runs on your machine', 'Runs on TradingView’s servers'],
+  ['Account', 'None. Download and open it.', 'Sign-up for the free plan'],
+  ['Where it runs', 'Desktop: macOS, Windows, Linux', 'Web, desktop and mobile apps'],
+];
+
+const betterAtTradingView = [
+  'Web and mobile apps, so your charts follow you onto any device with a browser or a phone.',
+  'Much wider market coverage: stocks, futures, forex, bonds and economic data well beyond crypto, US stocks and prediction markets.',
+  'A huge community: published ideas and a public library of other people’s scripts.',
+  'Trading from the chart through connected brokers.',
+];
+
+const faqs: [string, string][] = [
+  [
+    'Is DegenView a free TradingView alternative?',
+    'Yes. DegenView is free and open source (GPL-3.0), with multi-chart layouts, a local Pine Script v6 engine, alerts, bar replay, paper trading and portfolio tracking. It is an independent project, and it does not replace everything TradingView offers.',
+  ],
+  [
+    'Is DegenView open source?',
+    'Yes. The source is public on GitHub under the GPL-3.0-only license, and the release builds are made by a public workflow.',
+  ],
+  [
+    'Can I run my Pine Script in DegenView?',
+    'Yes. DegenView runs its own engine for Pine Script v6, locally, so your source never leaves your computer. It is an independent implementation, so very exotic scripts may behave differently from TradingView.',
+  ],
+  [
+    'Do I need an account?',
+    'No. There is nothing to sign up for. The one exception is US stock data, which comes from Alpaca’s free feed and needs your own free Alpaca API keys.',
+  ],
+  [
+    'Which platforms does it run on?',
+    'macOS (Apple Silicon and Intel), Windows (x64 and ARM64) and Linux (x64 and ARM64, as a tarball or Flatpak).',
+  ],
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+  },
+];
+---
+
+<Base
+  title="DegenView vs TradingView: the Free, Open Source Alternative"
+  description={description}
+  path="/tradingview-alternative/"
+  jsonLd={jsonLd}
+  breadcrumbs={[['Home', '/'], ['TradingView alternative', '/tradingview-alternative/']]}
+>
+  <Header slot="header" />
+  <div class="container-x max-w-4xl py-20">
+    <div class="text-center">
+      <p class="text-sm font-semibold text-accent-text">TradingView alternative</p>
+      <h1 class="display mt-3 text-5xl sm:text-7xl">The free, open source <span class="gradient-text block">TradingView alternative</span></h1>
+      <p class="mx-auto mt-6 max-w-2xl text-lg text-muted">
+        DegenView is a desktop app for crypto, stocks and prediction markets. It has the things people pay TradingView for, free and
+        open source, with Pine Script that runs on your own machine.
+      </p>
+      <div class="mt-8 flex justify-center"><DownloadButton showNote /></div>
+    </div>
+
+    <section aria-labelledby="cmp-h" class="mt-24">
+      <h2 id="cmp-h" class="display text-3xl sm:text-5xl">DegenView vs TradingView</h2>
+      <div class="card mt-8 overflow-x-auto">
+        <table class="w-full min-w-[40rem] text-left text-sm sm:text-base">
+          <thead>
+            <tr class="border-b border-line text-muted">
+              <th scope="col" class="px-5 py-4 font-medium"><span class="sr-only">Feature</span></th>
+              <th scope="col" class="px-5 py-4 font-semibold text-fg">DegenView</th>
+              <th scope="col" class="px-5 py-4 font-semibold text-fg">TradingView (free plan)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-line/60">
+            {
+              rows.map(([feature, ours, theirs]) => (
+                <tr>
+                  <th scope="row" class="px-5 py-4 align-top font-medium">{feature}</th>
+                  <td class="px-5 py-4 align-top text-up">{ours}</td>
+                  <td class="px-5 py-4 align-top text-muted">{theirs}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-4 text-sm text-muted">
+        TradingView figures are taken from its <a class="text-accent-text underline underline-offset-4" href={PRICING_URL} rel="nofollow noopener">public pricing page</a>
+        and were last checked in {CHECKED}. Plans, prices and limits change, and prices vary by region, so check TradingView directly before deciding.
+      </p>
+    </section>
+
+    <section aria-labelledby="better-h" class="mt-24">
+      <h2 id="better-h" class="display text-3xl sm:text-5xl">What TradingView still does better</h2>
+      <p class="mt-4 text-lg text-muted">We’d rather you pick the right tool than the loudest one.</p>
+      <ul class="mt-8 space-y-3">
+        {
+          betterAtTradingView.map((b) => (
+            <li class="card flex gap-4 p-5">
+              <svg viewBox="0 0 24 24" class="mt-0.5 size-5 shrink-0 text-muted" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+              <span>{b}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-6 text-muted">If you rely on those, keep TradingView next to DegenView. If you mostly want fast charts, indicators, alerts and replay without a plan to manage, this is the free one.</p>
+    </section>
+
+    <section aria-labelledby="from-h" class="mt-24">
+      <h2 id="from-h" class="display text-3xl sm:text-5xl">Coming from TradingView</h2>
+      <ul class="mt-8 grid gap-4 sm:grid-cols-3">
+        <li class="card p-6"><h3 class="text-lg font-semibold">Pine Script v6</h3><p class="mt-2 text-muted">Paste your script source into the Script Manager and run it locally, with a step debugger and a profiler.</p></li>
+        <li class="card p-6"><h3 class="text-lg font-semibold">Familiar tools</h3><p class="mt-2 text-muted">Trend lines, Fibonacci retracements, a ruler, and 18 chart types from candles to Renko and Kagi.</p></li>
+        <li class="card p-6"><h3 class="text-lg font-semibold">More than charts</h3><p class="mt-2 text-muted">Bar replay, paper trading, portfolio tracking, alerts with webhooks, and an optional MCP server for AI assistants.</p></li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="faq-h" class="mt-24">
+      <h2 id="faq-h" class="display text-3xl sm:text-5xl">Questions</h2>
+      <div class="mt-8 divide-y divide-line rounded-[14px] border border-line bg-surface">
+        {
+          faqs.map(([q, a]) => (
+            <details class="group p-6">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold [&::-webkit-details-marker]:hidden">
+                {q}
+                <svg viewBox="0 0 24 24" class="size-5 shrink-0 text-muted transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+              </summary>
+              <p class="mt-3 text-muted">{a}</p>
+            </details>
+          ))
+        }
+      </div>
+      <p class="mt-4 text-sm text-muted">More in the <a class="text-accent-text underline underline-offset-4" href="/faq/">full FAQ</a>.</p>
+    </section>
+
+    <div class="mt-24 flex flex-col items-center gap-4 text-center">
+      <h2 class="display text-3xl sm:text-5xl">Try it. <span class="gradient-text">It’s free.</span></h2>
+      <p class="max-w-xl text-muted">No account, no trial, no catch. macOS, Windows and Linux.</p>
+      <DownloadButton showNote github />
+      <p class="mt-6 max-w-2xl text-xs text-muted">DegenView is an independent project and is not affiliated with, endorsed by or sponsored by TradingView. TradingView is a trademark of its owner; it is named here only to describe what DegenView is an alternative to.</p>
+    </div>
+  </div>
+  <Footer slot="footer" />
+</Base>

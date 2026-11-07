@@ -1,5 +1,21 @@
 export const faq: { q: string; a: string }[] = [
   {
+    q: 'Is DegenView a free TradingView alternative?',
+    a: 'Yes. DegenView is a free, open source desktop app for crypto, stocks and prediction markets, with multi-chart layouts, a local Pine Script v6 engine, alerts, bar replay and portfolio tracking. It is independent of TradingView and does not replace everything TradingView offers. See the comparison page for the details.',
+  },
+  {
+    q: 'Is DegenView open source?',
+    a: 'Yes. The source code is public on GitHub under the GPL-3.0-only license, and the release builds come from a public workflow.',
+  },
+  {
+    q: 'Can I run my TradingView Pine Scripts in DegenView?',
+    a: 'Yes. DegenView runs its own engine for Pine Script v6, locally. It is an independent implementation, so very exotic scripts may behave differently from TradingView.',
+  },
+  {
+    q: 'Does DegenView work offline?',
+    a: 'The app, your scripts and your data live on your machine. Live prices still come from the data providers, so you need an internet connection for market data.',
+  },
+  {
     q: 'Is DegenView really free?',
     a: 'Yes. DegenView is free and open source under the GPL-3.0. There are no paid tiers and no feature gates.',
   },

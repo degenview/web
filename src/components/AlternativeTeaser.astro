@@ -1,0 +1,24 @@
+---
+const points = [
+  ['Free', 'No plans, no tiers, no “upgrade to unlock”.'],
+  ['Open source', 'GPL-3.0 on GitHub. Read it, build it, change it.'],
+  ['Local Pine Script', 'Your scripts run on your machine and never leave it.'],
+  ['No account', 'Download it and open it. That’s the whole signup.'],
+];
+---
+
+<section id="alternative" aria-labelledby="alt-h" class="border-t border-line/50 py-24">
+  <div class="container-x">
+    <div class="mx-auto max-w-2xl text-center">
+      <p class="text-sm font-semibold text-accent-text">switching from TradingView?</p>
+      <h2 id="alt-h" class="display mt-3 text-4xl sm:text-6xl">The <span class="gradient-text">free, open source</span> TradingView alternative</h2>
+      <p class="mt-5 text-lg text-muted">Same habits, a lot fewer paywalls. DegenView is a desktop app for macOS, Windows and Linux with multi-chart layouts, indicators, alerts, replay and a Pine Script v6 engine.</p>
+    </div>
+    <ul class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {points.map(([t, d]) => <li class="card p-6"><h3 class="text-lg font-semibold">{t}</h3><p class="mt-2 text-muted">{d}</p></li>)}
+    </ul>
+    <p class="mt-10 text-center">
+      <a href="/tradingview-alternative/" class="btn btn-primary">See how DegenView compares</a>
+    </p>
+  </div>
+</section>

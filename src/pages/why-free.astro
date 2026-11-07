@@ -6,10 +6,15 @@ import NotPremium from '../components/NotPremium.astro';
 import DownloadButton from '../components/DownloadButton.astro';
 
 const description =
-  'Multiple watchlists, multi-chart layouts, indicators, alerts, bar replay, scripting and portfolio tracking. Everything other dashboards call premium is free in DegenView.';
+  'A free, open source TradingView alternative with no premium tier: unlimited watchlists, multi-chart layouts, indicators, alerts, replay and scripting.';
 ---
 
-<Base title="Why DegenView Is Free – No Premium Tier" description={description} path="/why-free/">
+<Base
+  title="Why DegenView Is Free – No Premium Tier, Open Source"
+  description={description}
+  path="/why-free/"
+  breadcrumbs={[['Home', '/'], ['Why free', '/why-free/']]}
+>
   <Header slot="header" />
   <div class="container-x py-20">
     <div class="mx-auto max-w-2xl text-center">
@@ -20,6 +25,7 @@ const description =
     <div class="mt-14"><NotPremium /></div>
     <div class="mt-16 flex flex-col items-center gap-3 text-center">
       <p class="text-lg font-semibold">Free, open source, and no account.</p>
+      <p class="text-muted">Weighing it against TradingView? <a class="text-accent-text underline underline-offset-4" href="/tradingview-alternative/">See the comparison</a>.</p>
       <DownloadButton showNote />
     </div>
   </div>

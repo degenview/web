@@ -6,7 +6,7 @@ import Faq from '../components/Faq.astro';
 import { faq } from '../data/faq';
 
 const description =
-  'Answers about DegenView: is it free, do you need an account, where Pine Scripts go, how to get stock data, supported platforms and first-launch warnings.';
+  'Answers about DegenView, the free, open source TradingView alternative: accounts, Pine Script, stock data, supported platforms and first-launch warnings.';
 const jsonLd = [
   {
     '@context': 'https://schema.org',
@@ -16,7 +16,13 @@ const jsonLd = [
 ];
 ---
 
-<Base title="DegenView FAQ – Free, Local Pine Script & More" description={description} path="/faq/" jsonLd={jsonLd}>
+<Base
+  title="DegenView FAQ – Free, Open Source TradingView Alternative"
+  description={description}
+  path="/faq/"
+  jsonLd={jsonLd}
+  breadcrumbs={[['Home', '/'], ['FAQ', '/faq/']]}
+>
   <Header slot="header" />
   <div class="container-x max-w-3xl py-20">
     <h1 class="display text-center text-5xl sm:text-7xl">Questions, <span class="gradient-text">answered</span></h1>

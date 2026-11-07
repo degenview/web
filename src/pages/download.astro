@@ -9,10 +9,15 @@ import { RELEASES_URL } from '../data/platforms';
 
 const release = await getRelease();
 const description =
-  'Download DegenView for macOS (Apple Silicon and Intel), Windows or Linux. Free, open source and no account needed, with install notes.';
+  'Download DegenView, the free, open source TradingView alternative, for macOS, Windows or Linux. No account needed, with install notes.';
 ---
 
-<Base title="Download DegenView – macOS, Windows & Linux" description={description} path="/download/">
+<Base
+  title="Download DegenView – Free TradingView Alternative"
+  description={description}
+  path="/download/"
+  breadcrumbs={[['Home', '/'], ['Download', '/download/']]}
+>
   <Header slot="header" />
   <div class="container-x max-w-4xl py-20">
     <h1 class="display text-5xl sm:text-7xl">Download <span class="gradient-text">DegenView</span></h1>

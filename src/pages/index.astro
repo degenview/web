@@ -11,19 +11,24 @@ import DownloadButton from '../components/DownloadButton.astro';
 import Footer from '../components/Footer.astro';
 import SectionNav from '../components/SectionNav.astro';
 import { features, extras } from '../data/features';
+import { getImage } from 'astro:assets';
+import heroImage from '../assets/screens/hero-dark.webp';
+import AlternativeTeaser from '../components/AlternativeTeaser.astro';
 import { getRelease } from '../data/release';
 import { LATEST_URL, REPO_URL } from '../data/platforms';
 
 const release = await getRelease();
 const SITE = 'https://degenview.app';
 const description =
-  'DegenView is a free, open-source desktop dashboard for crypto, stocks and prediction markets: multi-chart layouts, local Pine Script v6, price alerts, bar replay and portfolio tracking. macOS, Windows, Linux.';
+  'A free, open source TradingView alternative for desktop: multi-chart layouts, local Pine Script v6, alerts, replay and portfolios. macOS, Windows, Linux.';
+const heroShot = await getImage({ src: heroImage, width: 1280 });
 
 const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: 'DegenView',
+    alternateName: ['DegenView – open source TradingView alternative', 'DegenView Charts'],
     url: SITE,
     description,
     applicationCategory: 'FinanceApplication',
@@ -31,6 +36,9 @@ const jsonLd = [
     isAccessibleForFree: true,
     license: 'https://www.gnu.org/licenses/gpl-3.0.html',
     image: `${SITE}/og.png`,
+    screenshot: `${SITE}${heroShot.src}`,
+    sameAs: [REPO_URL],
+    softwareHelp: `${SITE}/faq/`,
     ...(release.tag ? { softwareVersion: release.tag.replace(/^v/, '') } : {}),
     downloadUrl: LATEST_URL,
     codeRepository: REPO_URL,
@@ -42,7 +50,7 @@ const jsonLd = [
 ];
 ---
 
-<Base title="DegenView – Free Multi-Chart Crypto & Stock Dashboard" description={description} jsonLd={jsonLd}>
+<Base title="DegenView – Free, Open Source TradingView Alternative" description={description} jsonLd={jsonLd}>
   <Header slot="header" />
   <SectionNav />
   <Hero />
@@ -60,6 +68,7 @@ const jsonLd = [
   </section>
   <ChartTypes />
   <MoreFeatures />
+  <AlternativeTeaser />
   <Privacy />
   <section id="download" aria-labelledby="dl-h" class="py-32">
     <div class="container-x text-center">
