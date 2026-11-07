@@ -36,7 +36,7 @@ const posterSrc = Object.entries(shots).find(([path]) => path.endsWith(`/${slug}
 const poster = clip && posterSrc ? await getImage({ src: posterSrc, width: Math.min(1280, posterSrc.width), quality }) : undefined;
 ---
 
-<figure class:list={['window', framed ? 'shot-framed' : 'card shot-glow overflow-hidden', className]}>
+<figure class:list={['window', framed ? 'shot-framed' : 'card shot-glow overflow-hidden', clip && framed && 'overflow-hidden rounded-[14px]', className]}>
   {
     clip ? (
       <>

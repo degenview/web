@@ -23,7 +23,8 @@ export const features: Feature[] = [
       'Polymarket + Kalshi, plus CoinMarketCap Fear & Greed and Altcoin Season',
       'Same symbol from different sources? Both stay. 1H to 1Y timeframes',
     ],
-    alt: 'DegenView charting BTC, a US stock and a Polymarket event side by side',
+    alt: 'DegenView with BTC, ETH and SOL charts and a Polymarket probability chart in one multi-chart layout',
+    framed: true,
   },
   {
     slug: 'pine-script',
