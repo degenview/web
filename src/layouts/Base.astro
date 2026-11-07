@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import themeInline from '../scripts/theme-inline.js?raw';
 import { getRelease } from '../data/release';
+import CookieConsent from '../components/CookieConsent.astro';
 import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 
 interface Props {
@@ -72,6 +73,7 @@ const release = await getRelease();
     <slot name="header" />
     <main id="main"><slot /></main>
     <slot name="footer" />
+    <CookieConsent />
     <script>
       import { initThemeToggle } from '../scripts/theme';
       import { initDownloads } from '../scripts/platform';
