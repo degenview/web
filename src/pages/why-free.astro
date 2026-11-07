@@ -7,6 +7,15 @@ import DownloadButton from '../components/DownloadButton.astro';
 
 const description =
   'A free, open source TradingView alternative with no premium tier: unlimited watchlists, multi-chart layouts, indicators, alerts, replay and scripting.';
+
+const manifesto: [string, string][] = [
+  ['The basics aren’t premium.', 'Watchlists, indicators, alerts and replay are what a charting app is. They are not upsells.'],
+  ['Your scripts are yours.', 'Pine Script runs on your machine, and the source never leaves it.'],
+  ['Software should be readable.', 'It’s open source under the GPL-3.0. If you wonder what it does, go and read it.'],
+  ['No account is the best account.', 'Download it, open it, chart. That’s the whole onboarding.'],
+  ['Free means free.', 'No tiers, no trial clock, no “upgrade to unlock”.'],
+  ['Be honest about trade-offs.', 'We’re not affiliated with TradingView, and they do plenty better. We say so.'],
+];
 ---
 
 <Base
@@ -22,7 +31,30 @@ const description =
       <h1 class="display mt-3 text-5xl sm:text-7xl">Nothing here is a <span class="gradient-text block">“premium feature”.</span></h1>
       <p class="mt-4 text-lg text-muted">Other dashboards slice the basics into tiers. We just shipped them.</p>
     </div>
-    <div class="mt-14"><NotPremium /></div>
+    <section aria-labelledby="manifesto-h" class="mx-auto mt-20 max-w-3xl">
+      <p class="text-center text-sm font-semibold text-accent-text">the manifesto</p>
+      <h2 id="manifesto-h" class="display mt-3 text-center text-3xl sm:text-5xl">Six things <span class="gradient-text">we believe</span></h2>
+      <ol class="mt-12 divide-y divide-line/60 border-y border-line/60">
+        {
+          manifesto.map(([t, d], i) => (
+            <li class="flex gap-5 py-7 sm:gap-8 sm:py-8">
+              <span class="pt-1 font-mono text-sm text-accent-text">0{i + 1}</span>
+              <div>
+                <h3 class="display text-2xl sm:text-3xl">{t}</h3>
+                <p class="mt-2 text-lg text-muted">{d}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="display mt-10 text-center text-2xl sm:text-4xl">Charts should be free. <span class="gradient-text">So we made them free.</span></p>
+    </section>
+
+    <div class="mt-24 text-center">
+      <p class="text-sm font-semibold text-accent-text">the receipts</p>
+      <h2 class="display mt-3 text-3xl sm:text-5xl">Free here, <span class="gradient-text">premium elsewhere</span></h2>
+    </div>
+    <div class="mt-10"><NotPremium /></div>
     <div class="mt-16 flex flex-col items-center gap-3 text-center">
       <p class="text-lg font-semibold">Free, open source, and no account.</p>
       <p class="text-muted">Weighing it against TradingView? <a class="text-accent-text underline underline-offset-4" href="/tradingview-alternative/">See the comparison</a>.</p>
