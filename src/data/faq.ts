@@ -45,6 +45,6 @@ export const faq: { q: string; a: string }[] = [
   },
   {
     q: 'Is it affiliated with TradingView or the data providers?',
-    a: 'No. DegenView is an independent project. Pine Script is a TradingView language, and DegenView runs its own engine for scripts written in it. All trademarks belong to their owners.',
+    a: 'No. DegenView is an independent project. Pine Script and TradingView are trademarks of TradingView, Inc. Pine Script is TradingView’s language, and DegenView runs its own engine for scripts written in it. All other trademarks belong to their owners.',
   },
 ];
