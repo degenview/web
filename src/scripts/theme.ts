@@ -6,7 +6,7 @@ export function getTheme(): Theme {
     const v = localStorage.getItem(KEY);
     if (v === 'light' || v === 'dark' || v === 'system') return v;
   } catch {}
-  return 'system';
+  return 'dark'; // dark unless the visitor picked otherwise
 }
 
 export function applyTheme(theme: Theme) {

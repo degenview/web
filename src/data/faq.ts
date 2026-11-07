@@ -21,7 +21,7 @@ export const faq: { q: string; a: string }[] = [
   },
   {
     q: 'Which platforms are supported?',
-    a: 'macOS (Apple Silicon and Intel), Windows x64 and Linux x64. A few extras are macOS-only: native tabs and windows, and background alerts.',
+    a: 'macOS (Apple Silicon and Intel), Windows (x64 and ARM64) and Linux (x64 and ARM64, as a tarball or Flatpak). A few extras are macOS-only: native tabs and windows, and background alerts.',
   },
   {
     q: 'Windows shows a SmartScreen warning. Is it safe?',

@@ -30,8 +30,8 @@ const keywords =
     <meta name="author" content="Nico Oelgart" />
     <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large'} />
     <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content="#f6f6f7" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#161d21" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
     <meta name="color-scheme" content="light dark" />
 
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
@@ -59,7 +59,7 @@ const keywords =
     <slot name="head" />
   </head>
   <body class="min-h-screen antialiased">
-    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-accent-ink">Skip to content</a>
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-white">Skip to content</a>
     <slot name="header" />
     <main id="main"><slot /></main>
     <slot name="footer" />

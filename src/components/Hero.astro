@@ -1,40 +1,32 @@
 ---
 import DownloadButton from './DownloadButton.astro';
 import Screenshot from './Screenshot.astro';
-import { REPO_URL } from '../data/platforms';
-interface Props { tag: string | null }
-const { tag } = Astro.props;
 ---
 
-<section class="relative overflow-hidden pb-20 pt-16 sm:pt-24">
+<section class="relative overflow-hidden pb-24 pt-16 sm:pt-24">
   <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
-    <div data-parallax="0.35" data-parallax-scroll class="absolute left-1/2 top-[-10rem] h-[34rem] w-[60rem] -translate-x-1/2 rounded-full blur-3xl" style="background: radial-gradient(closest-side, var(--glow-a), transparent)"></div>
-    <div data-parallax="0.6" data-parallax-scroll class="absolute right-[-10rem] top-40 h-[28rem] w-[36rem] rounded-full blur-3xl" style="background: radial-gradient(closest-side, var(--glow-b), transparent)"></div>
-    <svg data-parallax="0.15" data-parallax-scroll class="absolute inset-0 size-full [mask-image:radial-gradient(ellipse_at_top,black,transparent_70%)]" aria-hidden="true">
-      <defs><pattern id="g" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="var(--grid)" /></pattern></defs>
+    <div class="absolute left-1/2 top-[-12rem] h-[34rem] w-[60rem] -translate-x-1/2 rounded-full blur-3xl" style="background: radial-gradient(closest-side, var(--glow-a), transparent)"></div>
+    <div class="absolute right-[-12rem] top-72 h-[30rem] w-[40rem] rounded-full blur-3xl" style="background: radial-gradient(closest-side, var(--glow-b), transparent)"></div>
+    <svg class="absolute inset-0 size-full [mask-image:radial-gradient(ellipse_at_top,black,transparent_65%)]" aria-hidden="true">
+      <defs><pattern id="g" width="56" height="56" patternUnits="userSpaceOnUse"><path d="M56 0H0V56" fill="none" stroke="var(--grid)" /></pattern></defs>
       <rect width="100%" height="100%" fill="url(#g)" />
     </svg>
   </div>
 
-  <div class="container-x text-center" data-parallax="0.1" data-parallax-scroll data-parallax-fade>
-    <p class="mx-auto mb-6 inline-flex max-w-full flex-wrap items-center justify-center gap-x-2 rounded-2xl border border-line bg-surface/70 px-3.5 py-1.5 font-mono text-xs text-muted backdrop-blur">
-      <span class="size-1.5 rounded-full bg-accent"></span>
-      <span data-dl-version>{tag ?? 'Open source'}</span> · GPL-3.0 · macOS · Windows · Linux
-    </p>
-    <h1 class="mx-auto max-w-4xl text-balance text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
-      Where multiple watchlists is <span class="gradient-text">not a premium feature.</span>
+  <div class="container-x relative z-10 text-center">
+    <h1 class="display mx-auto max-w-5xl text-5xl sm:text-7xl lg:text-8xl">
+      Where <em class="italic">multiple watchlists</em> is <span class="gradient-text block">not a premium feature.</span>
     </h1>
-    <p class="mx-auto mt-6 max-w-2xl text-balance text-lg text-muted sm:text-xl">
+    <p class="mx-auto mt-8 max-w-2xl text-balance text-lg text-muted sm:text-xl">
       Crypto, stocks and prediction markets in multi-chart layouts, with local Pine Script, alerts and replay.
       Free, open source, and it runs on your machine.
     </p>
-    <div class="mt-9 flex flex-col items-center gap-4">
-      <DownloadButton showNote />
-      <a href={REPO_URL} rel="noopener" class="text-sm font-medium text-muted hover:text-fg">or view the source on GitHub →</a>
+    <div class="mt-10 flex flex-col items-center gap-4">
+      <DownloadButton showNote github />
     </div>
   </div>
 
-  <div class="container-x mt-16 max-w-5xl">
-    <Screenshot slug="hero" alt="DegenView dashboard with multiple live charts in a grid layout" priority parallax={-0.03} parallaxScroll />
+  <div class="container-x mt-20 max-w-5xl">
+    <Screenshot slug="hero" alt="DegenView dashboard with multiple live charts in a grid layout" priority framed sizes="(min-width: 1088px) 1024px, calc(100vw - 2rem)" />
   </div>
 </section>

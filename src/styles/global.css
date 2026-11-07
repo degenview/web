@@ -1,40 +1,55 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/inter';
+@import '@fontsource-variable/inter/wght-italic.css';
 @import '@fontsource-variable/jetbrains-mono';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * Palette adapted from TradingView's site: true-black canvas, neutral greys,
+ * a royal blue (#2962ff) that fades into magenta-purple on hero words.
+ */
 :root {
   color-scheme: light;
-  --bg: #f6f6f7;
-  --surface: #ffffff;
-  --chrome: #ececee;
-  --border: #d0d1d5;
-  --fg: #1d1d1f;
-  --muted: #6e6e73;
-  --accent: #17c972;
-  --accent-ink: #06210f;
-  --accent-text: #0a8f4f;
-  --orange: #d97100;
-  --down: #d62d31;
-  --glow-a: rgb(23 201 114 / 0.22);
-  --glow-b: rgb(191 82 203 / 0.16);
+  --bg: #ffffff;
+  --surface: #f9f9f9;
+  --chrome: #f2f2f2;
+  --border: #dbdbdb;
+  --fg: #0f0f0f;
+  --muted: #636363;
+  --accent: #2962ff;
+  --accent-hover: #1e53e5;
+  --accent-text: #2962ff;
+  --inverse: #0f0f0f;
+  --inverse-ink: #ffffff;
+  --inverse-hover: #2e2e2e;
+  --purple: #b600d6;
+  --up: #089981;
+  --down: #f23645;
+  --glow-a: rgb(41 98 255 / 0.16);
+  --glow-b: rgb(213 0 249 / 0.1);
   --grid: rgb(0 0 0 / 0.05);
 }
 :root.dark {
   color-scheme: dark;
-  --bg: #161d21;
-  --surface: #1f282c;
-  --chrome: #252d31;
-  --border: #394449;
-  --fg: #ebebf0;
-  --muted: #98989d;
-  --accent-text: #17c972;
-  --orange: #ff9500;
-  --down: #f5484c;
-  --glow-a: rgb(23 201 114 / 0.2);
-  --glow-b: rgb(191 82 203 / 0.18);
-  --grid: rgb(255 255 255 / 0.05);
+  --bg: #000000;
+  --surface: #131313;
+  --chrome: #222222;
+  --border: #303030;
+  --fg: #ffffff;
+  --muted: #b8b8b8;
+  --accent: #2962ff;
+  --accent-hover: #3179f5;
+  --accent-text: #5b9cf6;
+  --inverse: #ffffff;
+  --inverse-ink: #000000;
+  --inverse-hover: #dbdbdb;
+  --purple: #d500f9;
+  --up: #22ab94;
+  --down: #f7525f;
+  --glow-a: rgb(41 98 255 / 0.34);
+  --glow-b: rgb(213 0 249 / 0.2);
+  --grid: rgb(255 255 255 / 0.045);
 }
 
 @theme inline {
@@ -47,9 +62,9 @@
   --color-fg: var(--fg);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
-  --color-accent-ink: var(--accent-ink);
   --color-accent-text: var(--accent-text);
-  --color-orange: var(--orange);
+  --color-purple: var(--purple);
+  --color-up: var(--up);
   --color-down: var(--down);
 }
 
@@ -64,9 +79,12 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; border-radius: 6px; }
+:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; border-radius: 8px; }
 
 .container-x { width: min(100% - 2rem, 72rem); margin-inline: auto; }
+
+/* Big, tight, semibold display type like TradingView's section titles. */
+.display { font-weight: 600; letter-spacing: -0.035em; line-height: 1.04; text-wrap: balance; }
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
@@ -74,17 +92,55 @@ body {
   transition: transform .15s, background-color .15s, border-color .15s, box-shadow .15s;
 }
 .btn:active { transform: translateY(1px); }
-.btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: 0 8px 28px -8px rgb(23 201 114 / .55); }
-.btn-primary:hover { background: #3fe08e; box-shadow: 0 10px 34px -6px rgb(23 201 114 / .7); }
-.btn-ghost { border: 1px solid var(--border); background: var(--surface); }
-.btn-ghost:hover { border-color: var(--accent-text); }
+/* Inverse pill: white on black, black on white. Same as TradingView's "Get started". */
+.btn-primary { background: var(--inverse); color: var(--inverse-ink); }
+.btn-primary:hover { background: var(--inverse-hover); }
+.btn-ghost { border: 1px solid var(--border); background: transparent; }
+.btn-ghost:hover { border-color: var(--muted); background: var(--surface); }
 
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: 1rem; }
+/* Per-OS download buttons: outlined like TradingView's desktop page; the detected OS is filled. */
+.dl-os {
+  display: inline-flex; align-items: center; gap: .75rem;
+  padding: .5rem 1.1rem .5rem .95rem; min-width: 10.5rem;
+  border: 1px solid var(--border); border-radius: .75rem; background: transparent;
+  transition: transform .15s, background-color .15s, border-color .15s, color .15s;
+}
+.dl-os .dl-os-top { color: var(--muted); }
+.dl-os:hover { border-color: var(--muted); background: var(--surface); }
+.dl-os:active { transform: translateY(1px); }
+.dl-menu[data-selected] > .dl-os { background: var(--inverse); color: var(--inverse-ink); border-color: var(--inverse); }
+.dl-menu[data-selected] > .dl-os .dl-os-top { color: inherit; opacity: .6; }
+.dl-menu[data-selected] > .dl-os:hover { background: var(--inverse-hover); }
+.dl-menu[open] > .dl-os .dl-chevron { transform: rotate(180deg); }
+.dl-menu[open] > .dl-os { border-color: var(--muted); }
+
+/* Dropdown panel under each OS button. */
+.dl-panel {
+  position: absolute; left: 0; top: calc(100% + .5rem); z-index: 30;
+  min-width: max(100%, 17.5rem); max-width: calc(100vw - 2rem); padding: .375rem;
+  background: var(--surface); border: 1px solid var(--border); border-radius: .875rem;
+  box-shadow: 0 24px 60px -20px rgb(0 0 0 / .6);
+}
+.dl-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: .6rem .75rem; border-radius: .6rem; transition: background-color .12s;
+}
+.dl-item:hover, .dl-item:focus-visible { background: var(--chrome); }
+.dl-item:hover svg { color: var(--fg); }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: .875rem; }
 
 .gradient-text {
-  background: linear-gradient(100deg, var(--accent-text) 0%, var(--orange) 100%);
+  background: linear-gradient(90deg, #2962ff 30%, var(--purple));
   -webkit-background-clip: text; background-clip: text; color: transparent;
+  padding-bottom: .08em;
 }
+
+/* Blue/purple halo under product screenshots. */
+.shot-glow { box-shadow: 0 0 0 1px rgb(41 98 255 / .18), 0 30px 90px -30px rgb(41 98 255 / .55), 0 20px 60px -40px rgb(213 0 249 / .4); }
+
+/* Window shots that carry their own title bar and transparent rounded corners: the glow follows the alpha. */
+.shot-framed { filter: drop-shadow(0 0 1px rgb(41 98 255 / .35)) drop-shadow(0 30px 60px rgb(41 98 255 / .28)) drop-shadow(0 20px 50px rgb(213 0 249 / .16)); }
 
 /* Theme-aware screenshot swap */
 .shot-dark { display: none; }

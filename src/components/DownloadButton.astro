@@ -1,28 +1,53 @@
 ---
-import { PLATFORMS, LATEST_URL } from '../data/platforms';
-interface Props { size?: 'lg' | 'sm'; showNote?: boolean }
-const { size = 'lg', showNote = false } = Astro.props;
+import PlatformIcon from './PlatformIcon.astro';
+import { getRelease } from '../data/release';
+import { OS_NAMES, PLATFORMS, REPO_URL, assetUrl } from '../data/platforms';
+interface Props { showNote?: boolean; github?: boolean }
+const { showNote = false, github = false } = Astro.props;
+
+const release = await getRelease();
 ---
 
-<div class="inline-flex flex-col items-center gap-2">
-  <div class="flex flex-wrap items-stretch justify-center gap-2">
-    <a href={LATEST_URL} data-dl-button
-      class:list={['btn btn-primary', size === 'lg' ? 'px-6 py-3.5 text-base' : 'px-4 py-2 text-sm']}>
-      <svg viewBox="0 0 24 24" class="size-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14" /></svg>
-      <span class="flex flex-col items-start text-left leading-tight">
-        <span data-dl-label>Download</span>
-        {size === 'lg' && <span data-dl-sub class="text-xs font-medium opacity-70">Free · macOS · Windows · Linux</span>}
-      </span>
-    </a>
-    {size === 'lg' && (
-    <label class="relative inline-flex">
-      <span class="sr-only">Choose platform</span>
-      <select data-dl-select class="btn btn-ghost h-full cursor-pointer appearance-none pr-9 text-sm font-medium">
-        <option value="" disabled>Platform…</option>
-        {PLATFORMS.map((p) => <option value={p.id}>{p.label}</option>)}
-      </select>
-      <svg viewBox="0 0 24 24" class="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
-    </label>
+<div class="inline-flex flex-col items-center gap-3">
+  <div class="flex flex-wrap items-start justify-center gap-3">
+    {
+      OS_NAMES.map((os) => (
+        <details data-dl-menu={os} class="dl-menu relative">
+          <summary class="dl-os group cursor-pointer list-none [&::-webkit-details-marker]:hidden" aria-haspopup="menu">
+            <PlatformIcon os={os} class="size-6 shrink-0" />
+            <span class="flex flex-col items-start text-left leading-tight">
+              <span class="dl-os-top text-[10px] font-semibold uppercase tracking-[0.12em]">Download</span>
+              <span class="text-[15px] font-semibold">For {os}</span>
+            </span>
+            <svg viewBox="0 0 24 24" class="dl-chevron ml-auto size-4 shrink-0 transition-transform" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+          </summary>
+          <div role="menu" aria-label={`${os} downloads`} class="dl-panel">
+            {PLATFORMS.filter((p) => p.os === os).flatMap((p) =>
+              p.formats.map((f) => (
+                <a href={assetUrl(release.tag, p, f)} role="menuitem" rel="noopener" data-dl-item data-arch={p.arch} data-platform={p.id} data-suffix={f.suffix} class="dl-item">
+                  <span class="flex min-w-0 flex-col text-left">
+                    <span class="flex items-center gap-2 whitespace-nowrap font-medium text-fg">
+                      {f.name}
+                      <span data-dl-rec hidden class="rounded bg-accent/20 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent-text">Recommended</span>
+                    </span>
+                    <span class="text-xs text-muted">{p.short} · .{f.ext}</span>
+                  </span>
+                  <svg viewBox="0 0 24 24" class="size-4 shrink-0 text-muted" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14" /></svg>
+                </a>
+              )),
+            )}
+          </div>
+        </details>
+      ))
+    }
+    {github && (
+      <a href={REPO_URL} rel="noopener" class="dl-os group">
+        <PlatformIcon os="GitHub" class="size-6 shrink-0" />
+        <span class="flex flex-col items-start text-left leading-tight">
+          <span class="dl-os-top text-[10px] font-semibold uppercase tracking-[0.12em]">View source</span>
+          <span class="text-[15px] font-semibold">On GitHub</span>
+        </span>
+      </a>
     )}
   </div>
   {showNote && <p data-dl-note hidden class="text-sm text-muted" aria-live="polite"></p>}
