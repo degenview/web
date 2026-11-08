@@ -3,22 +3,78 @@ import { Image } from 'astro:assets';
 import logo from '../assets/brand/logo.png';
 import { DOCS_URL, REPO_URL } from '../data/platforms';
 import PlatformIcon from './PlatformIcon.astro';
+
+const links = [
+  { href: '/#features', label: 'Features' },
+  { href: '/pine-studio/', label: 'Pine Studio' },
+  { href: '/tradingview-alternative/', label: 'TradingView alternative' },
+  { href: '/download/', label: 'Download' },
+  { href: '/faq/', label: 'FAQ' },
+  { href: DOCS_URL, label: 'Docs' },
+];
 ---
 
-<header class="sticky top-0 z-40 border-b border-line/50 bg-bg/80 backdrop-blur-xl">
+<header data-site-header class="sticky top-0 z-40 border-b border-line/50 bg-bg/80 backdrop-blur-xl">
   <div class="container-x flex h-16 items-center justify-between gap-4">
     <a href="/" class="flex items-center gap-2.5 font-semibold tracking-tight" aria-label="DegenView home">
       <Image src={logo} alt="" width={64} height={64} class="size-8" loading="eager" />
       <span class="text-lg">DegenView</span>
     </a>
     <nav aria-label="Primary" class="hidden items-center gap-1 text-sm font-medium md:flex">
-      <a class="rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href="/#features">Features</a>
-      <a class="rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href="/pine-studio/">Pine Studio</a>
-      <a class="rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href="/tradingview-alternative/">TradingView alternative</a>
-      <a class="rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href="/download/">Download</a>
-      <a class="rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href="/faq/">FAQ</a>
-      <a class="rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href={DOCS_URL}>Docs</a>
+      {links.map((l) => (
+        <a class="rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href={l.href}>{l.label}</a>
+      ))}
       <a class="inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href={REPO_URL} target="_blank" rel="noopener noreferrer"><PlatformIcon os="GitHub" class="size-4" />GitHub<span class="sr-only"> (opens in a new tab)</span></a>
     </nav>
+    <button
+      type="button"
+      data-menu-button
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      aria-label="Open menu"
+      class="grid size-10 place-items-center rounded-lg text-fg/80 transition-colors hover:bg-chrome hover:text-fg md:hidden"
+    >
+      <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path data-icon-open d="M4 7h16M4 12h16M4 17h16" />
+        <path data-icon-close class="hidden" d="M6 6l12 12M18 6L6 18" />
+      </svg>
+    </button>
   </div>
+
+  <nav
+    id="mobile-menu"
+    aria-label="Mobile"
+    hidden
+    class="absolute inset-x-0 top-full max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-line bg-bg shadow-[0_24px_40px_-24px_rgb(0_0_0/.5)] md:hidden"
+  >
+    <div class="container-x flex flex-col gap-1 py-3 text-base font-medium">
+      {links.map((l) => (
+        <a class="rounded-lg px-3 py-3 text-fg/90 transition-colors hover:bg-chrome hover:text-fg" href={l.href}>{l.label}</a>
+      ))}
+      <a class="inline-flex items-center gap-2 rounded-lg px-3 py-3 text-fg/90 transition-colors hover:bg-chrome hover:text-fg" href={REPO_URL} target="_blank" rel="noopener noreferrer"><PlatformIcon os="GitHub" class="size-5" />GitHub<span class="sr-only"> (opens in a new tab)</span></a>
+    </div>
+  </nav>
 </header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-site-header]');
+  const button = header?.querySelector<HTMLButtonElement>('[data-menu-button]');
+  const menu = header?.querySelector<HTMLElement>('#mobile-menu');
+  if (header && button && menu) {
+    const iconOpen = button.querySelector('[data-icon-open]');
+    const iconClose = button.querySelector('[data-icon-close]');
+    const set = (open: boolean) => {
+      menu.hidden = !open;
+      button.setAttribute('aria-expanded', String(open));
+      button.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      iconOpen?.classList.toggle('hidden', open);
+      iconClose?.classList.toggle('hidden', !open);
+    };
+    button.addEventListener('click', () => set(menu.hidden));
+    // Close on link tap (same-page anchors don't reload), Escape, outside tap, or growing to desktop width.
+    menu.addEventListener('click', (e) => { if ((e.target as Element).closest('a')) set(false); });
+    addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { set(false); button.focus(); } });
+    document.addEventListener('click', (e) => { if (!menu.hidden && !header.contains(e.target as Node)) set(false); });
+    matchMedia('(min-width: 768px)').addEventListener('change', (e) => { if (e.matches) set(false); });
+  }
+</script>
