@@ -70,7 +70,7 @@ const links = [
       iconOpen?.classList.toggle('hidden', open);
       iconClose?.classList.toggle('hidden', !open);
     };
-    button.addEventListener('click', () => set(menu.hidden));
+    button.addEventListener('click', () => set(button.getAttribute('aria-expanded') !== 'true'));
     // Close on link tap (same-page anchors don't reload), Escape, outside tap, or growing to desktop width.
     menu.addEventListener('click', (e) => { if ((e.target as Element).closest('a')) set(false); });
     addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { set(false); button.focus(); } });
