@@ -6,7 +6,7 @@ import PlatformIcon from '../components/PlatformIcon.astro';
 import CodeBlock from '../components/CodeBlock.astro';
 import PreReleaseNote from '../components/PreReleaseNote.astro';
 import { getRelease } from '../data/release';
-import { OS_NAMES, PLATFORMS, REPO_URL, RELEASES_URL, assetUrl, type OsName, type Platform } from '../data/platforms';
+import { DOCS_URL, OS_NAMES, PLATFORMS, REPO_URL, RELEASES_URL, assetUrl, type OsName, type Platform } from '../data/platforms';
 
 const release = await getRelease();
 const tag = release.tag;
@@ -381,7 +381,7 @@ const arrow = 'M12 4v12m0 0 5-5m-5 5-5-5M5 20h14';
       </div>
       <p class="mt-6 text-center text-sm text-muted">
         Something not working? <a class="font-medium text-accent-text underline underline-offset-4" href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer">Open an issue on GitHub<span class="sr-only"> (opens in a new tab)</span></a>{' '}
-        or read the <a class="font-medium text-accent-text underline underline-offset-4" href="/faq/">full FAQ</a>.
+        or read the <a class="font-medium text-accent-text underline underline-offset-4" href={DOCS_URL}>docs</a>.
       </p>
     </div>
   </section>
