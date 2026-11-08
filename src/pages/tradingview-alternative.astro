@@ -138,7 +138,7 @@ const jsonLd = [
   </section>
 
   <!-- Price ladder -->
-  <section aria-labelledby="ladder-h" class="py-24">
+  <section aria-labelledby="ladder-h" class="py-16 sm:py-24">
     <div class="container-x">
       <div class="mx-auto max-w-2xl text-center">
         <p class="text-sm font-semibold text-accent-text">pricing</p>
@@ -178,7 +178,7 @@ const jsonLd = [
   </section>
 
   <!-- Free plan vs free plan -->
-  <section aria-labelledby="free-h" class="border-t border-line/50 py-24">
+  <section aria-labelledby="free-h" class="border-t border-line/50 py-16 sm:py-24">
     <div class="container-x">
       <div class="mx-auto max-w-2xl text-center">
         <p class="text-sm font-semibold text-accent-text">free vs free</p>
@@ -232,7 +232,7 @@ const jsonLd = [
   </section>
 
   <!-- Honest section -->
-  <section aria-labelledby="better-h" class="border-t border-line/50 py-24">
+  <section aria-labelledby="better-h" class="border-t border-line/50 py-16 sm:py-24">
     <div class="container-x">
       <div class="mx-auto max-w-2xl text-center">
         <p class="text-sm font-semibold text-accent-text">to be fair</p>
@@ -259,7 +259,7 @@ const jsonLd = [
   </section>
 
   <!-- Coming from TradingView -->
-  <section aria-labelledby="from-h" class="border-t border-line/50 py-24">
+  <section aria-labelledby="from-h" class="border-t border-line/50 py-16 sm:py-24">
     <div class="container-x">
       <div class="mx-auto max-w-2xl text-center">
         <p class="text-sm font-semibold text-accent-text">moving over</p>
@@ -280,18 +280,18 @@ const jsonLd = [
   </section>
 
   <!-- FAQ -->
-  <section aria-labelledby="faq-h" class="border-t border-line/50 py-24">
+  <section aria-labelledby="faq-h" class="border-t border-line/50 py-16 sm:py-24">
     <div class="container-x max-w-3xl">
       <h2 id="faq-h" class="display text-center text-4xl sm:text-6xl">Questions, <span class="gradient-text">answered</span></h2>
       <div class="mt-12 divide-y divide-line rounded-[14px] border border-line bg-surface">
         {
           faqs.map(([q, a]) => (
-            <details class="group p-6">
-              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold [&::-webkit-details-marker]:hidden">
+            <details class="group">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-5 font-semibold sm:p-6 [&::-webkit-details-marker]:hidden">
                 {q}
                 <svg viewBox="0 0 24 24" class="size-5 shrink-0 text-muted transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
               </summary>
-              <p class="mt-3 text-muted">{a}</p>
+              <p class="-mt-1 px-5 pb-5 text-muted sm:px-6 sm:pb-6">{a}</p>
             </details>
           ))
         }
@@ -301,7 +301,7 @@ const jsonLd = [
   </section>
 
   <!-- Closing call to action -->
-  <section class="relative overflow-hidden border-t border-line/50 py-28">
+  <section class="relative overflow-hidden border-t border-line/50 py-20 sm:py-28">
     <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
       <div class="absolute left-1/2 top-1/2 h-[28rem] w-[56rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl" style="background: radial-gradient(closest-side, var(--glow-a), transparent)"></div>
     </div>

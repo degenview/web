@@ -211,7 +211,7 @@ const checkPath = 'm5 12 5 5L20 7';
         <DownloadButton showNote />
         <PreReleaseNote variant="inline" />
         <p class="text-sm text-muted">
-          <a class="font-medium text-accent-text underline underline-offset-4" href={`${DOCS}/pine/overview`}>Read the Pine Studio docs</a>
+          <a class="inline-block py-2 font-medium text-accent-text underline underline-offset-4" href={`${DOCS}/pine/overview`}>Read the Pine Studio docs</a>
         </p>
       </div>
       <ul class="mt-10 flex flex-wrap justify-center gap-2.5 text-sm text-muted">
@@ -228,7 +228,7 @@ const checkPath = 'm5 12 5 5L20 7';
   </section>
 
   <!-- Write -->
-  <section id="write" aria-labelledby="write-h" class="border-t border-line/50 py-24 sm:py-32">
+  <section id="write" aria-labelledby="write-h" class="border-t border-line/50 py-16 sm:py-32">
     <div class="container-x">
       <div class="mx-auto max-w-3xl text-center">
         <p class="text-sm font-semibold text-accent-text">Pine Studio</p>
@@ -256,7 +256,7 @@ const checkPath = 'm5 12 5 5L20 7';
   </section>
 
   <!-- Debugger -->
-  <section id="debugger" aria-labelledby="debugger-h" class="relative overflow-hidden border-t border-line/50 py-24 sm:py-32">
+  <section id="debugger" aria-labelledby="debugger-h" class="relative overflow-hidden border-t border-line/50 py-16 sm:py-32">
     <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
       <div class="absolute left-1/2 top-24 h-[34rem] w-[64rem] -translate-x-1/2 rounded-full blur-3xl" style="background: radial-gradient(closest-side, var(--glow-a), transparent)"></div>
     </div>
@@ -290,7 +290,7 @@ const checkPath = 'm5 12 5 5L20 7';
   </section>
 
   <!-- Profiler -->
-  <section id="profiler" aria-labelledby="profiler-h" class="border-t border-line/50 py-24 sm:py-32">
+  <section id="profiler" aria-labelledby="profiler-h" class="border-t border-line/50 py-16 sm:py-32">
     <div class="container-x grid items-center gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
       <div>
         <p class="text-sm font-semibold text-accent-text">Profiler</p>
@@ -318,7 +318,7 @@ const checkPath = 'm5 12 5 5L20 7';
   </section>
 
   <!-- AI assistant -->
-  <section id="ai" aria-labelledby="ai-h" class="relative overflow-hidden border-t border-line/50 py-24 sm:py-32">
+  <section id="ai" aria-labelledby="ai-h" class="relative overflow-hidden border-t border-line/50 py-16 sm:py-32">
     <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
       <div class="absolute right-[-8rem] top-16 h-[32rem] w-[44rem] rounded-full blur-3xl" style="background: radial-gradient(closest-side, var(--glow-b), transparent)"></div>
     </div>
@@ -399,7 +399,7 @@ const checkPath = 'm5 12 5 5L20 7';
   </section>
 
   <!-- Themes -->
-  <section id="themes" aria-labelledby="themes-h" class="border-t border-line/50 py-24 sm:py-32">
+  <section id="themes" aria-labelledby="themes-h" class="border-t border-line/50 py-16 sm:py-32">
     <div class="container-x">
       <div class="mx-auto max-w-3xl text-center">
         <p class="text-sm font-semibold text-accent-text">Editor themes</p>
@@ -448,7 +448,7 @@ const checkPath = 'm5 12 5 5L20 7';
   </section>
 
   <!-- Local -->
-  <section id="local" aria-labelledby="local-h" class="border-t border-line/50 py-24 sm:py-32">
+  <section id="local" aria-labelledby="local-h" class="border-t border-line/50 py-16 sm:py-32">
     <div class="container-x">
       <div class="mx-auto max-w-3xl text-center">
         <p class="text-sm font-semibold text-accent-text">Yours to keep</p>
@@ -487,7 +487,7 @@ const checkPath = 'm5 12 5 5L20 7';
   </section>
 
   <!-- Workflow -->
-  <section id="workflow" aria-labelledby="workflow-h" class="border-t border-line/50 py-24 sm:py-32">
+  <section id="workflow" aria-labelledby="workflow-h" class="border-t border-line/50 py-16 sm:py-32">
     <div class="container-x">
       <div class="mx-auto max-w-3xl text-center">
         <p class="text-sm font-semibold text-accent-text">From idea to alert</p>
@@ -509,7 +509,7 @@ const checkPath = 'm5 12 5 5L20 7';
   </section>
 
   <!-- Differences from TradingView -->
-  <section id="differences" aria-labelledby="differences-h" class="border-t border-line/50 py-24 sm:py-32">
+  <section id="differences" aria-labelledby="differences-h" class="border-t border-line/50 py-16 sm:py-32">
     <div class="container-x max-w-5xl">
       <div class="mx-auto max-w-3xl text-center">
         <p class="text-sm font-semibold text-accent-text">Compatibility</p>
@@ -551,16 +551,16 @@ const checkPath = 'm5 12 5 5L20 7';
         </div>
       </div>
 
-      <p class="mt-8 text-center text-sm text-muted">
-        <a class="font-medium text-accent-text underline underline-offset-4" href={`${DOCS}/pine/language`}>The full list of what Pine Studio supports</a> ·
-        <a class="font-medium text-accent-text underline underline-offset-4" href="/tradingview-alternative/">DegenView vs TradingView</a>
+      <p class="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-1 text-center text-sm text-muted">
+        <a class="py-2 font-medium text-accent-text underline underline-offset-4" href={`${DOCS}/pine/language`}>The full list of what Pine Studio supports</a>
+        <a class="py-2 font-medium text-accent-text underline underline-offset-4" href="/tradingview-alternative/">DegenView vs TradingView</a>
       </p>
       <p class="mx-auto mt-4 max-w-2xl text-center text-xs text-muted">Pine Script and TradingView are trademarks of TradingView, Inc. DegenView is not affiliated with or endorsed by TradingView.</p>
     </div>
   </section>
 
   <!-- FAQ -->
-  <section id="faq" aria-labelledby="faq-h" class="border-t border-line/50 py-24 sm:py-32">
+  <section id="faq" aria-labelledby="faq-h" class="border-t border-line/50 py-16 sm:py-32">
     <div class="container-x max-w-3xl">
       <div class="text-center">
         <p class="text-sm font-semibold text-accent-text">FAQ</p>
@@ -569,25 +569,25 @@ const checkPath = 'm5 12 5 5L20 7';
       <div class="mt-12 divide-y divide-line rounded-[14px] border border-line bg-surface">
         {
           faqs.map(([q, a]) => (
-            <details class="group p-6">
-              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold [&::-webkit-details-marker]:hidden">
+            <details class="group">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-5 text-lg sm:p-6 font-semibold [&::-webkit-details-marker]:hidden">
                 {q}
                 <svg viewBox="0 0 24 24" class="size-5 shrink-0 text-muted transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
               </summary>
-              <p class="mt-4 text-base text-muted sm:text-lg">{a}</p>
+              <p class="-mt-1 px-5 pb-5 text-base text-muted sm:px-6 sm:pb-6 sm:text-lg">{a}</p>
             </details>
           ))
         }
       </div>
       <p class="mt-8 text-center text-sm text-muted">
-        More in the <a class="font-medium text-accent-text underline underline-offset-4" href="/faq/">general FAQ</a>, or
+        More in the <a class="font-medium text-accent-text underline underline-offset-4" href="/faq/">general FAQ</a>, or{' '}
         <a class="font-medium text-accent-text underline underline-offset-4" href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer">ask on GitHub<span class="sr-only"> (opens in a new tab)</span></a>.
       </p>
     </div>
   </section>
 
   <!-- Download -->
-  <section id="download" aria-labelledby="dl-h" class="relative overflow-hidden border-t border-line/50 py-28 sm:py-36">
+  <section id="download" aria-labelledby="dl-h" class="relative overflow-hidden border-t border-line/50 py-20 sm:py-36">
     <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
       <div class="absolute left-1/2 top-1/2 h-[26rem] w-[52rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl" style="background: radial-gradient(closest-side, var(--glow-a), transparent)"></div>
     </div>
@@ -596,10 +596,10 @@ const checkPath = 'm5 12 5 5L20 7';
       <p class="mx-auto mt-5 max-w-xl text-lg text-muted">Pine Studio comes with DegenView. Free, open source, and nothing to sign up for.</p>
       <div class="mt-8 flex justify-center"><DownloadButton showNote /></div>
       <PreReleaseNote variant="inline" class="mt-6" />
-      <p class="mt-8 text-sm text-muted">
-        <a class="font-medium text-accent-text underline underline-offset-4" href={`${DOCS}/pine/overview`}>Pine Studio docs</a> ·
-        <a class="font-medium text-accent-text underline underline-offset-4" href="/download/">All downloads</a> ·
-        <a class="font-medium text-accent-text underline underline-offset-4" href="/tradingview-alternative/">Compare with TradingView</a>
+      <p class="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm text-muted">
+        <a class="py-2 font-medium text-accent-text underline underline-offset-4" href={`${DOCS}/pine/overview`}>Pine Studio docs</a>
+        <a class="py-2 font-medium text-accent-text underline underline-offset-4" href="/download/">All downloads</a>
+        <a class="py-2 font-medium text-accent-text underline underline-offset-4" href="/tradingview-alternative/">Compare with TradingView</a>
       </p>
     </div>
   </section>

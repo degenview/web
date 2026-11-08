@@ -104,11 +104,12 @@ body {
 /* Per-OS download buttons: outlined like TradingView's desktop page; the detected OS is filled. */
 .dl-os {
   display: inline-flex; align-items: center; gap: .75rem;
-  padding: .5rem 1.1rem .5rem .95rem; min-width: 10.5rem;
+  width: 100%; min-height: 3.5rem; padding: .5rem 1.1rem .5rem .95rem;
   border: 1px solid var(--border); border-radius: .75rem; background: transparent;
   transition: transform .15s, background-color .15s, border-color .15s, color .15s;
 }
 .dl-os .dl-os-top { color: var(--muted); }
+@media (min-width: 40rem) { .dl-os { width: auto; min-width: 10.5rem; } }
 .dl-os:hover { border-color: var(--muted); background: var(--surface); }
 .dl-os:active { transform: translateY(1px); }
 .dl-menu[data-selected] > .dl-os { background: var(--inverse); color: var(--inverse-ink); border-color: var(--inverse); }
@@ -119,14 +120,14 @@ body {
 
 /* Dropdown panel under each OS button. */
 .dl-panel {
-  position: absolute; left: 0; top: calc(100% + .5rem); z-index: 30;
-  min-width: max(100%, 17.5rem); max-width: calc(100vw - 2rem); padding: .375rem;
+  position: absolute; left: 0; right: 0; top: calc(100% + .5rem); z-index: 30; padding: .375rem;
   background: var(--surface); border: 1px solid var(--border); border-radius: .875rem;
   box-shadow: 0 24px 60px -20px rgb(0 0 0 / .6);
 }
+@media (min-width: 40rem) { .dl-panel { right: auto; min-width: max(100%, 17.5rem); max-width: calc(100vw - 2rem); } }
 .dl-item {
   display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-  padding: .6rem .75rem; border-radius: .6rem; transition: background-color .12s;
+  padding: .75rem; border-radius: .6rem; transition: background-color .12s;
 }
 .dl-item:hover, .dl-item:focus-visible { background: var(--chrome); }
 .dl-item:hover svg { color: var(--fg); }

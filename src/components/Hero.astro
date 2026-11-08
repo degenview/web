@@ -4,11 +4,11 @@ import PreReleaseNote from './PreReleaseNote.astro';
 import Screenshot from './Screenshot.astro';
 ---
 
-<section class="relative overflow-hidden pb-24 pt-16 sm:pt-24">
+<section class="relative overflow-hidden pb-16 pt-12 sm:pb-24 sm:pt-24">
   <div class="hero-bg" aria-hidden="true"></div>
 
   <div class="container-x relative z-10 text-center">
-    <p class="mx-auto mb-6 inline-flex rounded-full border border-line bg-surface/60 px-4 py-1.5 text-sm font-medium text-muted backdrop-blur">Free &amp; open source <a href="/tradingview-alternative/" class="ml-1 font-semibold text-accent-text hover:underline">TradingView alternative</a></p>
+    <p class="mx-auto mb-6 inline-flex rounded-full border border-line bg-surface/60 px-4 py-1.5 text-sm font-medium text-muted backdrop-blur">Free &amp; open source <a href="/tradingview-alternative/" class="-my-2 ml-1 inline-block py-2 font-semibold text-accent-text hover:underline">TradingView alternative</a></p>
     <h1 class="display mx-auto max-w-5xl text-5xl sm:text-7xl lg:text-8xl">
       Where <em class="italic">multiple watchlists</em> is <span class="gradient-text block">not a premium feature.</span>
     </h1>
@@ -16,13 +16,13 @@ import Screenshot from './Screenshot.astro';
       The free, open source TradingView alternative for your desktop: crypto, stocks and prediction markets in
       multi-chart layouts, with local Pine Script, alerts and replay. No account, and it runs on your machine.
     </p>
-    <div class="mt-10 flex flex-col items-center gap-4">
+    <div class="mt-8 flex flex-col items-center gap-4 sm:mt-10">
       <DownloadButton showNote github />
       <PreReleaseNote variant="inline" />
     </div>
   </div>
 
-  <div class="container-x mt-20 max-w-5xl">
+  <div class="container-x mt-14 max-w-5xl sm:mt-20">
     <Screenshot slug="hero" alt="DegenView dashboard with multiple live charts in a grid layout" priority framed sizes="(min-width: 1088px) 1024px, calc(100vw - 2rem)" />
   </div>
 </section>
