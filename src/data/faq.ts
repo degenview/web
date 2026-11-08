@@ -106,6 +106,12 @@ export const faq: FaqItem[] = [
   },
   {
     group: 'install',
+    q: 'Can I install DegenView with Homebrew?',
+    a: 'Yes, on macOS: brew install --cask degenview/degenview/degenview@rc. It installs the same signed app into Applications from the DegenView tap. The name without @rc is for the latest final release and exists once one is published. The app updates itself, so brew upgrade skips it.',
+    links: [['Go to downloads', '/download/']],
+  },
+  {
+    group: 'install',
     q: 'Which download should I pick?',
     a: 'On a Mac, Apple menu, About This Mac: “Apple M…” means Apple Silicon, “Intel” means Intel. On Windows, choose x64 unless you have a Windows on ARM machine. On Linux, the tarball suits most distros and the Flatpak suits older ones.',
     links: [['Go to downloads', '/download/']],

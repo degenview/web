@@ -11,6 +11,9 @@ import { DOCS_URL, OS_NAMES, PLATFORMS, REPO_URL, RELEASES_URL, assetUrl, type O
 const release = await getRelease();
 const tag = release.tag;
 const T = tag ?? '<version>';
+// `degenview@rc` follows release candidates and finals; `degenview` is the newest final only, so it
+// is named only once the newest release is one. Homebrew trusts a fully named cask as it installs.
+const brewCask = !tag || tag.includes('-') ? 'degenview@rc' : 'degenview';
 const description =
   'Download DegenView, the free, open source TradingView alternative, for macOS, Windows or Linux. No account needed, with install steps and checksums.';
 
@@ -220,6 +223,9 @@ const arrow = 'M12 4v12m0 0 5-5m-5 5-5-5M5 20h14';
             <li>Launch it from Applications.</li>
             <li>Keep it in Applications. It updates itself from inside the app.</li>
           </ol>
+          <p class="mt-6 text-sm font-semibold">Or with Homebrew</p>
+          <div class="mt-3"><CodeBlock label="terminal" code={`brew install --cask degenview/degenview/${brewCask}`} /></div>
+          <p class="mt-4 text-sm text-muted">Installs the signed app into Applications. It still updates itself from inside the app, so <code class="font-mono text-fg">brew upgrade</code> leaves it alone.</p>
         </div>
 
         <div data-dl-os-card="Windows" class="card min-w-0 p-6 data-[selected]:border-accent data-[selected]:ring-2 data-[selected]:ring-accent/30">
