@@ -140,6 +140,18 @@ body {
 }
 
 /* Blue/purple halo under product screenshots. */
+/* Hero backdrop: two soft glows and a 56px grid that fades out down the first screen. Same recipe as the Flatpak repo page. */
+.hero-bg {
+  position: absolute; inset: 0 0 auto 0; z-index: -10; height: 44rem; pointer-events: none;
+  background:
+    radial-gradient(60% 55% at 28% 0%, var(--glow-a), transparent 70%),
+    radial-gradient(50% 50% at 78% 8%, var(--glow-b), transparent 70%),
+    linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 56px 56px,
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 56px 56px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent);
+}
+
 .shot-glow { box-shadow: 0 0 0 1px rgb(41 98 255 / .18), 0 30px 90px -30px rgb(41 98 255 / .55), 0 20px 60px -40px rgb(213 0 249 / .4); }
 
 /* Window shots that carry their own title bar and transparent rounded corners: the glow follows the alpha. */
