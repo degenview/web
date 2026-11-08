@@ -14,6 +14,9 @@ const T = tag ?? '<version>';
 // `degenview@rc` follows release candidates and finals; `degenview` is the newest final only, so it
 // is named only once the newest release is one. Homebrew trusts a fully named cask as it installs.
 const brewCask = !tag || tag.includes('-') ? 'degenview@rc' : 'degenview';
+// The Flatpak repo has the same two tracks: `beta` follows release candidates and finals, `stable`
+// follows finals only and exists once one is published.
+const flatpakBranch = !tag || tag.includes('-') ? 'beta' : 'stable';
 const description =
   'Download DegenView, the free, open source TradingView alternative, for macOS, Windows or Linux. No account needed, with install steps and checksums.';
 
@@ -58,7 +61,7 @@ const faqs: [string, string][] = [
   ],
   [
     'Tarball or Flatpak on Linux?',
-    'The tarball runs on any recent distro and updates itself from inside the app when it sits in a folder you own. The Flatpak runs sandboxed (network, display and GPU only) and suits older distros such as RHEL 9, but it can’t update itself, so you download the next one from here.',
+    'The tarball runs on any recent distro and updates itself from inside the app when it sits in a folder you own. The Flatpak runs sandboxed (network, display and GPU only) and suits older distros such as RHEL 9. Add the DegenView Flatpak repository and flatpak update keeps it current.',
   ],
   [
     'Windows shows a SmartScreen warning. Is it safe?',
@@ -66,7 +69,7 @@ const faqs: [string, string][] = [
   ],
   [
     'Does DegenView update itself?',
-    'Yes on macOS, on Windows (installer and portable zip) and for the Linux tarball in a writable folder. A Flatpak bundle has no remote, so it does not.',
+    'Yes on macOS, on Windows (installer and portable zip) and for the Linux tarball in a writable folder. A Flatpak is updated by flatpak update once you add the DegenView repository. A downloaded .flatpak file has no remote, so you download the next one from here.',
   ],
   [
     'Do I need an account?',
@@ -250,8 +253,9 @@ const arrow = 'M12 4v12m0 0 5-5m-5 5-5-5M5 20h14';
             </div>
             <div class="min-w-0">
               <p class="text-sm font-semibold">Flatpak, sandboxed</p>
-              <div class="mt-3"><CodeBlock label="flatpak" code={`flatpak install --user DegenView-${T}-linux-x64.flatpak\nflatpak run es.nico.degenview`} /></div>
-              <p class="mt-4 text-sm text-muted">A bundle has no remote, so <code class="font-mono text-fg">flatpak update</code> won’t find newer versions. Download the next one from here.</p>
+              <div class="mt-3"><CodeBlock label="flatpak" code={`flatpak remote-add --if-not-exists degenview https://flatpak.degenview.app/degenview.flatpakrepo\nflatpak install degenview es.nico.degenview//${flatpakBranch}\nflatpak run es.nico.degenview`} /></div>
+              <p class="mt-4 text-sm text-muted">Update it any time with <code class="font-mono text-fg">flatpak update</code>. The runtime comes from Flathub, so <a class="font-medium text-accent-text underline underline-offset-4" href="https://flathub.org/setup" target="_blank" rel="noopener noreferrer">set Flathub up<span class="sr-only"> (opens in a new tab)</span></a> first. <code class="font-mono text-fg">beta</code> follows release candidates and final releases; <code class="font-mono text-fg">stable</code> follows final releases only and works once one is published.</p>
+              <p class="mt-4 text-sm text-muted">Prefer a single file? <code class="font-mono text-fg">flatpak install --user DegenView-{T}-linux-x64.flatpak</code>. A downloaded file has no remote, so it does not update.</p>
               <p class="mt-4 text-sm text-muted">Needs OpenGL/EGL and X11 or Wayland. On ARM machines, use <code class="font-mono text-fg">arm64</code> in the file name.</p>
             </div>
           </div>
