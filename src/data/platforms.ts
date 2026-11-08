@@ -2,6 +2,8 @@ export const REPO = 'degenview/degenview';
 export const REPO_URL = `https://github.com/${REPO}`;
 /** The user guide, built from the degenview/docs repository. */
 export const DOCS_URL = 'https://docs.degenview.app/';
+/** The maintainer's Buy Me a Coffee page, the same one the app links to. */
+export const COFFEE_URL = 'https://buymeacoffee.com/nicoswd';
 export const RELEASES_URL = `${REPO_URL}/releases`;
 /** `/releases/latest` 404s while only pre-releases exist, so the fallback is the releases list. */
 export const LATEST_URL = RELEASES_URL;
