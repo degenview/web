@@ -20,6 +20,11 @@ const { feature: f, flip = false } = Astro.props;
         ))
       }
     </ul>
+    {f.link && (
+      <p class="mt-8">
+        <a href={f.link.href} class="btn btn-primary">{f.link.label}</a>
+      </p>
+    )}
   </div>
   <Screenshot slug={f.slug} alt={f.alt} framed={f.framed} class={flip ? 'lg:order-1' : ''} />
 </article>

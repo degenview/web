@@ -1,0 +1,605 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SectionNav from '../components/SectionNav.astro';
+import DownloadButton from '../components/DownloadButton.astro';
+import Screenshot from '../components/Screenshot.astro';
+import { REPO_URL } from '../data/platforms';
+import themeDark from '../assets/pine/theme-dark.webp';
+import themeLight from '../assets/pine/theme-light.webp';
+import themeDracula from '../assets/pine/theme-dracula.webp';
+
+const SITE = 'https://degenview.app';
+const DOCS = 'https://docs.degenview.app';
+
+const title = 'Pine Script Editor, Debugger & Profiler | DegenView';
+const description =
+  'Pine Studio is DegenView’s free Pine Script v6 editor for desktop: a step debugger, profiler, AI assistant and custom editor themes. Runs locally, no account.';
+
+const sections: [string, string][] = [
+  ['write', 'Write'],
+  ['debugger', 'Debugger'],
+  ['profiler', 'Profiler'],
+  ['ai', 'AI assistant'],
+  ['themes', 'Themes'],
+  ['local', 'Local'],
+  ['workflow', 'Workflow'],
+  ['faq', 'FAQ'],
+  ['differences', 'vs TradingView'],
+  ['download', 'Download'],
+];
+
+const icon = {
+  engine: 'M4 6h16M4 12h10M4 18h16M18 9l3 3-3 3',
+  preview: 'M3 17l5-5 4 4 8-9M3 21h18',
+  problems: 'M12 9v4M12 17h.01M10.3 3.9 2.4 17.5A2 2 0 0 0 4.1 20.5h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z',
+  logs: 'M5 4h14v16H5zM9 9h6M9 13h6M9 17h3',
+  strategy: 'M3 17l6-6 4 4 8-9M15 6h6v6',
+  editor: 'M8 7 3 12l5 5M16 7l5 5-5 5M14 4l-4 16',
+  breakpoint: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
+  step: 'M5 12h10M11 6l6 6-6 6M20 5v14',
+  variables: 'M4 7h16M4 12h10M4 17h13',
+  jump: 'M4 12h12M12 6l6 6-6 6M20 4v16',
+  shield: 'M12 3 4 6v6c0 5 3.5 8 8 9 4.500-1 8-4 8-9V6z',
+  user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21c0-4 3.500-6 8-6s8 2 8 6',
+  code: 'M16 18l6-6-6-6M8 6l-6 6 6 6',
+};
+
+const writing: [keyof typeof icon, string, string][] = [
+  ['engine', 'A real Pine v6 engine, locally', 'Indicators, strategies and libraries are parsed and evaluated on your machine, over your chart’s bars. No server, no upload, no account.'],
+  ['preview', 'A live preview chart', 'The script re-runs as you type, on any crypto or stock market. Every input() becomes a control, so you can tune a script without editing it.'],
+  ['problems', 'Diagnostics that point at the line', 'Errors and warnings, including run-time failures, land in a Problems tab with go-to-line, so you can fix them without hunting.'],
+  ['logs', 'A Logs pane for log.*()', 'Search with match-case, whole-word or regex. Filter by level, pick a bar range on the chart, and jump from a message to its line or bar.'],
+  ['strategy', 'Strategies with a report', 'Backtest figures, an equity curve and a full trade list, with the alerts your script can raise marked live or historical.'],
+  ['editor', 'An editor that helps', 'Completion and signature help, go to definition, rename symbol, multiple cursors, find, and gutter marks for what changed since you last saved.'],
+];
+
+const debugger_: [keyof typeof icon, string, string][] = [
+  ['breakpoint', 'Breakpoints that think', 'Click the gutter or press F9. Add a condition, a hit count, or a logpoint that writes to the Logs pane without stopping the script.'],
+  ['step', 'Step like in any IDE', 'Step over, into and out of your own functions, or run a whole bar at a time. Values appear inline, right on the line.'],
+  ['variables', 'See every variable', 'Locals and globals with their types. Whatever changed on the last step is highlighted. Add watches such as close - open.'],
+  ['jump', 'Jump to any bar', 'Stop at bar 400 or at a date and time and read the call stack that got you there. Restart the run in one click.'],
+];
+
+const aiModes: [string, string, string][] = [
+  ['pine-ai-chat', 'Ask', 'Questions about your script. It reads, compiles and measures, and never edits a thing.'],
+  ['pine-ai-plan', 'Plan', 'It investigates, then proposes a plan of up to twelve steps. Approve, revise or discard it.'],
+  ['pine-ai-proposal', 'Edit', 'It proposes changes as a diff. Apply them all, or review them one by one.'],
+];
+
+const themes = [
+  { name: 'Dark', note: 'Built-in', src: themeDark, alt: 'Pine Script editor in the Dark theme' },
+  { name: 'Light', note: 'Built-in', src: themeLight, alt: 'Pine Script editor in the Light theme' },
+  { name: 'Dracula', note: 'Built-in', src: themeDracula, alt: 'Pine Script editor in the Dracula theme' },
+];
+
+const supports = [
+  'Indicators, strategies and libraries',
+  'Plots, fills, shapes and background colors',
+  'Labels, lines, boxes and tables',
+  'ta.*, math.*, str.* and color.*',
+  'Arrays, maps and matrices',
+  'User-defined types and methods',
+  'request.security and timeframes',
+  'alert() and alertcondition()',
+  'input.* controls',
+  'log.*()',
+  'varip',
+  'import of your own libraries',
+];
+
+const steps: [string, string, string][] = [
+  ['Write', 'Open Pine Studio, start from one of nine examples or a blank script, and watch the preview chart follow your code.', `${DOCS}/pine/writing-scripts`],
+  ['Debug', 'Break on the line that misbehaves, read the variables, profile the slow part and ask the assistant what it sees.', `${DOCS}/pine/debugger-profiler`],
+  ['Add to a chart', 'Apply the script to any chart from the + menu. Tune its inputs and style, or turn it off, without leaving the chart.', `${DOCS}/pine/using-scripts`],
+  ['Get alerted', 'Turn alert() calls into script alerts that notify you on a live bar and can post to your own webhook.', `${DOCS}/alerts/script-alerts`],
+];
+
+// What differs from TradingView. Keep in step with docs.degenview.app/pine/language.
+const differences: [area: string, tv: string, dv: string][] = [
+  ['Language versions', 'Still runs scripts written for older versions of Pine.', 'Pine Script v6 only. Older scripts are rejected with a clear error, so migrate them first.'],
+  ['Where scripts run', 'On TradingView’s servers, tied to your account.', 'On your computer. Plain .pine files, no account, nothing uploaded.'],
+  ['Markets and timeframes', 'Stocks, futures, forex, bonds, crypto and more, with intraday timeframes.', 'Crypto, US stocks and ETFs, and prediction markets, in 1H, 1D, 1W, 1M, 3M and 1Y candles. No minute timeframes.'],
+  ['Data feeds in scripts', 'Fundamentals, earnings, dividends, splits, economic data and more through request.*.', 'request.security and request.security_lower_tf work. Feeds such as earnings, dividends, splits, economic, financial, seed and quandl return na with a warning. request.footprint is built from finer candles, an approximation of tick data.'],
+  ['Strategy backtests', 'TradingView’s own broker emulator, including margin.', 'A separate emulator with no margin model or margin calls. calc_on_order_fills and the bar magnifier are ignored with a warning. Expect backtest numbers to differ.'],
+  ['Time zones on stocks', 'Calendar values follow the exchange’s time zone.', 'Hour and day-of-week values use UTC on stocks.'],
+  ['Text styling', 'Choose font family, bold and italic on labels, boxes and tables.', 'Accepted, but ignored.'],
+  ['Sharing', 'Publish scripts and browse a community library.', 'No publishing and no built-in library. The Community scripts link opens tradingview.com/scripts in your browser, and you paste what you want to run.'],
+];
+
+const faqs: [string, string][] = [
+  [
+    'What is Pine Studio?',
+    'Pine Studio is the Pine Script workspace inside DegenView, the free and open source desktop market dashboard. It is a script library, a code editor and a live preview chart in one tab, with a step debugger, a profiler, an AI assistant and editor themes.',
+  ],
+  [
+    'Does DegenView run Pine Script v6 scripts from TradingView?',
+    'DegenView runs its own Pine Script v6 engine on your computer, so you can paste a script into Pine Studio and run it. It is an independent implementation, not TradingView’s, so very exotic scripts can behave differently, and a few features, such as some request.* data feeds, return na with a warning. Pine Script v6 is the only supported version.',
+  ],
+  [
+    'Can I debug a Pine Script with breakpoints?',
+    'Yes. Set breakpoints in the gutter, with optional conditions, hit counts and logpoints, then step over, into and out of functions or step a whole bar at a time. Locals, globals, watch expressions and the call stack update at every stop. The debugger runs on a frozen copy of the preview chart’s bars.',
+  ],
+  [
+    'Is there a Pine Script profiler?',
+    'Yes. Turn on the profiler and DegenView times your script over the preview chart’s bars. It draws a bar and a share beside each line and ranks the hottest lines, blocks and functions, so you can see what to fix first.',
+  ],
+  [
+    'Does the AI assistant send my code anywhere?',
+    'Only if you use it, and only to the provider you choose. You bring your own API key for OpenAI, Anthropic or an OpenAI-compatible server such as OpenRouter, Ollama or LM Studio. DegenView has no server in between, and you pay your provider directly. The assistant works on a private copy of your script and never changes your editor until you apply a change.',
+  ],
+  [
+    'Can I vibe-code Pine scripts with my own AI assistant?',
+    'Yes, through DegenView’s optional MCP server. Describe the idea to an MCP-capable assistant and it can list, read and compile your scripts, edit a script’s draft, read diagnostics, inputs and reports, and apply a saved script to a chart. The server is off by default, listens only on your machine and needs a token, and you choose what each assistant may do. By default, saving over a script waits for your approval in the app.',
+  ],
+  [
+    'Do I need an account, or an internet connection?',
+    'No account. Your scripts are plain .pine files on your computer. Market data for the preview chart comes from public providers, so you need a connection to see live prices, but not to edit a script.',
+  ],
+  [
+    'Is Pine Studio free?',
+    'Yes. Pine Studio is part of DegenView, which is free and open source under the GPL-3.0 license, for macOS, Windows and Linux.',
+  ],
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'DegenView Pine Studio',
+    url: `${SITE}/pine-studio/`,
+    description,
+    applicationCategory: 'DeveloperApplication',
+    applicationSubCategory: 'Pine Script editor',
+    operatingSystem: 'macOS, Windows, Linux',
+    isAccessibleForFree: true,
+    license: 'https://www.gnu.org/licenses/gpl-3.0.html',
+    image: `${SITE}/og.png`,
+    isPartOf: { '@type': 'SoftwareApplication', name: 'DegenView', url: SITE },
+    author: { '@type': 'Person', name: 'Nico Oelgart' },
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    softwareHelp: `${DOCS}/pine/overview`,
+    featureList: [
+      'Pine Script v6 engine that runs locally',
+      'Live preview chart with input controls',
+      'Step debugger with breakpoints, watches and call stack',
+      'Per-line profiler',
+      'AI assistant with Ask, Plan and Edit modes',
+      'MCP server so other AI assistants can read, edit and apply scripts',
+      'Customizable editor themes',
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+  },
+];
+
+const checkPath = 'm5 12 5 5L20 7';
+---
+
+<Base title={title} description={description} path="/pine-studio/" jsonLd={jsonLd} breadcrumbs={[['Home', '/'], ['Pine Studio', '/pine-studio/']]}>
+  <Header slot="header" />
+  <SectionNav sections={sections} />
+
+  <!-- Hero -->
+  <section class="relative overflow-hidden pb-24 pt-16 sm:pt-24">
+    <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+      <div class="absolute left-1/2 top-[-12rem] h-[34rem] w-[60rem] -translate-x-1/2 rounded-full blur-3xl" style="background: radial-gradient(closest-side, var(--glow-a), transparent)"></div>
+      <div class="absolute right-[-12rem] top-72 h-[30rem] w-[40rem] rounded-full blur-3xl" style="background: radial-gradient(closest-side, var(--glow-b), transparent)"></div>
+      <svg class="absolute inset-0 size-full [mask-image:radial-gradient(ellipse_at_top,black,transparent_65%)]" aria-hidden="true">
+        <defs><pattern id="ps-grid" width="56" height="56" patternUnits="userSpaceOnUse"><path d="M56 0H0V56" fill="none" stroke="var(--grid)" /></pattern></defs>
+        <rect width="100%" height="100%" fill="url(#ps-grid)" />
+      </svg>
+    </div>
+
+    <div class="container-x relative z-10 text-center">
+      <p class="mx-auto mb-6 inline-flex rounded-full border border-line bg-surface/60 px-4 py-1.5 text-sm font-medium text-muted backdrop-blur">
+        Pine Studio <span class="mx-2 text-line" aria-hidden="true">·</span> part of <a href="/" class="ml-1 font-semibold text-accent-text hover:underline">DegenView</a>
+      </p>
+      <h1 class="display mx-auto max-w-5xl text-5xl sm:text-7xl lg:text-8xl">
+        The Pine Script editor with a <span class="gradient-text block">real debugger.</span>
+      </h1>
+      <p class="mx-auto mt-8 max-w-2xl text-balance text-lg text-muted sm:text-xl">
+        Write Pine Script v6, break on any line, profile the slow parts and let an AI assistant help. Pine Studio runs on your own machine, on live market data. Free, open source, no account.
+      </p>
+      <div class="mt-10 flex flex-col items-center gap-4">
+        <DownloadButton showNote />
+        <p class="text-sm text-muted">
+          <a class="font-medium text-accent-text underline underline-offset-4" href={`${DOCS}/pine/overview`}>Read the Pine Studio docs</a>
+        </p>
+      </div>
+      <ul class="mt-10 flex flex-wrap justify-center gap-2.5 text-sm text-muted">
+        <li class="rounded-full border border-line bg-surface px-4 py-2">Pine Script v6</li>
+        <li class="rounded-full border border-line bg-surface px-4 py-2">Runs 100% locally</li>
+        <li class="rounded-full border border-line bg-surface px-4 py-2">macOS · Windows · Linux</li>
+        <li class="rounded-full border border-line bg-surface px-4 py-2">Open source · GPL-3.0</li>
+      </ul>
+    </div>
+
+    <div class="container-x mt-20 max-w-6xl">
+      <Screenshot slug="pine-hero" alt="Pine Studio with the Trend Strength script in the editor, a live BTC/USDT preview chart and the script's inputs" priority framed sizes="(min-width: 1216px) 1152px, calc(100vw - 2rem)" />
+    </div>
+  </section>
+
+  <!-- Write -->
+  <section id="write" aria-labelledby="write-h" class="border-t border-line/50 py-24 sm:py-32">
+    <div class="container-x">
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="text-sm font-semibold text-accent-text">Pine Studio</p>
+        <h2 id="write-h" class="display mt-3 text-4xl sm:text-6xl">A proper workspace for <span class="gradient-text">Pine Script v6</span></h2>
+        <p class="mt-5 text-lg text-muted">A script library, a code editor and a live preview chart in one tab. Your scripts run as you type, on real market data, without leaving your computer.</p>
+      </div>
+      <ul class="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          writing.map(([i, t, d]) => (
+            <li class="card p-7">
+              <span class="grid size-11 place-items-center rounded-xl border border-line bg-bg text-accent-text">
+                <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icon[i]} /></svg>
+              </span>
+              <h3 class="mt-5 text-lg font-semibold">{t}</h3>
+              <p class="mt-2 text-muted">{d}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-10 text-center text-muted">
+        Starts with nine example scripts, from an EMA cross to a stats table.
+        <a class="ml-1 font-medium text-accent-text underline underline-offset-4" href={`${DOCS}/pine/writing-scripts`}>How to write scripts in Pine Studio</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Debugger -->
+  <section id="debugger" aria-labelledby="debugger-h" class="relative overflow-hidden border-t border-line/50 py-24 sm:py-32">
+    <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+      <div class="absolute left-1/2 top-24 h-[34rem] w-[64rem] -translate-x-1/2 rounded-full blur-3xl" style="background: radial-gradient(closest-side, var(--glow-a), transparent)"></div>
+    </div>
+    <div class="container-x">
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="text-sm font-semibold text-accent-text">Step debugger</p>
+        <h2 id="debugger-h" class="display mt-3 text-4xl sm:text-6xl">Stop debugging Pine with <span class="gradient-text">log.info()</span></h2>
+        <p class="mt-5 text-lg text-muted">Set a breakpoint, run the script over your chart’s bars and stop exactly where it matters. Read every variable and step through the code, the way you would in any real IDE.</p>
+      </div>
+      <div class="mx-auto mt-14 max-w-6xl">
+        <Screenshot slug="pine-debugger" alt="Pine Studio paused on line 14 of a Pine Script, with inline values, the variables panel and the step controls" framed sizes="(min-width: 1216px) 1152px, calc(100vw - 2rem)" />
+      </div>
+      <ul class="mx-auto mt-14 grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          debugger_.map(([i, t, d]) => (
+            <li class="card p-6">
+              <span class="grid size-10 place-items-center rounded-lg border border-line bg-bg text-accent-text">
+                <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icon[i]} /></svg>
+              </span>
+              <h3 class="mt-4 font-semibold">{t}</h3>
+              <p class="mt-2 text-sm text-muted">{d}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-10 text-center text-muted">
+        The debugger runs on a frozen copy of the preview chart’s bars, so nothing moves while you look.
+        <a class="ml-1 font-medium text-accent-text underline underline-offset-4" href={`${DOCS}/pine/debugger-profiler`}>Debugger docs</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Profiler -->
+  <section id="profiler" aria-labelledby="profiler-h" class="border-t border-line/50 py-24 sm:py-32">
+    <div class="container-x grid items-center gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+      <div>
+        <p class="text-sm font-semibold text-accent-text">Profiler</p>
+        <h2 id="profiler-h" class="display mt-3 text-4xl sm:text-5xl">Find the slow line, <span class="gradient-text">not just the slow script.</span></h2>
+        <p class="mt-5 text-lg text-muted">Turn on the stopwatch and DegenView times your script over the preview chart’s bars. A bar and a share beside each line show where the time goes.</p>
+        <ul class="mt-7 space-y-3">
+          {
+            [
+              'Per-line time and share, drawn right next to your code',
+              'The hottest lines, blocks and functions, ranked',
+              'Total time, bars and executions at a glance',
+              'Click a row to jump to the line. Edit the script and the profile tells you it is out of date',
+            ].map((b) => (
+              <li class="flex gap-3">
+                <svg viewBox="0 0 24 24" class="mt-1 size-5 shrink-0 text-accent-text" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={checkPath} /></svg>
+                <span class="text-fg/90">{b}</span>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="mt-8"><a class="font-medium text-accent-text underline underline-offset-4" href={`${DOCS}/pine/debugger-profiler`}>How the profiler measures</a></p>
+      </div>
+      <Screenshot slug="pine-profiler" alt="Pine Studio profiler: a time bar and share beside each line of code and a ranked list of the hottest lines" framed sizes="(min-width: 1024px) 660px, 100vw" />
+    </div>
+  </section>
+
+  <!-- AI assistant -->
+  <section id="ai" aria-labelledby="ai-h" class="relative overflow-hidden border-t border-line/50 py-24 sm:py-32">
+    <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+      <div class="absolute right-[-8rem] top-16 h-[32rem] w-[44rem] rounded-full blur-3xl" style="background: radial-gradient(closest-side, var(--glow-b), transparent)"></div>
+    </div>
+    <div class="container-x">
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="text-sm font-semibold text-accent-text">AI assistant</p>
+        <h2 id="ai-h" class="display mt-3 text-4xl sm:text-6xl">An assistant that edits a copy. <span class="gradient-text">You approve every change.</span></h2>
+        <p class="mt-5 text-lg text-muted">Describe what you want and vibe-code your way there. The assistant reads your script, compiles it and can even profile it, then proposes changes you review before anything touches your editor.</p>
+      </div>
+
+      <ul class="mt-14 grid gap-5 lg:grid-cols-3">
+        {
+          aiModes.map(([slug, name, d]) => (
+            <li class="flex flex-col">
+              <Screenshot slug={slug} alt={`The ${name} mode of the Pine Studio assistant`} sizes="(min-width: 1024px) 380px, 100vw" />
+              <h3 class="mt-5 text-xl font-semibold">{name}</h3>
+              <p class="mt-1.5 text-muted">{d}</p>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="mt-24 grid items-center gap-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-16">
+        <Screenshot slug="pine-ai-review" alt="The review sheet: five proposed changes with per-change checkboxes and a diff, ready to apply as one step" sizes="(min-width: 1024px) 660px, 100vw" />
+        <div>
+          <h3 class="display text-3xl sm:text-4xl">Review it like a pull request</h3>
+          <ul class="mt-7 space-y-3">
+            {
+              [
+                'A diff with a checkbox per change. Apply all, or just the ones you like',
+                'Applying is one undo step, and it refuses if the editor changed meanwhile',
+                'Manual by default. Switch to Auto to apply clean proposals right away',
+                'Bring your own key: OpenAI, Anthropic, or any OpenAI-compatible server such as OpenRouter, Ollama or LM Studio',
+                'Your script goes straight to the provider you pick. DegenView has no server in between',
+              ].map((b) => (
+                <li class="flex gap-3">
+                  <svg viewBox="0 0 24 24" class="mt-1 size-5 shrink-0 text-accent-text" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={checkPath} /></svg>
+                  <span class="text-fg/90">{b}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="mt-8 text-sm text-muted">You pay your provider directly. Keys live in the system keychain on macOS and Linux.</p>
+          <p class="mt-3"><a class="font-medium text-accent-text underline underline-offset-4" href={`${DOCS}/pine/ai-assistant`}>AI assistant docs</a></p>
+        </div>
+      </div>
+
+      <div class="mt-24 overflow-hidden rounded-3xl border border-line bg-surface/70 p-8 shadow-[0_30px_90px_-50px_rgb(41_98_255/.6)] backdrop-blur sm:p-12">
+        <div class="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-center lg:gap-14">
+          <div>
+            <p class="text-sm font-semibold text-accent-text">MCP server</p>
+            <h3 class="display mt-3 text-3xl sm:text-4xl">Or drive Pine Studio from <span class="gradient-text">your own assistant</span></h3>
+            <p class="mt-5 text-lg text-muted">Vibe-code your Pine scripts with the assistant you already use. DegenView’s optional MCP server opens Pine Studio to any MCP-capable AI assistant. It can read your scripts, compile them, fix the diagnostics and put the result on a chart, within the permissions you grant.</p>
+            <p class="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium">
+              <a class="text-accent-text underline underline-offset-4" href={`${DOCS}/mcp/setup`}>Set up the MCP server</a>
+              <a class="text-accent-text underline underline-offset-4" href="/#mcp">More on MCP</a>
+            </p>
+          </div>
+          <ul class="space-y-3">
+            {
+              [
+                'List, read and compile scripts, and read diagnostics, inputs, styles and reports',
+                'Edit a script’s draft. Every edit names the revision it was based on, so nothing is overwritten unnoticed',
+                'Apply a saved script to a chart, change its inputs or visibility, or remove it again',
+                'By default, saving over a script waits for your approval in the app',
+                'Off by default, local to your machine, protected by a token, with a separate read or write permission for each thing',
+              ].map((b) => (
+                <li class="flex gap-3">
+                  <svg viewBox="0 0 24 24" class="mt-1 size-5 shrink-0 text-accent-text" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={checkPath} /></svg>
+                  <span class="text-fg/90">{b}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Themes -->
+  <section id="themes" aria-labelledby="themes-h" class="border-t border-line/50 py-24 sm:py-32">
+    <div class="container-x">
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="text-sm font-semibold text-accent-text">Editor themes</p>
+        <h2 id="themes-h" class="display mt-3 text-4xl sm:text-6xl">Make the editor <span class="gradient-text">yours</span></h2>
+        <p class="mt-5 text-lg text-muted">Follow the app automatically, or pick Dark, Light or Dracula. Then change every color, the font, the size and the line height.</p>
+      </div>
+
+      <ul class="mt-14 grid gap-5 lg:grid-cols-3">
+        {
+          themes.map((t) => (
+            <li>
+              <figure class="card overflow-hidden shot-glow">
+                <Image src={t.src} alt={t.alt} widths={[480, 720, 1240]} sizes="(min-width: 1024px) 380px, 100vw" quality={90} class="block h-auto w-full" loading="lazy" decoding="async" />
+              </figure>
+              <p class="mt-4 flex items-baseline gap-2"><span class="text-lg font-semibold">{t.name}</span><span class="text-sm text-muted">{t.note}</span></p>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="mt-24 grid items-center gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+        <div class="order-2 lg:order-1">
+          <h3 class="display text-3xl sm:text-4xl">Build your own theme</h3>
+          <ul class="mt-7 space-y-3">
+            {
+              [
+                'Edit syntax colors, editor surfaces and typography, with a live preview of the real editor',
+                'Any monospaced font on your computer, from 9 to 32 pt, with four line heights',
+                'A warning when colors are hard to read',
+                'Duplicate, rename, export and share themes as .degenview-theme.json files',
+              ].map((b) => (
+                <li class="flex gap-3">
+                  <svg viewBox="0 0 24 24" class="mt-1 size-5 shrink-0 text-accent-text" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={checkPath} /></svg>
+                  <span class="text-fg/90">{b}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="mt-8"><a class="font-medium text-accent-text underline underline-offset-4" href={`${DOCS}/pine/writing-scripts`}>Editor themes in the docs</a></p>
+        </div>
+        <div class="order-1 mx-auto w-full max-w-md lg:order-2 lg:max-w-none">
+          <Screenshot slug="pine-theme-editor" alt="The theme editor for a custom theme named Night shift, with Syntax, Editor and Typography tabs" sizes="(min-width: 1024px) 520px, 100vw" class="mx-auto max-w-[34rem]" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Local -->
+  <section id="local" aria-labelledby="local-h" class="border-t border-line/50 py-24 sm:py-32">
+    <div class="container-x">
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="text-sm font-semibold text-accent-text">Yours to keep</p>
+        <h2 id="local-h" class="display mt-3 text-4xl sm:text-6xl">Your scripts <span class="gradient-text">stay on your machine</span></h2>
+        <p class="mt-5 text-lg text-muted">Pine Studio evaluates scripts in-process. Your source is a plain <span class="font-mono text-base">.pine</span> file in a folder you own.</p>
+      </div>
+      <ul class="mt-12 grid gap-4 md:grid-cols-3">
+        {
+          ([
+            ['shield', 'Nothing is uploaded', 'Scripts run locally. The only time source text leaves your computer is when you ask the AI assistant, and then it goes to your chosen provider.'],
+            ['user', 'No account', 'There is nothing to sign up for. Download DegenView, open Pine Studio and start writing.'],
+            ['code', 'Open source', 'DegenView is GPL-3.0 on GitHub. Read how the engine works, or build it yourself.'],
+          ] as [keyof typeof icon, string, string][]).map(([i, t, d]) => (
+            <li class="card p-7">
+              <span class="grid size-11 place-items-center rounded-xl border border-line bg-bg text-accent-text">
+                <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icon[i]} /></svg>
+              </span>
+              <h3 class="mt-5 text-lg font-semibold">{t}</h3>
+              <p class="mt-2 text-muted">{d}</p>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="mx-auto mt-16 max-w-4xl text-center">
+        <h3 class="text-xl font-semibold">What the engine runs</h3>
+        <ul class="mt-6 flex flex-wrap justify-center gap-2.5 text-sm">
+          {supports.map((s) => <li class="rounded-full border border-line bg-surface px-4 py-2 text-muted">{s}</li>)}
+        </ul>
+        <p class="mx-auto mt-6 max-w-2xl text-sm text-muted">
+          Pine Studio is an independent implementation of Pine Script v6, and it tells you when something is unsupported instead of failing silently.
+          <a class="ml-1 font-medium text-accent-text underline underline-offset-4" href={`${DOCS}/pine/language`}>What Pine supports</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Workflow -->
+  <section id="workflow" aria-labelledby="workflow-h" class="border-t border-line/50 py-24 sm:py-32">
+    <div class="container-x">
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="text-sm font-semibold text-accent-text">From idea to alert</p>
+        <h2 id="workflow-h" class="display mt-3 text-4xl sm:text-6xl">One loop, <span class="gradient-text">start to finish</span></h2>
+      </div>
+      <ol class="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {
+          steps.map(([t, d, href], i) => (
+            <li class="card flex flex-col p-7">
+              <span class="font-mono text-sm font-semibold text-accent-text">0{i + 1}</span>
+              <h3 class="mt-3 text-xl font-semibold">{t}</h3>
+              <p class="mt-2 flex-1 text-muted">{d}</p>
+              <a href={href} class="mt-5 text-sm font-medium text-accent-text hover:underline">Read more<span class="sr-only"> about {t.toLowerCase()}</span></a>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" aria-labelledby="faq-h" class="border-t border-line/50 py-24 sm:py-32">
+    <div class="container-x max-w-3xl">
+      <div class="text-center">
+        <p class="text-sm font-semibold text-accent-text">FAQ</p>
+        <h2 id="faq-h" class="display mt-3 text-4xl sm:text-6xl">Pine Studio, <span class="gradient-text">answered</span></h2>
+      </div>
+      <div class="mt-12 divide-y divide-line rounded-[14px] border border-line bg-surface">
+        {
+          faqs.map(([q, a]) => (
+            <details class="group p-6">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold [&::-webkit-details-marker]:hidden">
+                {q}
+                <svg viewBox="0 0 24 24" class="size-5 shrink-0 text-muted transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+              </summary>
+              <p class="mt-4 text-base text-muted sm:text-lg">{a}</p>
+            </details>
+          ))
+        }
+      </div>
+      <p class="mt-8 text-center text-sm text-muted">
+        More in the <a class="font-medium text-accent-text underline underline-offset-4" href="/faq/">general FAQ</a>, or
+        <a class="font-medium text-accent-text underline underline-offset-4" href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer">ask on GitHub<span class="sr-only"> (opens in a new tab)</span></a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- Differences from TradingView -->
+  <section id="differences" aria-labelledby="differences-h" class="border-t border-line/50 py-24 sm:py-32">
+    <div class="container-x max-w-5xl">
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="text-sm font-semibold text-accent-text">Compatibility</p>
+        <h2 id="differences-h" class="display mt-3 text-4xl sm:text-6xl">How it differs from <span class="gradient-text">TradingView</span></h2>
+        <p class="mt-5 text-lg text-muted">Pine Script is TradingView’s language. Pine Studio is an independent implementation of Pine Script v6 with its own engine and data, so the same script can behave differently. Here is what to know before you paste one in.</p>
+      </div>
+
+      <div class="mt-14 overflow-hidden rounded-[14px] border border-line bg-surface">
+        <div class="hidden grid-cols-[11rem_1fr_1fr] gap-6 border-b border-line bg-chrome/40 px-6 py-3 text-xs font-semibold uppercase tracking-wider text-muted md:grid" aria-hidden="true">
+          <span></span><span>TradingView</span><span>DegenView Pine Studio</span>
+        </div>
+        <dl class="divide-y divide-line">
+          {
+            differences.map(([area, tv, dv]) => (
+              <div class="grid gap-x-6 gap-y-3 px-6 py-6 md:grid-cols-[11rem_1fr_1fr]">
+                <dt class="font-semibold">{area}</dt>
+                <dd class="text-muted">
+                  <span class="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted/80 md:hidden">TradingView</span>
+                  {tv}
+                </dd>
+                <dd class="text-fg/90">
+                  <span class="mb-1 block text-xs font-semibold uppercase tracking-wider text-accent-text md:hidden">Pine Studio</span>
+                  {dv}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <div class="mt-8 grid gap-4 md:grid-cols-2">
+        <div class="card p-6">
+          <h3 class="font-semibold">Unsupported means a warning, not a surprise</h3>
+          <p class="mt-2 text-muted">When a script uses something Pine Studio does not have, it returns na or ignores the setting and tells you in the Problems tab with a numbered warning, so you can see exactly what is missing.</p>
+        </div>
+        <div class="card p-6">
+          <h3 class="font-semibold">Check results before you rely on them</h3>
+          <p class="mt-2 text-muted">Data sources and the strategy emulator differ, so plots and backtests can differ from TradingView’s. Community scripts belong to their authors, so check a script’s license before you reuse it.</p>
+        </div>
+      </div>
+
+      <p class="mt-8 text-center text-sm text-muted">
+        <a class="font-medium text-accent-text underline underline-offset-4" href={`${DOCS}/pine/language`}>The full list of what Pine Studio supports</a> ·
+        <a class="font-medium text-accent-text underline underline-offset-4" href="/tradingview-alternative/">DegenView vs TradingView</a>
+      </p>
+      <p class="mx-auto mt-4 max-w-2xl text-center text-xs text-muted">Pine Script and TradingView are trademarks of TradingView, Inc. DegenView is not affiliated with or endorsed by TradingView.</p>
+    </div>
+  </section>
+
+  <!-- Download -->
+  <section id="download" aria-labelledby="dl-h" class="relative overflow-hidden border-t border-line/50 py-28 sm:py-36">
+    <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+      <div class="absolute left-1/2 top-1/2 h-[26rem] w-[52rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl" style="background: radial-gradient(closest-side, var(--glow-a), transparent)"></div>
+    </div>
+    <div class="container-x text-center">
+      <h2 id="dl-h" class="display text-4xl sm:text-7xl">Write Pine. <span class="gradient-text block">Debug it properly.</span></h2>
+      <p class="mx-auto mt-5 max-w-xl text-lg text-muted">Pine Studio comes with DegenView. Free, open source, and nothing to sign up for.</p>
+      <div class="mt-8 flex justify-center"><DownloadButton showNote /></div>
+      <p class="mt-8 text-sm text-muted">
+        <a class="font-medium text-accent-text underline underline-offset-4" href={`${DOCS}/pine/overview`}>Pine Studio docs</a> ·
+        <a class="font-medium text-accent-text underline underline-offset-4" href="/download/">All downloads</a> ·
+        <a class="font-medium text-accent-text underline underline-offset-4" href="/tradingview-alternative/">Compare with TradingView</a>
+      </p>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</Base>

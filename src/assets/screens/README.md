@@ -11,8 +11,10 @@ Drop PNGs here; the site picks them up automatically (missing ones render a "com
 |---|---|
 | `hero` | Multi-column chart grid with crypto, a stock and a prediction market, favorites sidebar visible |
 | `markets` | Symbol search across sources, a Polymarket/Kalshi probability chart next to a price chart |
-| `pine-script` | Script Manager: editor, diagnostics, live preview chart |
+| `pine-script` | Pine Studio: editor, diagnostics, live preview chart |
 | `portfolio` | Allocation, P&L, transaction ledger |
 | `mcp` | Settings ▸ MCP Server: enabled server, a client with its token hidden, per-client Read/Write permissions |
 | `paper-trading` | Order ticket + position/order markers on a chart |
 | `replay` | Replay controls and timeline scrubber |
+
+The Pine Studio page (`/pine-studio/`) adds these, all with `-dark` and `-light` variants: `pine-hero`, `pine-debugger` and `pine-profiler` are full window shots (use `framed`), `pine-ai-chat`, `pine-ai-plan`, `pine-ai-proposal` and `pine-ai-review` are crops of the assistant panel and its review sheet, and `pine-theme-editor` is the theme editor. The three editor-theme crops (Dark, Light, Dracula) live in `src/assets/pine/` because they show a theme and must not swap with the site's.
