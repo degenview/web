@@ -1,17 +1,20 @@
 ---
 // A floating pill under the header that appears once the hero is behind you and jumps between the
 // home page's sections, highlighting the one you're in.
-const sections = [
-  ['markets', 'Markets'],
-  ['pine-script', 'Pine Script'],
-  ['mcp', 'MCP'],
-  ['portfolio', 'Portfolio'],
-  ['paper-trading', 'Paper trading'],
-  ['replay', 'Replay'],
-  ['chart-types', 'Chart types'],
-  ['more', 'More'],
-  ['download', 'Download'],
-];
+interface Props { sections?: [id: string, label: string][] }
+const {
+  sections = [
+    ['markets', 'Markets'],
+    ['pine-script', 'Pine Script'],
+    ['mcp', 'MCP'],
+    ['portfolio', 'Portfolio'],
+    ['paper-trading', 'Paper trading'],
+    ['replay', 'Replay'],
+    ['chart-types', 'Chart types'],
+    ['more', 'More'],
+    ['download', 'Download'],
+  ],
+} = Astro.props;
 ---
 
 <div data-section-nav class="pointer-events-none fixed inset-x-0 top-[4.75rem] z-30 flex justify-center px-4 transition-[opacity,transform] duration-300 data-[hidden]:-translate-y-2 data-[hidden]:opacity-0" data-hidden inert>

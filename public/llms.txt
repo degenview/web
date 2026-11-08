@@ -6,6 +6,7 @@ DegenView is an independent project and is not affiliated with TradingView.
 
 ## Pages
 - [Home](https://degenview.app/): overview and feature tour
+- [Pine Studio](https://degenview.app/pine-studio/): the Pine Script v6 editor with a step debugger, profiler, AI assistant and editor themes
 - [TradingView alternative](https://degenview.app/tradingview-alternative/): how DegenView compares with TradingView, including what TradingView does better
 - [Download](https://degenview.app/download/): installers for macOS, Windows and Linux
 - [FAQ](https://degenview.app/faq/): accounts, data sources, Pine Script, platforms

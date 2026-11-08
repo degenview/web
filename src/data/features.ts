@@ -6,6 +6,8 @@ export interface Feature {
   bullets: string[];
   /** What the screenshot should show (also used as alt text). */
   alt: string;
+  /** A call to action under the bullets, for features with their own page. */
+  link?: { label: string; href: string };
   /** The screenshot is a full app window with its own title bar and rounded corners: skip the site's card frame. */
   framed?: boolean;
 }
@@ -37,7 +39,8 @@ export const features: Feature[] = [
       'A real step debugger with breakpoints, watches and a call stack. No more debugging Pine scripts like a caveman with log.info()',
       'Built-in profiler that shows where your script spends its time',
     ],
-    alt: 'DegenView Script Manager with a Pine Script editor and live preview chart',
+    alt: 'DegenView Pine Studio with a Pine Script editor and live preview chart',
+    link: { label: 'Explore Pine Studio', href: '/pine-studio/' },
   },
   {
     slug: 'mcp',
