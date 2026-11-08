@@ -27,6 +27,7 @@ const sections: [string, string][] = [
   ['local', 'Local'],
   ['workflow', 'Workflow'],
   ['faq', 'FAQ'],
+  ['differences', 'vs TradingView'],
   ['download', 'Download'],
 ];
 
@@ -94,6 +95,18 @@ const steps: [string, string, string][] = [
   ['Debug', 'Break on the line that misbehaves, read the variables, profile the slow part and ask the assistant what it sees.', `${DOCS}/pine/debugger-profiler`],
   ['Add to a chart', 'Apply the script to any chart from the + menu. Tune its inputs and style, or turn it off, without leaving the chart.', `${DOCS}/pine/using-scripts`],
   ['Get alerted', 'Turn alert() calls into script alerts that notify you on a live bar and can post to your own webhook.', `${DOCS}/alerts/script-alerts`],
+];
+
+// What differs from TradingView. Keep in step with docs.degenview.app/pine/language.
+const differences: [area: string, tv: string, dv: string][] = [
+  ['Language versions', 'Still runs scripts written for older versions of Pine.', 'Pine Script v6 only. Older scripts are rejected with a clear error, so migrate them first.'],
+  ['Where scripts run', 'On TradingView’s servers, tied to your account.', 'On your computer. Plain .pine files, no account, nothing uploaded.'],
+  ['Markets and timeframes', 'Stocks, futures, forex, bonds, crypto and more, with intraday timeframes.', 'Crypto, US stocks and ETFs, and prediction markets, in 1H, 1D, 1W, 1M, 3M and 1Y candles. No minute timeframes.'],
+  ['Data feeds in scripts', 'Fundamentals, earnings, dividends, splits, economic data and more through request.*.', 'request.security and request.security_lower_tf work. Feeds such as earnings, dividends, splits, economic, financial, seed and quandl return na with a warning. request.footprint is built from finer candles, an approximation of tick data.'],
+  ['Strategy backtests', 'TradingView’s own broker emulator, including margin.', 'A separate emulator with no margin model or margin calls. calc_on_order_fills and the bar magnifier are ignored with a warning. Expect backtest numbers to differ.'],
+  ['Time zones on stocks', 'Calendar values follow the exchange’s time zone.', 'Hour and day-of-week values use UTC on stocks.'],
+  ['Text styling', 'Choose font family, bold and italic on labels, boxes and tables.', 'Accepted, but ignored.'],
+  ['Sharing', 'Publish scripts and browse a community library.', 'No publishing and no built-in library. The Community scripts link opens tradingview.com/scripts in your browser, and you paste what you want to run.'],
 ];
 
 const faqs: [string, string][] = [
@@ -482,6 +495,57 @@ const checkPath = 'm5 12 5 5L20 7';
         More in the <a class="font-medium text-accent-text underline underline-offset-4" href="/faq/">general FAQ</a>, or
         <a class="font-medium text-accent-text underline underline-offset-4" href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer">ask on GitHub<span class="sr-only"> (opens in a new tab)</span></a>.
       </p>
+    </div>
+  </section>
+
+  <!-- Differences from TradingView -->
+  <section id="differences" aria-labelledby="differences-h" class="border-t border-line/50 py-24 sm:py-32">
+    <div class="container-x max-w-5xl">
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="text-sm font-semibold text-accent-text">Compatibility</p>
+        <h2 id="differences-h" class="display mt-3 text-4xl sm:text-6xl">How it differs from <span class="gradient-text">TradingView</span></h2>
+        <p class="mt-5 text-lg text-muted">Pine Script is TradingView’s language. Pine Studio is an independent implementation of Pine Script v6 with its own engine and data, so the same script can behave differently. Here is what to know before you paste one in.</p>
+      </div>
+
+      <div class="mt-14 overflow-hidden rounded-[14px] border border-line bg-surface">
+        <div class="hidden grid-cols-[11rem_1fr_1fr] gap-6 border-b border-line bg-chrome/40 px-6 py-3 text-xs font-semibold uppercase tracking-wider text-muted md:grid" aria-hidden="true">
+          <span></span><span>TradingView</span><span>DegenView Pine Studio</span>
+        </div>
+        <dl class="divide-y divide-line">
+          {
+            differences.map(([area, tv, dv]) => (
+              <div class="grid gap-x-6 gap-y-3 px-6 py-6 md:grid-cols-[11rem_1fr_1fr]">
+                <dt class="font-semibold">{area}</dt>
+                <dd class="text-muted">
+                  <span class="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted/80 md:hidden">TradingView</span>
+                  {tv}
+                </dd>
+                <dd class="text-fg/90">
+                  <span class="mb-1 block text-xs font-semibold uppercase tracking-wider text-accent-text md:hidden">Pine Studio</span>
+                  {dv}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <div class="mt-8 grid gap-4 md:grid-cols-2">
+        <div class="card p-6">
+          <h3 class="font-semibold">Unsupported means a warning, not a surprise</h3>
+          <p class="mt-2 text-muted">When a script uses something Pine Studio does not have, it returns na or ignores the setting and tells you in the Problems tab with a numbered warning, so you can see exactly what is missing.</p>
+        </div>
+        <div class="card p-6">
+          <h3 class="font-semibold">Check results before you rely on them</h3>
+          <p class="mt-2 text-muted">Data sources and the strategy emulator differ, so plots and backtests can differ from TradingView’s. Community scripts belong to their authors, so check a script’s license before you reuse it.</p>
+        </div>
+      </div>
+
+      <p class="mt-8 text-center text-sm text-muted">
+        <a class="font-medium text-accent-text underline underline-offset-4" href={`${DOCS}/pine/language`}>The full list of what Pine Studio supports</a> ·
+        <a class="font-medium text-accent-text underline underline-offset-4" href="/tradingview-alternative/">DegenView vs TradingView</a>
+      </p>
+      <p class="mx-auto mt-4 max-w-2xl text-center text-xs text-muted">Pine Script and TradingView are trademarks of TradingView, Inc. DegenView is not affiliated with or endorsed by TradingView.</p>
     </div>
   </section>
 
