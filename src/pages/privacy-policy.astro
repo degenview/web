@@ -133,7 +133,7 @@ const consentSteps: [string, string][] = [
         </div>
       </div>
 
-      <div class="card mt-6 overflow-x-auto">
+      <div class="card relative mt-6 overflow-x-auto">
         <table class="w-full min-w-[34rem] text-left text-sm">
           <caption class="sr-only">What is stored in your browser</caption>
           <thead>
@@ -203,7 +203,7 @@ const consentSteps: [string, string][] = [
             <p class="mt-5 text-lg text-muted">{s.body[0]}</p>
           )}
           {s.id === 'app' && (
-            <div class="card mt-8 overflow-x-auto">
+            <div class="card relative mt-8 overflow-x-auto">
               <table class="w-full min-w-[40rem] text-left text-sm">
                 <caption class="sr-only">Services the desktop app connects to, with their terms and privacy policies</caption>
                 <thead>

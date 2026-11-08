@@ -5,7 +5,7 @@ const notes = extras.filter((e) => e.note).map((e) => e.note as string);
 
 ---
 
-<section id="more" aria-labelledby="more-h" class="py-24">
+<section id="more" aria-labelledby="more-h" class="py-16 sm:py-24">
   <div class="container-x flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
     <div class="max-w-2xl">
       <p class="text-sm font-semibold text-accent-text">and while you’re here</p>
@@ -62,8 +62,9 @@ const notes = extras.filter((e) => e.note).map((e) => e.note as string);
     next.addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }));
     track.addEventListener('scroll', sync, { passive: true });
     addEventListener('resize', sync);
-    // Start on the second card; the first sits just off the left edge, one tap on the back arrow away.
-    track.scrollLeft = step();
+    // On wide screens start on the second card; the first sits just off the left edge, one tap on the back arrow away.
+    // On phones begin at the first card so nothing is cut off.
+    track.scrollLeft = matchMedia('(min-width: 768px)').matches ? step() : 0;
     sync();
   }
 </script>
