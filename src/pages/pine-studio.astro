@@ -27,8 +27,8 @@ const sections: [string, string][] = [
   ['themes', 'Themes'],
   ['local', 'Local'],
   ['workflow', 'Workflow'],
-  ['faq', 'FAQ'],
   ['differences', 'vs TradingView'],
+  ['faq', 'FAQ'],
   ['download', 'Download'],
 ];
 
@@ -508,33 +508,6 @@ const checkPath = 'm5 12 5 5L20 7';
     </div>
   </section>
 
-  <!-- FAQ -->
-  <section id="faq" aria-labelledby="faq-h" class="border-t border-line/50 py-24 sm:py-32">
-    <div class="container-x max-w-3xl">
-      <div class="text-center">
-        <p class="text-sm font-semibold text-accent-text">FAQ</p>
-        <h2 id="faq-h" class="display mt-3 text-4xl sm:text-6xl">Pine Studio, <span class="gradient-text">answered</span></h2>
-      </div>
-      <div class="mt-12 divide-y divide-line rounded-[14px] border border-line bg-surface">
-        {
-          faqs.map(([q, a]) => (
-            <details class="group p-6">
-              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold [&::-webkit-details-marker]:hidden">
-                {q}
-                <svg viewBox="0 0 24 24" class="size-5 shrink-0 text-muted transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
-              </summary>
-              <p class="mt-4 text-base text-muted sm:text-lg">{a}</p>
-            </details>
-          ))
-        }
-      </div>
-      <p class="mt-8 text-center text-sm text-muted">
-        More in the <a class="font-medium text-accent-text underline underline-offset-4" href="/faq/">general FAQ</a>, or
-        <a class="font-medium text-accent-text underline underline-offset-4" href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer">ask on GitHub<span class="sr-only"> (opens in a new tab)</span></a>.
-      </p>
-    </div>
-  </section>
-
   <!-- Differences from TradingView -->
   <section id="differences" aria-labelledby="differences-h" class="border-t border-line/50 py-24 sm:py-32">
     <div class="container-x max-w-5xl">
@@ -583,6 +556,33 @@ const checkPath = 'm5 12 5 5L20 7';
         <a class="font-medium text-accent-text underline underline-offset-4" href="/tradingview-alternative/">DegenView vs TradingView</a>
       </p>
       <p class="mx-auto mt-4 max-w-2xl text-center text-xs text-muted">Pine Script and TradingView are trademarks of TradingView, Inc. DegenView is not affiliated with or endorsed by TradingView.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" aria-labelledby="faq-h" class="border-t border-line/50 py-24 sm:py-32">
+    <div class="container-x max-w-3xl">
+      <div class="text-center">
+        <p class="text-sm font-semibold text-accent-text">FAQ</p>
+        <h2 id="faq-h" class="display mt-3 text-4xl sm:text-6xl">Pine Studio, <span class="gradient-text">answered</span></h2>
+      </div>
+      <div class="mt-12 divide-y divide-line rounded-[14px] border border-line bg-surface">
+        {
+          faqs.map(([q, a]) => (
+            <details class="group p-6">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold [&::-webkit-details-marker]:hidden">
+                {q}
+                <svg viewBox="0 0 24 24" class="size-5 shrink-0 text-muted transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+              </summary>
+              <p class="mt-4 text-base text-muted sm:text-lg">{a}</p>
+            </details>
+          ))
+        }
+      </div>
+      <p class="mt-8 text-center text-sm text-muted">
+        More in the <a class="font-medium text-accent-text underline underline-offset-4" href="/faq/">general FAQ</a>, or
+        <a class="font-medium text-accent-text underline underline-offset-4" href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer">ask on GitHub<span class="sr-only"> (opens in a new tab)</span></a>.
+      </p>
     </div>
   </section>
 
