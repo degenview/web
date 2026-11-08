@@ -11,6 +11,7 @@ import DownloadButton from '../components/DownloadButton.astro';
 import Footer from '../components/Footer.astro';
 import CoffeeButton from '../components/CoffeeButton.astro';
 import SectionNav from '../components/SectionNav.astro';
+import PreReleaseNote from '../components/PreReleaseNote.astro';
 import { features, extras } from '../data/features';
 import { getImage } from 'astro:assets';
 import heroImage from '../assets/screens/hero-dark.webp';
@@ -76,6 +77,7 @@ const jsonLd = [
       <h2 id="dl-h" class="display text-4xl sm:text-7xl">Get DegenView. <span class="gradient-text block">It’s free.</span></h2>
       <p class="mx-auto mt-4 max-w-xl text-lg text-muted">Latest release <span class="font-mono" data-dl-version>{release.tag ?? ''}</span>. No account, no trial, no catch.</p>
       <div class="mt-8 flex justify-center"><DownloadButton showNote /></div>
+      <PreReleaseNote variant="inline" class="mt-6" />
       <p class="mt-8 text-sm text-muted">
         <a class="font-medium text-accent-text underline underline-offset-4" href="/download/">All downloads</a> ·{' '}
         <a class="font-medium text-accent-text underline underline-offset-4" href="/faq/">FAQ</a>
