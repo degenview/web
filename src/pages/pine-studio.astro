@@ -131,8 +131,8 @@ const faqs: [string, string][] = [
     'Only if you use it, and only to the provider you choose. You bring your own API key for OpenAI, Anthropic or an OpenAI-compatible server such as OpenRouter, Ollama or LM Studio. DegenView has no server in between, and you pay your provider directly. The assistant works on a private copy of your script and never changes your editor until you apply a change.',
   ],
   [
-    'Can another AI assistant write and run Pine scripts in Pine Studio?',
-    'Yes, through DegenView’s optional MCP server. An MCP-capable assistant can list, read and compile your scripts, edit a script’s draft, read diagnostics, inputs and reports, and apply a saved script to a chart. The server is off by default, listens only on your machine and needs a token, and you choose what each assistant may do. By default, saving over a script waits for your approval in the app.',
+    'Can I vibe-code Pine scripts with my own AI assistant?',
+    'Yes, through DegenView’s optional MCP server. Describe the idea to an MCP-capable assistant and it can list, read and compile your scripts, edit a script’s draft, read diagnostics, inputs and reports, and apply a saved script to a chart. The server is off by default, listens only on your machine and needs a token, and you choose what each assistant may do. By default, saving over a script waits for your approval in the app.',
   ],
   [
     'Do I need an account, or an internet connection?',
@@ -324,7 +324,7 @@ const checkPath = 'm5 12 5 5L20 7';
       <div class="mx-auto max-w-3xl text-center">
         <p class="text-sm font-semibold text-accent-text">AI assistant</p>
         <h2 id="ai-h" class="display mt-3 text-4xl sm:text-6xl">An assistant that edits a copy. <span class="gradient-text">You approve every change.</span></h2>
-        <p class="mt-5 text-lg text-muted">Describe what you want. The assistant reads your script, compiles it and can even profile it, then proposes changes you review before anything touches your editor.</p>
+        <p class="mt-5 text-lg text-muted">Describe what you want and vibe-code your way there. The assistant reads your script, compiles it and can even profile it, then proposes changes you review before anything touches your editor.</p>
       </div>
 
       <ul class="mt-14 grid gap-5 lg:grid-cols-3">
@@ -369,7 +369,7 @@ const checkPath = 'm5 12 5 5L20 7';
           <div>
             <p class="text-sm font-semibold text-accent-text">MCP server</p>
             <h3 class="display mt-3 text-3xl sm:text-4xl">Or drive Pine Studio from <span class="gradient-text">your own assistant</span></h3>
-            <p class="mt-5 text-lg text-muted">DegenView’s optional MCP server opens Pine Studio to any MCP-capable AI assistant. It can read your scripts, compile them, fix the diagnostics and put the result on a chart, within the permissions you grant.</p>
+            <p class="mt-5 text-lg text-muted">Vibe-code your Pine scripts with the assistant you already use. DegenView’s optional MCP server opens Pine Studio to any MCP-capable AI assistant. It can read your scripts, compile them, fix the diagnostics and put the result on a chart, within the permissions you grant.</p>
             <p class="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium">
               <a class="text-accent-text underline underline-offset-4" href={`${DOCS}/mcp/setup`}>Set up the MCP server</a>
               <a class="text-accent-text underline underline-offset-4" href="/#mcp">More on MCP</a>
