@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PlatformIcon from '../components/PlatformIcon.astro';
 import CodeBlock from '../components/CodeBlock.astro';
+import PreReleaseNote from '../components/PreReleaseNote.astro';
 import { getRelease } from '../data/release';
 import { OS_NAMES, PLATFORMS, REPO_URL, RELEASES_URL, assetUrl, type OsName, type Platform } from '../data/platforms';
 
@@ -137,6 +138,7 @@ const arrow = 'M12 4v12m0 0 5-5m-5 5-5-5M5 20h14';
         <li class="rounded-full border border-line bg-surface/70 px-4 py-1.5 text-muted backdrop-blur">Open source · GPL-3.0</li>
         <li class="rounded-full border border-line bg-surface/70 px-4 py-1.5 text-muted backdrop-blur">Signed and notarized on macOS</li>
       </ul>
+      <PreReleaseNote class="mt-10" />
     </div>
   </section>
 
