@@ -2,6 +2,9 @@
 import DownloadButton from './DownloadButton.astro';
 import PreReleaseNote from './PreReleaseNote.astro';
 import Screenshot from './Screenshot.astro';
+
+// Features TradingView paywalls (see the comparison page). First one is the static, no-JS headline.
+const phrases = ['multiple watchlists', 'unlimited indicators', 'multi-chart layouts', 'unlimited price alerts', 'more than 30 symbols'];
 ---
 
 <section class="relative overflow-hidden pb-16 pt-12 sm:pb-24 sm:pt-24">
@@ -10,7 +13,12 @@ import Screenshot from './Screenshot.astro';
   <div class="container-x relative z-10 text-center">
     <p class="mx-auto mb-6 inline-flex rounded-full border border-line bg-surface/60 px-4 py-1.5 text-sm font-medium text-muted backdrop-blur">Free &amp; open source <a href="/tradingview-alternative/" class="-my-2 ml-1 inline-block py-2 font-semibold text-accent-text hover:underline">TradingView alternative</a></p>
     <h1 class="display mx-auto max-w-5xl text-5xl sm:text-7xl lg:text-8xl">
-      Where <em class="italic">multiple watchlists</em> is <span class="gradient-text block">not a premium feature.</span>
+      Where
+      <em class="rotator italic" data-rotator>
+        <span class="sr-only">{phrases[0]}</span>
+        {phrases.map((p, i) => <span class:list={['rotator-item', i === 0 && 'is-active']} aria-hidden="true">{p}</span>)}
+      </em>
+      is <span class="gradient-text">not a premium feature.</span>
     </h1>
     <p class="mx-auto mt-8 max-w-2xl text-balance text-lg text-muted sm:text-xl">
       The free, open source TradingView alternative for your desktop: crypto, stocks and prediction markets in
@@ -26,3 +34,39 @@ import Screenshot from './Screenshot.astro';
     <Screenshot slug="hero" alt="DegenView dashboard with multiple live charts in a grid layout" priority framed sizes="(min-width: 1088px) 1024px, calc(100vw - 2rem)" />
   </div>
 </section>
+
+<style>
+  /* All phrases share one grid cell, so the block is as tall as the tallest and nothing shifts. */
+  .rotator { display: grid; justify-items: center; }
+  .rotator-item { grid-area: 1 / 1; opacity: 0; will-change: transform, opacity, filter; }
+  .rotator-item.is-active { opacity: 1; animation: rot-in .7s cubic-bezier(.2, .8, .2, 1) both; }
+  .rotator-item.is-leaving { animation: rot-out .5s cubic-bezier(.5, 0, 1, .6) both; }
+  /* First paint: no entrance animation, the headline is just there. */
+  .rotator:not(.is-running) .rotator-item.is-active { animation: none; }
+  @keyframes rot-in {
+    from { opacity: 0; transform: translateY(.45em) scale(.96); filter: blur(10px); }
+    to { opacity: 1; transform: none; filter: blur(0); }
+  }
+  @keyframes rot-out {
+    from { opacity: 1; transform: none; filter: blur(0); }
+    to { opacity: 0; transform: translateY(-.45em) scale(.96); filter: blur(10px); }
+  }
+</style>
+
+<script>
+  const el = document.querySelector<HTMLElement>('[data-rotator]');
+  const items = el ? Array.from(el.querySelectorAll<HTMLElement>('.rotator-item')) : [];
+  if (el && items.length > 1 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let i = 0;
+    el.classList.add('is-running');
+    setInterval(() => {
+      if (document.hidden) return;
+      const prev = items[i];
+      i = (i + 1) % items.length;
+      prev.classList.remove('is-active');
+      prev.classList.add('is-leaving');
+      items[i].classList.add('is-active');
+      setTimeout(() => prev.classList.remove('is-leaving'), 500);
+    }, 2800);
+  }
+</script>
