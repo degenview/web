@@ -9,7 +9,7 @@ Drop PNGs here; the site picks them up automatically (missing ones render a "com
 
 | slug | show |
 |---|---|
-| `hero` | Multi-column chart grid with crypto, a stock and a prediction market, favorites sidebar visible |
+| `hero` | Full window: BTC-EUR chart with indicators and drawings, paper-trading order ticket on the right |
 | `markets` | Symbol search across sources, a Polymarket/Kalshi probability chart next to a price chart |
 | `pine-script` | Pine Studio: editor, diagnostics, live preview chart |
 | `portfolio` | Allocation, P&L, transaction ledger |
