@@ -13,5 +13,14 @@ DegenView is an independent project and is not affiliated with TradingView.
 - [Docs](https://docs.degenview.app/): user guide covering markets, charts, drawing tools, Pine Studio, alerts, paper trading, portfolio and the MCP server
 - [Privacy policy](https://degenview.app/privacy-policy/): cookies and analytics
 
+## Languages
+The site is available in English (default), Spanish, German, French, Hindi and Simplified Chinese. Each page has the same path under a language prefix.
+- [English](https://degenview.app/)
+- [Español](https://degenview.app/es/)
+- [Deutsch](https://degenview.app/de/)
+- [Français](https://degenview.app/fr/)
+- [हिन्दी](https://degenview.app/hi/)
+- [简体中文](https://degenview.app/zh/)
+
 ## Source
 - [GitHub](https://github.com/degenview/degenview): source code and releases

@@ -1,0 +1,236 @@
+---
+import { getStaticPaths as paths } from '../../i18n/paths';
+export const getStaticPaths = paths;
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import TopicNav from '../../components/TopicNav.astro';
+import { REPO_URL } from '../../data/platforms';
+import { getLang, useT, localeMeta, fmt } from '../../i18n';
+
+const lang = getLang(Astro.url);
+const t = useT(lang).privacyPolicy;
+
+const UPDATED = new Intl.DateTimeFormat(localeMeta[lang].intl, { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(Date.UTC(2026, 10, 1)));
+
+// Storage keys stay as-is; the Google row's name is translatable.
+const storage: [string, string, string][] = [
+  ['theme', t.storage.table.themePurpose, t.storage.table.themeDuration],
+  ['dv_analytics_consent', t.storage.table.consentPurpose, t.storage.table.consentDuration],
+  [t.storage.table.googleName, t.storage.table.googlePurpose, t.storage.table.googleDuration],
+];
+
+const sections: { id: string; title: string; body: string[] }[] = [
+  { id: 'legal', ...t.legal },
+  { id: 'third', ...t.third },
+  { id: 'retention', ...t.retention },
+  { id: 'app', ...t.app },
+  { id: 'contact', title: t.contact.title, body: t.contact.body },
+];
+
+// Terms/privacy URLs stay here; what each service is used for comes from the dictionary.
+type Provider = { name: string; use: string; terms?: string; privacy?: string; site?: string };
+const marketData: Provider[] = [
+  { name: 'Binance', use: t.app.uses.binance, terms: 'https://www.binance.com/en/terms', privacy: 'https://www.binance.com/en/privacy' },
+  { name: 'Coinbase', use: t.app.uses.coinbase, terms: 'https://www.coinbase.com/legal/user_agreement', privacy: 'https://www.coinbase.com/legal/privacy' },
+  { name: 'CoinGecko', use: t.app.uses.coingecko, terms: 'https://www.coingecko.com/en/terms', privacy: 'https://www.coingecko.com/en/privacy' },
+  { name: 'GeckoTerminal', use: t.app.uses.geckoterminal, terms: 'https://www.coingecko.com/en/terms', privacy: 'https://www.coingecko.com/en/privacy' },
+  { name: 'DEXScreener', use: t.app.uses.dexscreener, terms: 'https://dexscreener.com/terms-and-conditions', privacy: 'https://dexscreener.com/privacy-policy' },
+  { name: 'CoinMarketCap', use: t.app.uses.coinmarketcap, terms: 'https://coinmarketcap.com/terms/', privacy: 'https://coinmarketcap.com/privacy/' },
+  { name: 'Polymarket', use: t.app.uses.polymarket, terms: 'https://polymarket.com/tos', privacy: 'https://polymarket.com/privacy' },
+  { name: 'Kalshi', use: t.app.uses.kalshi, terms: 'https://kalshi-public-docs.s3.amazonaws.com/kalshi-data-terms-of-service.pdf', privacy: 'https://kalshi.com/privacy-policy' },
+  { name: 'Alpaca', use: t.app.uses.alpaca, terms: 'https://alpaca.markets/disclosures', privacy: 'https://alpaca.markets/privacy' },
+  { name: 'Bitstamp', use: t.app.uses.bitstamp, terms: 'https://www.bitstamp.net/terms-of-use/', privacy: 'https://www.bitstamp.net/privacy-policy/' },
+];
+const otherServices: Provider[] = [
+  { name: 'GitHub', use: t.app.uses.github, terms: 'https://docs.github.com/en/site-policy/github-terms/github-terms-of-service', privacy: 'https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement' },
+  { name: 'X', use: t.app.uses.x, terms: 'https://x.com/en/tos', privacy: 'https://x.com/en/privacy' },
+  { name: 'OpenAI', use: t.app.uses.openai, terms: 'https://openai.com/policies/terms-of-use', privacy: 'https://openai.com/policies/privacy-policy' },
+  { name: 'Anthropic', use: t.app.uses.anthropic, terms: 'https://www.anthropic.com/legal/commercial-terms', privacy: 'https://www.anthropic.com/legal/privacy' },
+  { name: 'OpenRouter', use: t.app.uses.openrouter, terms: 'https://openrouter.ai/terms', privacy: 'https://openrouter.ai/privacy' },
+  { name: 'Apple iCloud', use: t.app.uses.icloud, terms: 'https://www.apple.com/legal/internet-services/icloud/', privacy: 'https://www.apple.com/legal/privacy/' },
+];
+const providerGroups: [string, Provider[]][] = [
+  [t.app.table.groups.marketData, marketData],
+  [t.app.table.groups.other, otherServices],
+];
+
+const toc = [
+  { id: 'storage', title: t.storage.title },
+  { id: 'legal', title: t.legal.title },
+  { id: 'consent', title: t.consent.title },
+  { id: 'manage', title: t.manage.title },
+  { id: 'third', title: t.third.title },
+  { id: 'retention', title: t.retention.title },
+  { id: 'app', title: t.app.title },
+  { id: 'contact', title: t.contact.title },
+];
+const num = (id: string) => String(toc.findIndex((x) => x.id === id) + 1).padStart(2, '0');
+// Rows of the two tables sit on their own surface so wide tables scroll inside it, never the page.
+const tableBox = 'relative overflow-x-auto rounded-xl border border-[var(--hair)] bg-[var(--tile)]';
+const h2 = 'display mt-3 text-4xl sm:text-5xl';
+const body = 'max-w-[70ch] text-muted sm:text-lg';
+
+const consentIcons = ['M5 13l4 4L19 7', 'M6 6l12 12M18 6 6 18', 'M12 4v12m0 0 4-4m-4 4-4-4M5 20h14', 'M4 12h16'];
+const consentSteps: [string, string][] = t.consent.steps.map((text, i) => [consentIcons[i], text]);
+---
+
+<Base
+  title={t.meta.title}
+  description={t.meta.description}
+  path="/privacy-policy/"
+  breadcrumbs={[['Home', '/'], [t.meta.breadcrumb, '/privacy-policy/']]}
+>
+  <Header slot="header" />
+
+  <PageHero eyebrow={t.hero.eyebrow} title={t.hero.title} lead={t.hero.lead} align="left">
+    <p class="tag mt-6 max-w-full gap-2 whitespace-normal! leading-snug">
+      <svg viewBox="0 0 24 24" class="size-4 text-up" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.500 3 7.500 7 9 4-1.500 7-4.500 7-9V6z" /><path d="m9 12 2 2 4-4" /></svg>
+      {fmt(t.hero.lastUpdated, { date: UPDATED })}
+    </p>
+    {lang !== 'en' && <p class="card mt-4 max-w-2xl px-4 py-2.5 text-sm text-muted" role="note">{t.notice}</p>}
+  </PageHero>
+
+  <div class="container-x grid grid-cols-[minmax(0,1fr)] gap-6 pb-16 pt-10 sm:pb-24 sm:pt-12 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-10">
+    <TopicNav label={t.meta.breadcrumb} items={toc} />
+
+    <article class="glass min-w-0 divide-y divide-[var(--hair)] p-6 sm:p-8 lg:p-10 [&>section]:py-10 [&>section:first-child]:pt-0 [&>section:last-child]:pb-0">
+      <section id="storage" aria-labelledby="storage-h" class="scroll-mt-24">
+        <p class="card-index">{num('storage')}</p>
+        <h2 id="storage-h" class={h2}>{t.storage.title}</h2>
+        <div class="mt-6 grid gap-4 sm:grid-cols-2 sm:gap-6">
+          <div data-reveal class="flex">
+            <div class="card w-full p-5 sm:p-6">
+              <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-3">
+                <h3 class="display text-2xl sm:text-3xl">{t.storage.necessary.title}</h3>
+                <span class="tag max-w-full whitespace-normal! leading-snug">{t.storage.necessary.badge}</span>
+              </div>
+              <p class="mt-3 text-muted">{t.storage.necessary.body}</p>
+            </div>
+          </div>
+          <div data-reveal style="--i:1" class="flex">
+            <div class="card w-full p-5 sm:p-6">
+              <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-3">
+                <h3 class="display text-2xl sm:text-3xl">{t.storage.analytics.title}</h3>
+                <span class="tag max-w-full whitespace-normal! leading-snug">{t.storage.analytics.badge}</span>
+              </div>
+              <p class="mt-3 text-muted">{t.storage.analytics.body}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class:list={[tableBox, 'mt-4 sm:mt-6']}>
+          <table class="w-full min-w-[34rem] text-left text-sm">
+            <caption class="sr-only">{t.storage.table.caption}</caption>
+            <thead>
+              <tr class="border-b border-[var(--hair)] bg-[var(--tile)]">
+                <th scope="col" class="mono-label px-5 py-3">{t.storage.table.name}</th>
+                <th scope="col" class="mono-label px-5 py-3">{t.storage.table.purpose}</th>
+                <th scope="col" class="mono-label px-5 py-3">{t.storage.table.duration}</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[var(--hair)]">
+              {
+                storage.map(([n, p, d]) => (
+                  <tr>
+                    <th scope="row" class="px-5 py-3 align-top font-mono text-[13px] font-medium">{n}</th>
+                    <td class="px-5 py-3 align-top text-muted">{p}</td>
+                    <td class="px-5 py-3 align-top text-muted">{d}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="legal" aria-labelledby="legal-h" class="scroll-mt-24">
+        <p class="card-index">{num('legal')}</p>
+        <h2 id="legal-h" class={h2}>{sections[0].title}</h2>
+        {sections[0].body.map((p) => <p class:list={[body, 'mt-4']}>{p}</p>)}
+      </section>
+
+      <section id="consent" aria-labelledby="consent-h" class="scroll-mt-24">
+        <p class="card-index">{num('consent')}</p>
+        <h2 id="consent-h" class={h2}>{t.consent.title}</h2>
+        <ul class="mt-6 grid gap-4 sm:grid-cols-2 sm:gap-6">
+          {
+            consentSteps.map(([icon, text], i) => (
+              <li data-reveal style={`--i:${i % 2}`} class="flex">
+                <div class="card w-full p-5 sm:p-6">
+                  <div class="flex items-center justify-between gap-3">
+                    <span class="card-index">{String(i + 1).padStart(2, '0')}</span>
+                    <svg viewBox="0 0 24 24" class="size-5 text-accent-text" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icon} /></svg>
+                  </div>
+                  <p class="mt-4 text-muted">{text}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section id="manage" aria-labelledby="manage-h" class="scroll-mt-24">
+        <p class="card-index">{num('manage')}</p>
+        <h2 id="manage-h" class={h2}>{t.manage.title}</h2>
+        <p class:list={[body, 'mt-4']}>{t.manage.body}</p>
+        <button type="button" data-cookie-settings class="btn btn-gradient mt-6">{t.manage.button}</button>
+      </section>
+
+      {
+        sections.slice(1).map((s) => (
+          <section id={s.id} aria-labelledby={`${s.id}-h`} class="scroll-mt-24">
+            <p class="card-index">{num(s.id)}</p>
+            <h2 id={`${s.id}-h`} class={h2}>{s.title}</h2>
+            {s.id === 'contact' ? (
+              <p class:list={[body, 'mt-4']} set:html={fmt(t.contact.intro, { url: `${REPO_URL}/issues` })} />
+            ) : (
+              <p class:list={[body, 'mt-4']}>{s.body[0]}</p>
+            )}
+            {s.id === 'app' && (
+              <div class:list={[tableBox, 'my-6']}>
+                <table class="w-full min-w-[40rem] text-left text-sm">
+                  <caption class="sr-only">{t.app.table.caption}</caption>
+                  <thead>
+                    <tr class="border-b border-[var(--hair)] bg-[var(--tile)]">
+                      <th scope="col" class="mono-label px-5 py-3">{t.app.table.service}</th>
+                      <th scope="col" class="mono-label px-5 py-3">{t.app.table.usedFor}</th>
+                      <th scope="col" class="mono-label px-5 py-3">{t.app.table.terms}</th>
+                      <th scope="col" class="mono-label px-5 py-3">{t.app.table.privacy}</th>
+                    </tr>
+                  </thead>
+                  {providerGroups.map(([group, list]) => (
+                    <tbody class="divide-y divide-[var(--hair)] border-t border-[var(--hair)]">
+                      <tr><th colspan="4" scope="colgroup" class="mono-label bg-[var(--tile)] px-5 py-2 text-left">{group}</th></tr>
+                      {list.map((r) => (
+                        <tr>
+                          <th scope="row" class="px-5 py-3 text-left align-top font-medium">{r.name}</th>
+                          <td class="px-5 py-3 align-top text-muted">{r.use}</td>
+                          {r.site ? (
+                            <td colspan="2" class="px-5 py-3 align-top"><a class="text-accent-text underline underline-offset-4" href={r.site} target="_blank" rel="noopener noreferrer">{fmt(t.app.table.siteLink, { host: new URL(r.site).hostname })}<span class="sr-only">{t.opensNewTab}</span></a></td>
+                          ) : (
+                            <>
+                              <td class="px-5 py-3 align-top"><a class="text-accent-text underline underline-offset-4" href={r.terms} target="_blank" rel="noopener noreferrer">{t.app.table.terms}<span class="sr-only">{fmt(t.app.table.termsSr, { name: r.name })}</span></a></td>
+                              <td class="px-5 py-3 align-top"><a class="text-accent-text underline underline-offset-4" href={r.privacy} target="_blank" rel="noopener noreferrer">{t.app.table.privacy}<span class="sr-only">{fmt(t.app.table.privacySr, { name: r.name })}</span></a></td>
+                            </>
+                          )}
+                        </tr>
+                      ))}
+                    </tbody>
+                  ))}
+                </table>
+              </div>
+            )}
+            {(s.id === 'contact' ? s.body : s.body.slice(1)).map((p) => <p class:list={[body, 'mt-4']}>{p}</p>)}
+            {s.id === 'contact' && (
+              <a href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer" class="btn btn-ghost mt-6">{t.contact.button}<span class="sr-only">{t.opensNewTab}</span></a>
+            )}
+          </section>
+        ))
+      }
+    </article>
+  </div>
+
+  <Footer slot="footer" />
+</Base>

@@ -1,0 +1,23 @@
+---
+// FAQ block of a sub page: head on the left (sticky from lg), rows-style accordion on the right. The default slot is the
+// accordion's footer line ("more questions?"). Stacks on mobile. Sits in a section with `py-16 sm:py-24`.
+import Accordion from './Accordion.astro';
+interface Props {
+  id: string;
+  eyebrow?: string;
+  /** HTML: may contain <span class="gradient-text">. */
+  title: string;
+  items: { q: string; a: string }[];
+}
+const { id, eyebrow, title, items } = Astro.props;
+---
+
+<div class="grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-14">
+  <div class="scrim lg:sticky lg:top-28 lg:self-start">
+    {eyebrow && <p class="kicker" data-reveal="fade">{eyebrow}</p>}
+    <h2 id={id} class:list={['display text-5xl sm:text-6xl', eyebrow && 'mt-4']} set:html={title} data-reveal style="--i:1" />
+  </div>
+  <Accordion items={items}>
+    <slot />
+  </Accordion>
+</div>

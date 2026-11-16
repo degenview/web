@@ -1,0 +1,96 @@
+---
+import { getLang, localeMeta, localePath, locales, stripLocale, useT } from '../i18n';
+
+interface Props {
+  /** `dropdown`: flag + code button with a popover. `list`: all languages inline (for the mobile menu). */
+  variant?: 'dropdown' | 'list';
+  /** Open the popover above the button (footer). */
+  up?: boolean;
+  /** Popover aligns to the button's right edge (default), left edge, or `auto` = left on phones, right from `sm` (footer row flips alignment there). */
+  align?: 'right' | 'left' | 'auto';
+}
+const { variant = 'dropdown', up = false, align = 'right' } = Astro.props;
+
+const lang = getLang(Astro.url);
+const t = useT(lang);
+// /404/ is a single page for every language: switching language there goes to that language's home page.
+const path = Astro.url.pathname === '/404/' ? '/' : stripLocale(Astro.url.pathname);
+const flags = import.meta.glob<string>('../assets/flags/*.svg', { eager: true, query: '?url', import: 'default' });
+const flagUrl = (l: (typeof locales)[number]) => flags[`../assets/flags/${localeMeta[l].flag}.svg`];
+const items = locales.map((l) => ({ l, href: localePath(l, path), ...localeMeta[l], flagSrc: flagUrl(l), current: l === lang }));
+const current = items.find((i) => i.current)!;
+---
+
+{
+  variant === 'list' ? (
+    <div role="group" aria-label={t.switcher.label} class="flex flex-wrap gap-2 px-1.5 py-1">
+      {items.map((i) => (
+        <a
+          href={i.href}
+          hreflang={i.htmlLang}
+          lang={i.htmlLang}
+          aria-current={i.current ? 'true' : undefined}
+          class:list={['inline-flex items-center gap-2 rounded-lg border px-3.5 py-2 text-sm font-medium transition-colors hover:bg-fg/[0.06]', i.current ? 'border-fg/40 text-fg' : 'border-[var(--hair)] text-fg/80']}
+        >
+          <img src={i.flagSrc} alt="" width="20" height="15" class="h-[15px] w-5 rounded-[2px] object-cover ring-1 ring-black/10" />
+          {i.name}
+        </a>
+      ))}
+    </div>
+  ) : (
+    <details data-lang-menu class="relative">
+      <summary
+        aria-label={`${t.switcher.choose}: ${current.name}`}
+        class="inline-flex cursor-pointer list-none items-center gap-2 rounded-lg px-2.5 py-2 text-sm font-medium text-fg/75 transition-colors hover:bg-fg/[0.06] hover:text-fg xl:px-3.5 [&::-webkit-details-marker]:hidden"
+      >
+        <img src={current.flagSrc} alt="" width="20" height="15" class="h-[15px] w-5 rounded-[2px] object-cover ring-1 ring-black/10" />
+        <span aria-hidden="true" class="font-mono text-xs uppercase tracking-[0.1em]">{current.htmlLang.split('-')[0]}</span>
+        <svg viewBox="0 0 24 24" class="size-3.5 shrink-0 opacity-70" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+      </summary>
+      <div
+        role="group"
+        aria-label={t.switcher.label}
+        class:list={[
+          'absolute z-50 min-w-44 rounded-xl border border-[var(--hair)] bg-bg p-1.5 shadow-[0_24px_60px_-20px_rgb(0_0_0/.7)]',
+          up ? 'bottom-full mb-2' : 'top-full mt-2',
+          align === 'right' ? 'right-0' : align === 'left' ? 'left-0' : 'left-0 sm:left-auto sm:right-0',
+        ]}
+      >
+        {items.map((i) => (
+          <a
+            href={i.href}
+            hreflang={i.htmlLang}
+            lang={i.htmlLang}
+            aria-current={i.current ? 'true' : undefined}
+            class:list={['flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-fg/[0.06] focus-visible:bg-fg/[0.06]', i.current ? 'text-fg' : 'text-fg/80']}
+          >
+            <img src={i.flagSrc} alt="" width="20" height="15" class="h-[15px] w-5 shrink-0 rounded-[2px] object-cover ring-1 ring-black/10" />
+            <span class="flex-1 whitespace-nowrap">{i.name}</span>
+            {i.current && (
+              <svg viewBox="0 0 24 24" class="size-4 shrink-0 text-accent-text" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>
+            )}
+          </a>
+        ))}
+      </div>
+    </details>
+  )
+}
+
+<script>
+  // Close any open language popover on outside click or Escape. Registered once per page.
+  const w = window as unknown as { __langMenuInit?: boolean };
+  if (!w.__langMenuInit) {
+    w.__langMenuInit = true;
+    const open = () => [...document.querySelectorAll<HTMLDetailsElement>('details[data-lang-menu][open]')];
+    document.addEventListener('click', (e) => {
+      for (const d of open()) if (!d.contains(e.target as Node)) d.open = false;
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      for (const d of open()) {
+        d.open = false;
+        d.querySelector('summary')?.focus();
+      }
+    });
+  }
+</script>

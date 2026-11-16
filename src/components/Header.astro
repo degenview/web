@@ -1,38 +1,45 @@
 ---
-import { Image } from 'astro:assets';
-import logo from '../assets/brand/logo.png';
 import { DOCS_URL, REPO_URL } from '../data/platforms';
 import PlatformIcon from './PlatformIcon.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { getLang, useT, localePath, stripLocale } from '../i18n';
 
+const lang = getLang(Astro.url);
+const t = useT(lang).common;
+// /404/ is shared by every language, so nothing is "current" there.
+const here = Astro.url.pathname === '/404/' ? '' : stripLocale(Astro.url.pathname);
+const item = (path: string, label: string) => ({ href: localePath(lang, path), label, current: path === here });
 const links = [
-  { href: '/#features', label: 'Features' },
-  { href: '/pine-studio/', label: 'Pine Studio' },
-  { href: '/tradingview-alternative/', label: 'TradingView alternative' },
-  { href: '/download/', label: 'Download' },
-  { href: '/faq/', label: 'FAQ' },
-  { href: DOCS_URL, label: 'Docs' },
+  item('/#features', t.nav.features),
+  item('/pine-studio/', t.nav.pineStudio),
+  item('/tradingview-alternative/', t.nav.tradingviewAlternative),
+  { href: DOCS_URL, label: t.nav.docs, current: false },
 ];
+const download = item('/download/', t.nav.download);
 ---
 
-<header data-site-header class="sticky top-0 z-40 border-b border-line/50 bg-bg/80 backdrop-blur-xl">
+<header data-site-header class="sticky top-0 z-40 border-b border-[var(--hair)] bg-bg/90">
   <div class="container-x flex h-16 items-center justify-between gap-4">
-    <a href="/" class="flex items-center gap-2.5 font-semibold tracking-tight" aria-label="DegenView home">
-      <Image src={logo} alt="" width={64} height={64} class="size-8" loading="eager" />
-      <span class="text-lg">DegenView</span>
+    <a href={localePath(lang, '/')} class="flex items-center gap-2.5" aria-label={t.nav.homeAria}>
+      <span class="font-display text-[1.7rem] font-extrabold leading-none tracking-[0.03em]">DegenView</span>
     </a>
-    <nav aria-label="Primary" class="hidden items-center gap-1 text-sm font-medium md:flex">
+    <nav aria-label={t.nav.primary} class="hidden items-center gap-0.5 whitespace-nowrap text-sm font-medium lg:flex">
       {links.map((l) => (
-        <a class="rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href={l.href}>{l.label}</a>
+        <a class="rounded-lg px-2.5 py-2 text-fg/75 transition-colors hover:bg-fg/[0.06] hover:text-fg aria-[current=page]:bg-fg/[0.08] aria-[current=page]:text-fg xl:px-3.5" href={l.href} aria-current={l.current ? 'page' : undefined}>{l.label}</a>
       ))}
-      <a class="inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-fg/80 transition-colors hover:bg-chrome hover:text-fg" href={REPO_URL} target="_blank" rel="noopener noreferrer"><PlatformIcon os="GitHub" class="size-4" />GitHub<span class="sr-only"> (opens in a new tab)</span></a>
+      <a class="inline-flex items-center gap-2 rounded-lg px-2.5 py-2 text-fg/75 transition-colors hover:bg-fg/[0.06] hover:text-fg xl:px-3.5" href={REPO_URL} target="_blank" rel="noopener noreferrer"><PlatformIcon os="GitHub" class="size-4" /><span class="sr-only">GitHub {t.opensInNewTab}</span></a>
+      <LanguageSwitcher />
+      <a class="btn btn-primary ml-2 rounded-lg! px-4! py-2! text-sm" href={download.href} aria-current={download.current ? 'page' : undefined}>{download.label}</a>
     </nav>
     <button
       type="button"
       data-menu-button
       aria-expanded="false"
       aria-controls="mobile-menu"
-      aria-label="Open menu"
-      class="grid size-10 place-items-center rounded-lg text-fg/80 transition-colors hover:bg-chrome hover:text-fg md:hidden"
+      aria-label={t.nav.openMenu}
+      data-label-open={t.nav.openMenu}
+      data-label-close={t.nav.closeMenu}
+      class="grid size-10 place-items-center rounded-lg text-fg/80 transition-colors hover:bg-fg/[0.06] hover:text-fg lg:hidden"
     >
       <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
         <path data-icon-open d="M4 7h16M4 12h16M4 17h16" />
@@ -41,17 +48,15 @@ const links = [
     </button>
   </div>
 
-  <nav
-    id="mobile-menu"
-    aria-label="Mobile"
-    hidden
-    class="absolute inset-x-0 top-full max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-line bg-bg shadow-[0_24px_40px_-24px_rgb(0_0_0/.5)] md:hidden"
-  >
-    <div class="container-x flex flex-col gap-1 py-3 text-base font-medium">
+  <nav id="mobile-menu" aria-label={t.nav.mobile} hidden class="absolute inset-x-0 top-full px-4 pt-2 lg:hidden">
+    <div class="glass mx-auto flex max-h-[calc(100dvh-5rem)] max-w-xl flex-col gap-1 overflow-y-auto bg-bg! p-2 text-base font-medium shadow-2xl">
       {links.map((l) => (
-        <a class="rounded-lg px-3 py-3 text-fg/90 transition-colors hover:bg-chrome hover:text-fg" href={l.href}>{l.label}</a>
+        <a class="rounded-lg px-3.5 py-3 text-fg/90 transition-colors hover:bg-fg/[0.06] hover:text-fg aria-[current=page]:bg-fg/[0.08]" href={l.href} aria-current={l.current ? 'page' : undefined}>{l.label}</a>
       ))}
-      <a class="inline-flex items-center gap-2 rounded-lg px-3 py-3 text-fg/90 transition-colors hover:bg-chrome hover:text-fg" href={REPO_URL} target="_blank" rel="noopener noreferrer"><PlatformIcon os="GitHub" class="size-5" />GitHub<span class="sr-only"> (opens in a new tab)</span></a>
+      <a class="inline-flex items-center gap-2 rounded-lg px-3.5 py-3 text-fg/90 transition-colors hover:bg-fg/[0.06] hover:text-fg" href={REPO_URL} target="_blank" rel="noopener noreferrer"><PlatformIcon os="GitHub" class="size-5" />GitHub<span class="sr-only"> {t.opensInNewTab}</span></a>
+      <div class="my-1 border-t border-[var(--hair)]"></div>
+      <LanguageSwitcher variant="list" />
+      <a class="btn btn-primary mx-1 mb-1 mt-1" href={download.href}>{download.label}</a>
     </div>
   </nav>
 </header>
@@ -66,7 +71,7 @@ const links = [
     const set = (open: boolean) => {
       menu.hidden = !open;
       button.setAttribute('aria-expanded', String(open));
-      button.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      button.setAttribute('aria-label', (open ? button.dataset.labelClose : button.dataset.labelOpen) ?? '');
       iconOpen?.classList.toggle('hidden', open);
       iconClose?.classList.toggle('hidden', !open);
     };
@@ -75,6 +80,6 @@ const links = [
     menu.addEventListener('click', (e) => { if ((e.target as Element).closest('a')) set(false); });
     addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { set(false); button.focus(); } });
     document.addEventListener('click', (e) => { if (!menu.hidden && !header.contains(e.target as Node)) set(false); });
-    matchMedia('(min-width: 768px)').addEventListener('change', (e) => { if (e.matches) set(false); });
+    matchMedia('(min-width: 1024px)').addEventListener('change', (e) => { if (e.matches) set(false); });
   }
 </script>

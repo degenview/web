@@ -1,0 +1,438 @@
+---
+import { getStaticPaths as paths } from '../../i18n/paths';
+export const getStaticPaths = paths;
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import SectionNav from '../../components/SectionNav.astro';
+import DownloadButton from '../../components/DownloadButton.astro';
+import PreReleaseNote from '../../components/PreReleaseNote.astro';
+import Screenshot from '../../components/Screenshot.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import CheckList from '../../components/CheckList.astro';
+import FaqSection from '../../components/FaqSection.astro';
+import { REPO_URL } from '../../data/platforms';
+import { SITE, fmt, getLang, localeMeta, localePath, useT } from '../../i18n';
+import themeDark from '../../assets/pine/theme-dark.webp';
+import themeLight from '../../assets/pine/theme-light.webp';
+import themeDracula from '../../assets/pine/theme-dracula.webp';
+
+const lang = getLang(Astro.url);
+const t = useT(lang);
+const p = t.pineStudio;
+
+const DOCS = 'https://docs.degenview.app';
+
+const title = p.meta.title;
+const description = p.meta.description;
+
+const sectionIds = ['write', 'debugger', 'profiler', 'ai', 'themes', 'local', 'workflow', 'differences', 'faq', 'download'] as const;
+const sections: [string, string][] = sectionIds.map((id) => [id, p.sectionNav[id]]);
+
+const icon = {
+  engine: 'M4 6h16M4 12h10M4 18h16M18 9l3 3-3 3',
+  preview: 'M3 17l5-5 4 4 8-9M3 21h18',
+  problems: 'M12 9v4M12 17h.01M10.3 3.9 2.4 17.5A2 2 0 0 0 4.1 20.5h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z',
+  logs: 'M5 4h14v16H5zM9 9h6M9 13h6M9 17h3',
+  strategy: 'M3 17l6-6 4 4 8-9M15 6h6v6',
+  editor: 'M8 7 3 12l5 5M16 7l5 5-5 5M14 4l-4 16',
+  breakpoint: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
+  step: 'M5 12h10M11 6l6 6-6 6M20 5v14',
+  variables: 'M4 7h16M4 12h10M4 17h13',
+  jump: 'M4 12h12M12 6l6 6-6 6M20 4v16',
+  shield: 'M12 3 4 6v6c0 5 3.5 8 8 9 4.500-1 8-4 8-9V6z',
+  user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21c0-4 3.500-6 8-6s8 2 8 6',
+  code: 'M16 18l6-6-6-6M8 6l-6 6 6 6',
+};
+
+// Icons pair with the dictionary items by position.
+const writingIcons: (keyof typeof icon)[] = ['engine', 'preview', 'problems', 'logs', 'strategy', 'editor'];
+const writing = p.write.items.map((it, n) => [writingIcons[n], it.title, it.body] as [keyof typeof icon, string, string]);
+
+const debuggerIcons: (keyof typeof icon)[] = ['breakpoint', 'step', 'variables', 'jump'];
+const debugger_ = p.debugger.items.map((it, n) => [debuggerIcons[n], it.title, it.body] as [keyof typeof icon, string, string]);
+
+const aiSlugs = ['pine-ai-chat', 'pine-ai-plan', 'pine-ai-proposal'];
+const aiModes = p.ai.modes.map((m, n) => [aiSlugs[n], m.name, m.body] as [string, string, string]);
+
+const themeSrcs = [themeDark, themeLight, themeDracula];
+const themes = p.themes.items.map((it, n) => ({ ...it, src: themeSrcs[n] }));
+
+const localIcons: (keyof typeof icon)[] = ['shield', 'user', 'code'];
+
+const stepHrefs = [`${DOCS}/pine/writing-scripts`, `${DOCS}/pine/debugger-profiler`, `${DOCS}/pine/using-scripts`, `${DOCS}/alerts/script-alerts`];
+const steps = p.workflow.steps.map((st, n) => ({ ...st, href: stepHrefs[n] }));
+
+const faqs = p.faq.items;
+
+// Shared bits of markup. Panels follow the site's spacing system: big panels p-6 sm:p-8 lg:p-10, cards p-5 sm:p-6.
+const two = (n: number) => String(n).padStart(2, '0');
+// In-sentence link, and the short mono "docs" link under a block.
+const textLink = 'font-medium text-accent-text underline underline-offset-4';
+const docLink = 'inline-flex items-center py-1 font-mono text-xs font-medium uppercase tracking-[0.12em] text-accent-text underline-offset-4 hover:underline';
+const svgIcon = 'size-5 text-accent-text';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: p.jsonLd.name,
+    url: SITE + localePath(lang, '/pine-studio/'),
+    inLanguage: localeMeta[lang].htmlLang,
+    description,
+    applicationCategory: 'DeveloperApplication',
+    applicationSubCategory: p.jsonLd.applicationSubCategory,
+    operatingSystem: 'macOS, Windows, Linux',
+    isAccessibleForFree: true,
+    license: 'https://www.gnu.org/licenses/gpl-3.0.html',
+    image: `${SITE}/og.png`,
+    isPartOf: { '@type': 'SoftwareApplication', name: 'DegenView', url: SITE },
+    author: { '@type': 'Person', name: 'Nico Oelgart' },
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    softwareHelp: `${DOCS}/pine/overview`,
+    featureList: p.jsonLd.featureList,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    inLanguage: localeMeta[lang].htmlLang,
+    mainEntity: faqs.map(({ q, a }) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+  },
+];
+
+---
+
+<Base title={title} description={description} path="/pine-studio/" jsonLd={jsonLd} breadcrumbs={[[p.meta.breadcrumbHome, '/'], [p.meta.breadcrumbName, '/pine-studio/']]}>
+  <Header slot="header" />
+  <SectionNav sections={sections} />
+
+  <!-- Hero -->
+  <PageHero title={p.hero.title} lead={p.hero.lead} width="wide" align="left">
+    <p slot="eyebrow" class="tag max-w-full !whitespace-normal">
+      <Fragment set:html={fmt(p.hero.badge, { home: localePath(lang, '/') })} />
+    </p>
+    <div class="mt-8 flex flex-col items-start gap-3">
+      <DownloadButton showNote align="start" />
+      <PreReleaseNote variant="inline" class="mx-0!" />
+      <a class={docLink} href={`${DOCS}/pine/overview`}>{p.hero.docsLink}</a>
+    </div>
+    <ul class="mt-6 flex flex-wrap gap-2">
+      {p.hero.chips.map((c) => <li class="tag">{c}</li>)}
+    </ul>
+  </PageHero>
+  <div class="container-x mt-10 sm:mt-12">
+    {/* Not revealed: it is the LCP element. */}
+    <div class="glass stage relative p-3 sm:p-4 lg:p-5">
+      <span class="glow-line absolute inset-x-10 top-0" aria-hidden="true"></span>
+      <Screenshot slug="pine-hero" alt={p.hero.screenshotAlt} priority framed sizes="(min-width: 1216px) 1100px, calc(100vw - 4rem)" />
+    </div>
+  </div>
+
+  <!-- Write -->
+  <section id="write" aria-labelledby="write-h" class="py-16 sm:py-24">
+    <div class="container-x">
+      <SectionHead id="write-h" align="left" eyebrow={p.write.eyebrow} title={p.write.title} lead={p.write.lead} />
+      <ul class="mt-10 grid gap-4 sm:mt-12 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+        {
+          writing.map(([i, t, d], n) => (
+            <li data-reveal style={`--i:${n % 3}`} class="flex">
+              <div class="card card-hover w-full p-5 sm:p-6">
+                <div class="flex items-center justify-between gap-3">
+                  <span class="card-index">{two(n + 1)}</span>
+                  <svg viewBox="0 0 24 24" class={svgIcon} fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icon[i]} /></svg>
+                </div>
+                <h3 class="display mt-5 text-2xl sm:text-[1.7rem]">{t}</h3>
+                <p class="mt-3 text-sm text-fg/70 sm:text-base">{d}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="card mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-1 px-5 py-3 text-sm text-muted sm:mt-6 sm:px-6" data-reveal="fade">
+        <span>{p.write.examples}</span>
+        <a class={docLink} href={`${DOCS}/pine/writing-scripts`}>{p.write.examplesLink}</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Debugger -->
+  <section id="debugger" aria-labelledby="debugger-h" class="py-16 sm:py-24">
+    <div class="container-x">
+      <SectionHead id="debugger-h" align="left" eyebrow={p.debugger.eyebrow} title={p.debugger.title} lead={p.debugger.lead} />
+      <div class="glass mt-10 p-6 sm:mt-12 sm:p-8 lg:p-10" data-reveal="fade">
+        <div class="stage rounded-xl border border-[var(--hair)] p-3 sm:p-5" data-reveal="scale">
+          <Screenshot slug="pine-debugger" alt={p.debugger.screenshotAlt} framed sizes="(min-width: 1216px) 1000px, calc(100vw - 4rem)" />
+        </div>
+        <ul class="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
+          {
+            debugger_.map(([i, t, d], n) => (
+              <li data-reveal style={`--i:${n}`} class="flex">
+                <div class="card card-hover w-full p-5 sm:p-6">
+                  <div class="flex items-center justify-between gap-3">
+                    <span class="card-index">{two(n + 1)}</span>
+                    <svg viewBox="0 0 24 24" class={svgIcon} fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icon[i]} /></svg>
+                  </div>
+                  <h3 class="display mt-5 text-2xl">{t}</h3>
+                  <p class="mt-3 text-sm text-fg/70">{d}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="mt-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-1 border-t border-[var(--hair)] pt-5 text-sm text-muted">
+          <span>{p.debugger.note}</span>
+          <a class={docLink} href={`${DOCS}/pine/debugger-profiler`}>{p.debugger.docsLink}</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Profiler: split panel, text cell and a lit media cell (same build as the home page features). -->
+  <section id="profiler" aria-labelledby="profiler-h" class="py-16 sm:py-24">
+    <div class="container-x">
+      <div class="glass relative grid overflow-hidden lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]" data-reveal="fade">
+        <div class="flex min-w-0 flex-col justify-center p-6 sm:p-8 lg:p-10">
+          <p class="kicker" data-reveal="fade">{p.profiler.eyebrow}</p>
+          <h2 id="profiler-h" class="display mt-4 text-4xl sm:text-5xl" data-reveal style="--i:1"><Fragment set:html={p.profiler.title} /></h2>
+          <p class="mt-4 text-base text-fg/75 sm:text-lg" data-reveal style="--i:2">{p.profiler.lead}</p>
+          <CheckList items={p.profiler.bullets} class="mt-6" />
+          <p class="mt-6"><a class={docLink} href={`${DOCS}/pine/debugger-profiler`}>{p.profiler.docsLink}</a></p>
+        </div>
+        <div class="stage flex min-w-0 items-center border-t border-[var(--hair)] p-4 sm:p-6 lg:border-l lg:border-t-0">
+          <div class="w-full" data-reveal="right" style="--i:2">
+            <Screenshot slug="pine-profiler" alt={p.profiler.screenshotAlt} framed class="w-full" sizes="(min-width: 1024px) 700px, calc(100vw - 4rem)" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI assistant -->
+  <section id="ai" aria-labelledby="ai-h" class="py-16 sm:py-24">
+    <div class="container-x">
+      <SectionHead id="ai-h" align="left" eyebrow={p.ai.eyebrow} title={p.ai.title} lead={p.ai.lead} />
+
+      <div class="mt-10 space-y-4 sm:mt-12 sm:space-y-6">
+        <ul class="glass grid gap-8 p-6 sm:p-8 lg:grid-cols-3 lg:gap-6 lg:p-10" data-reveal="fade">
+          {
+            aiModes.map(([slug, name, d], n) => (
+              <li class="flex flex-col" data-reveal style={`--i:${n + 1}`}>
+                <span class="card-index">{two(n + 1)}</span>
+                <h3 class="display mb-4 mt-3 text-3xl sm:text-4xl">{name}</h3>
+                <Screenshot slug={slug} alt={fmt(p.ai.modeAlt, { name })} sizes="(min-width: 1024px) 330px, 100vw" />
+                <p class="mt-5 text-fg/75">{d}</p>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="glass relative grid overflow-hidden lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]" data-reveal="fade">
+          <div class="stage flex min-w-0 items-center border-b border-[var(--hair)] p-4 sm:p-6 lg:border-b-0 lg:border-r">
+            <div class="w-full" data-reveal="left" style="--i:1">
+              <Screenshot slug="pine-ai-review" alt={p.ai.review.screenshotAlt} class="w-full" sizes="(min-width: 1024px) 640px, calc(100vw - 4rem)" />
+            </div>
+          </div>
+          <div class="flex min-w-0 flex-col justify-center p-6 sm:p-8 lg:p-10">
+            <h3 class="display text-3xl sm:text-4xl" data-reveal>{p.ai.review.title}</h3>
+            <CheckList items={p.ai.review.bullets} class="mt-6" />
+            <p class="mt-5 text-sm text-muted">{p.ai.review.note}</p>
+            <p class="mt-4"><a class={docLink} href={`${DOCS}/pine/ai-assistant`}>{p.ai.review.docsLink}</a></p>
+          </div>
+        </div>
+
+        <div class="glass grid gap-8 p-6 sm:p-8 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:items-center lg:gap-12 lg:p-10" data-reveal="fade">
+          <div>
+            <p class="kicker">{p.ai.mcp.eyebrow}</p>
+            <h3 class="display mt-4 text-3xl sm:text-4xl"><Fragment set:html={p.ai.mcp.title} /></h3>
+            <p class="mt-4 text-base text-fg/75 sm:text-lg">{p.ai.mcp.lead}</p>
+            <p class="mt-5 flex flex-wrap gap-x-6 gap-y-1">
+              <a class={docLink} href={`${DOCS}/mcp/setup`}>{p.ai.mcp.setupLink}</a>
+              <a class={docLink} href={localePath(lang, '/#mcp')}>{p.ai.mcp.moreLink}</a>
+            </p>
+          </div>
+          <div class="card p-5 sm:p-6">
+            <CheckList items={p.ai.mcp.bullets} />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Themes -->
+  <section id="themes" aria-labelledby="themes-h" class="py-16 sm:py-24">
+    <div class="container-x">
+      <SectionHead id="themes-h" align="left" eyebrow={p.themes.eyebrow} title={p.themes.title} lead={p.themes.lead} />
+
+      <div class="mt-10 space-y-4 sm:mt-12 sm:space-y-6">
+        <ul class="glass grid gap-8 p-6 sm:p-8 lg:grid-cols-3 lg:gap-6 lg:p-10" data-reveal="fade">
+          {
+            themes.map((t, n) => (
+              <li data-reveal="scale" style={`--i:${n + 1}`}>
+                <figure class="card shot-glow overflow-hidden">
+                  <Image src={t.src} alt={t.alt} widths={[480, 720, 1240]} sizes="(min-width: 1024px) 330px, 100vw" quality={90} class="block h-auto w-full" loading="lazy" decoding="async" />
+                </figure>
+                <p class="mt-5 flex items-center justify-between gap-3">
+                  <span class="flex items-baseline gap-3"><span class="card-index">{two(n + 1)}</span><span class="display text-2xl sm:text-3xl">{t.name}</span></span>
+                  <span class="tag">{t.note}</span>
+                </p>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="glass relative grid overflow-hidden lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)]" data-reveal="fade">
+          <div class="flex min-w-0 flex-col justify-center p-6 sm:p-8 lg:p-10">
+            <h3 class="display text-3xl sm:text-4xl" data-reveal>{p.themes.custom.title}</h3>
+            <CheckList items={p.themes.custom.bullets} class="mt-6" />
+            <p class="mt-6"><a class={docLink} href={`${DOCS}/pine/writing-scripts`}>{p.themes.custom.docsLink}</a></p>
+          </div>
+          <div class="stage flex min-w-0 items-center border-t border-[var(--hair)] p-4 sm:p-6 lg:border-l lg:border-t-0">
+            <div class="mx-auto w-full max-w-md lg:max-w-none" data-reveal="right" style="--i:1">
+              <Screenshot slug="pine-theme-editor" alt={p.themes.custom.screenshotAlt} sizes="(min-width: 1024px) 500px, 100vw" class="w-full" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Local -->
+  <section id="local" aria-labelledby="local-h" class="py-16 sm:py-24">
+    <div class="container-x">
+      <SectionHead id="local-h" align="left" eyebrow={p.local.eyebrow} title={p.local.title} leadHtml={p.local.lead} />
+      <ul class="mt-10 grid gap-4 sm:mt-12 sm:gap-6 md:grid-cols-3">
+        {
+          p.local.items.map(({ title: t, body: d }, n) => (
+            <li data-reveal style={`--i:${n}`} class="flex">
+              <div class="card card-hover w-full p-5 sm:p-6">
+                <div class="flex items-center justify-between gap-3">
+                  <span class="card-index">{two(n + 1)}</span>
+                  <svg viewBox="0 0 24 24" class={svgIcon} fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icon[localIcons[n]]} /></svg>
+                </div>
+                <h3 class="display mt-5 text-2xl sm:text-[1.7rem]">{t}</h3>
+                <p class="mt-3 text-sm text-fg/70 sm:text-base">{d}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="glass mt-4 grid gap-8 p-6 sm:mt-6 sm:p-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-12 lg:p-10" data-reveal="fade">
+        <div>
+          <h3 class="display text-3xl sm:text-4xl">{p.local.supportsTitle}</h3>
+          <p class="mt-4 text-sm text-muted sm:text-base">
+            {p.local.note}
+            <a class={`ml-1 ${textLink}`} href={`${DOCS}/pine/language`}>{p.local.noteLink}</a>
+          </p>
+        </div>
+        <ul class="flex flex-wrap content-start gap-2">
+          {p.local.supports.map((s) => <li class="rounded-md border border-[var(--hair)] bg-[var(--tile)] px-3 py-1.5 font-mono text-xs text-fg/80">{s}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Workflow -->
+  <section id="workflow" aria-labelledby="workflow-h" class="py-16 sm:py-24">
+    <div class="container-x">
+      <SectionHead id="workflow-h" align="left" eyebrow={p.workflow.eyebrow} title={p.workflow.title} />
+      <ol class="mt-10 grid gap-4 sm:mt-12 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
+        {
+          steps.map(({ title: t, body: d, href, topic }, i) => (
+            <li data-reveal style={`--i:${i}`} class="flex">
+              <div class="card card-hover flex w-full flex-col p-5 sm:p-6">
+                <span class="big-num text-[5.5rem]!" aria-hidden="true">{two(i + 1)}</span>
+                <h3 class="display mt-6 text-2xl sm:text-3xl">{t}</h3>
+                <p class="mt-3 flex-1 text-sm text-fg/70 sm:text-base">{d}</p>
+                <a href={href} class={`mt-5 ${docLink}`}><Fragment set:html={fmt(p.workflow.readMore, { topic })} /></a>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Differences from TradingView -->
+  <section id="differences" aria-labelledby="differences-h" class="py-16 sm:py-24">
+    <div class="container-x">
+      <SectionHead id="differences-h" align="left" eyebrow={p.differences.eyebrow} title={p.differences.title} lead={p.differences.lead} />
+
+      <div class="glass mt-10 sm:mt-12" data-reveal="fade">
+        <div class="sticky top-[7.75rem] z-10 hidden grid-cols-[12rem_1fr_1fr] gap-6 rounded-t-[inherit] border-b border-[var(--hair)] bg-chrome px-8 py-3 md:grid lg:px-10" aria-hidden="true">
+          <span></span><span class="mono-label">{p.differences.colTradingView}</span><span class="mono-label !text-accent-text">{p.differences.colDegenView}</span>
+        </div>
+        <dl class="divide-y divide-[var(--hair)]">
+          {
+            p.differences.rows.map(({ area, tradingView: tv, degenView: dv }) => (
+              <div class="grid gap-x-6 gap-y-2 px-6 py-5 transition-colors hover:bg-[var(--tile)] sm:px-8 md:grid-cols-[12rem_1fr_1fr] lg:px-10">
+                <dt class="display break-words text-2xl md:self-start">{area}</dt>
+                <dd class="text-muted">
+                  <span class="mono-label mb-1 block md:hidden">{p.differences.mobileTradingView}</span>
+                  {tv}
+                </dd>
+                <dd class="text-fg/90">
+                  <span class="mono-label mb-1 block !text-accent-text md:hidden">{p.differences.mobileDegenView}</span>
+                  {dv}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <div class="rows mt-4 sm:mt-6" data-reveal="fade">
+        {
+          p.differences.cards.map((c, n) => (
+            <div class="row">
+              <h3 class="row-claim"><span class="card-index">{two(n + 1)}</span><span>{c.title}</span></h3>
+              <p class="row-text">{c.body}</p>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="card mt-4 px-5 py-4 text-sm text-muted sm:mt-6 sm:px-6" data-reveal="fade">
+        <p class="flex flex-wrap justify-center gap-x-6 gap-y-1 text-center">
+          <a class={docLink} href={`${DOCS}/pine/language`}>{p.differences.supportedLink}</a>
+          <a class={docLink} href={localePath(lang, '/tradingview-alternative/')}>{p.differences.compareLink}</a>
+        </p>
+        <p class="mt-3 text-center text-xs">{p.differences.trademark}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" aria-labelledby="faq-h" class="py-16 sm:py-24">
+    <div class="container-x">
+      <FaqSection id="faq-h" eyebrow={p.faq.eyebrow} title={p.faq.title} items={faqs}>
+        <Fragment set:html={fmt(p.faq.more, { faqHref: localePath(lang, '/faq/'), issuesHref: `${REPO_URL}/issues` })} />
+      </FaqSection>
+    </div>
+  </section>
+
+  <!-- Download -->
+  <section id="download" aria-labelledby="dl-h" class="pb-16 pt-16 sm:pb-24 sm:pt-24">
+    <div class="container-x">
+      <div class="glass stage relative mx-auto max-w-4xl" data-reveal="scale">
+        <span class="glow-line absolute inset-x-10 top-0" aria-hidden="true"></span>
+        <div class="p-6 text-center sm:p-8 lg:p-10">
+          <p class="kicker kicker-c">{t.common.nav.download}</p>
+          <h2 id="dl-h" class="display mt-4 text-5xl sm:text-6xl"><Fragment set:html={p.download.title} /></h2>
+          <p class="mx-auto mt-5 max-w-xl text-lg text-fg/75">{p.download.lead}</p>
+          <div class="mt-8 flex justify-center"><DownloadButton showNote /></div>
+          <PreReleaseNote variant="inline" class="mt-6" wrapClass="-mx-5 w-auto! sm:mx-0" />
+          <p class="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-1">
+            <a class={docLink} href={`${DOCS}/pine/overview`}>{p.download.docsLink}</a>
+            <a class={docLink} href={localePath(lang, '/download/')}>{p.download.allDownloadsLink}</a>
+            <a class={docLink} href={localePath(lang, '/tradingview-alternative/')}>{p.download.compareLink}</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</Base>

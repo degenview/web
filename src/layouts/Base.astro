@@ -4,31 +4,40 @@ import themeInline from '../scripts/theme-inline.js?raw';
 import { getRelease } from '../data/release';
 import CookieConsent from '../components/CookieConsent.astro';
 import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import displayLatin from '@fontsource-variable/big-shoulders-display/files/big-shoulders-display-latin-wght-normal.woff2?url';
+import { SITE, alternates, getLang, localeMeta, localePath, useT } from '../i18n';
 
 interface Props {
   title: string;
   description: string;
+  /** Locale-agnostic (English) path of this page, e.g. '/faq/'. Localised automatically. */
   path?: string;
   jsonLd?: object[];
   noindex?: boolean;
   /** Trail for a BreadcrumbList, home first: `[['Home', '/'], ['FAQ', '/faq/']]`. */
   breadcrumbs?: [string, string][];
 }
-const SITE = 'https://degenview.app';
 const { title, description, path = '/', jsonLd = [], noindex = false, breadcrumbs } = Astro.props;
-const canonical = new URL(path, SITE).href;
+const lang = getLang(Astro.url);
+const t = useT(lang);
+const meta = localeMeta[lang];
+const canonical = new URL(localePath(lang, path), SITE).href;
+const hreflangs = alternates(path);
 const ogImage = `${SITE}/og.png`;
-const ogAlt = 'DegenView: the free, open source TradingView alternative';
+const ogAlt = t.common.ogAlt;
 const crumbs = breadcrumbs && {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
-  itemListElement: breadcrumbs.map(([name, href], i) => ({ '@type': 'ListItem', position: i + 1, name, item: new URL(href, SITE).href })),
+  itemListElement: breadcrumbs.map(([name, href], i) => ({ '@type': 'ListItem', position: i + 1, name, item: new URL(localePath(lang, href), SITE).href })),
 };
 const release = await getRelease();
+// Reveal-on-enter hides `[data-reveal]` elements only while `html.js-reveal` is set: JS on, motion allowed, IntersectionObserver there.
+// If src/scripts/reveal.ts has not run after 4 s (blocked or failed script), the class is dropped again and everything is visible.
+const revealInline = `try{var d=document.documentElement;if('IntersectionObserver'in window&&!matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('js-reveal');setTimeout(function(){if(!window.__dvReveal)d.classList.remove('js-reveal')},4000)}}catch(e){}`;
 ---
 
 <!doctype html>
-<html lang="en" data-release-tag={release.tag ?? ''}>
+<html lang={meta.htmlLang} data-release-tag={release.tag ?? ''}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -37,6 +46,8 @@ const release = await getRelease();
     <meta name="author" content="Nico Oelgart" />
     <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large'} />
     <link rel="canonical" href={canonical} />
+    {!noindex && hreflangs.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
+    {!noindex && <link rel="alternate" hreflang="x-default" href={hreflangs[0].href} />}
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
     <meta name="color-scheme" content="light dark" />
@@ -56,7 +67,8 @@ const release = await getRelease();
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={ogAlt} />
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale" content={meta.ogLocale} />
+    {!noindex && hreflangs.filter((a) => a.lang !== lang).map((a) => <meta property="og:locale:alternate" content={localeMeta[a.lang].ogLocale} />)}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
@@ -64,21 +76,28 @@ const release = await getRelease();
     <meta name="twitter:image:alt" content={ogAlt} />
 
     <link rel="preload" as="font" type="font/woff2" href={interLatin} crossorigin />
+    {lang !== 'hi' && lang !== 'zh' && <link rel="preload" as="font" type="font/woff2" href={displayLatin} crossorigin />}
     <script is:inline set:html={themeInline}></script>
+    <script is:inline set:html={revealInline}></script>
     {[...jsonLd, ...(crumbs ? [crumbs] : [])].map((d) => <script is:inline type="application/ld+json" set:html={JSON.stringify(d)} />)}
     <slot name="head" />
   </head>
   <body class="min-h-screen antialiased">
-    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-white">Skip to content</a>
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-white">{t.common.skipToContent}</a>
+    <canvas class="candle-city" aria-hidden="true" data-candle-city></canvas>
     <slot name="header" />
     <main id="main"><slot /></main>
     <slot name="footer" />
     <CookieConsent />
     <script>
+      import '../scripts/reveal';
       import { initThemeToggle } from '../scripts/theme';
       import { initDownloads } from '../scripts/platform';
+      import { initCandleCity } from '../scripts/candle-city';
       initThemeToggle();
       initDownloads();
+      const cityCanvas = document.querySelector<HTMLCanvasElement>('[data-candle-city]');
+      if (cityCanvas) initCandleCity(cityCanvas);
     </script>
   </body>
 </html>

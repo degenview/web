@@ -1,0 +1,31 @@
+---
+// Title block shared by the sub pages: soft grid + glow backdrop, then kicker, condensed h1 and lead on a scrim.
+// The column sits above the next sections (z-10) so a download menu opening from the slot is never covered.
+// The default slot sits under the lead (buttons, chips, a search box) inside the same column.
+// `align="center"` (default) centers the column; `left` sets it flush left with the lead capped to a readable width.
+interface Props {
+  eyebrow?: string;
+  /** HTML: may contain <span class="gradient-text">. */
+  title: string;
+  lead?: string;
+  /** Max width of the column: `narrow` (2xl), `default` (3xl) or `wide` (4xl). */
+  width?: 'narrow' | 'default' | 'wide';
+  align?: 'center' | 'left';
+}
+const { eyebrow, title, lead, width = 'default', align = 'center' } = Astro.props;
+const max = { narrow: 'max-w-2xl', default: 'max-w-3xl', wide: 'max-w-4xl' }[width];
+const left = align === 'left';
+---
+
+<section class="relative pt-16 sm:pt-24">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="container-x relative z-10">
+    <div class:list={['scrim', left ? 'max-w-4xl' : ['mx-auto text-center', max]]}>
+      {Astro.slots.has('eyebrow') && <div class:list={['mb-5 flex', !left && 'justify-center']} data-reveal="fade"><slot name="eyebrow" /></div>}
+      {eyebrow && <p class:list={['kicker', !left && 'kicker-c']} data-reveal="fade">{eyebrow}</p>}
+      <h1 class:list={['display text-6xl sm:text-7xl', eyebrow && 'mt-5']} set:html={title} data-reveal style="--i:1" />
+      {lead && <p class:list={['mt-5 max-w-2xl text-lg text-muted sm:text-xl', !left && 'mx-auto']} data-reveal style="--i:2">{lead}</p>}
+      <div data-reveal style="--i:3"><slot /></div>
+    </div>
+  </div>
+</section>

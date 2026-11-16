@@ -1,30 +1,56 @@
 ---
 import Screenshot from './Screenshot.astro';
 import type { Feature } from '../data/features';
-interface Props { feature: Feature; flip?: boolean }
-const { feature: f, flip = false } = Astro.props;
+import { getLang, localePath } from '../i18n';
+interface Props { feature: Feature; /** 1-based position, shown as the "01" index. */ index: number; flip?: boolean }
+const { feature: f, index, flip = false } = Astro.props;
+const lang = getLang(Astro.url);
+const num = String(index).padStart(2, '0');
+
+// Numbers, units ("24h", "3D") and ALL-CAPS tickers or acronyms ("USD", "CSV", "P&L") are set in mono so the facts pop.
+const FACT = /(\b\d+[A-Za-z]{0,2}\b|\b[A-Z][A-Z0-9&]+\b)/;
+const parts = (text: string) => text.split(FACT).map((t, i) => ({ t, fact: i % 2 === 1 }));
 ---
 
-<article id={f.slug} class="grid items-center gap-10 py-14 lg:grid-cols-2 lg:gap-16 lg:py-24">
-  <div class:list={[flip && 'lg:order-2']}>
-    <p class="text-sm font-semibold text-accent-text">{f.eyebrow}</p>
-    <h3 class="display mt-3 text-3xl sm:text-5xl">{f.title}</h3>
-    <p class="mt-5 text-lg text-muted">{f.blurb}</p>
-    <ul class="mt-7 space-y-3">
-      {
-        f.bullets.map((b) => (
-          <li class="flex gap-3">
-            <svg viewBox="0 0 24 24" class="mt-1 size-5 shrink-0 text-accent-text" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7" /></svg>
-            <span class="text-fg/90">{b}</span>
-          </li>
-        ))
-      }
-    </ul>
+{/*
+  One split panel: a numbered text cell and a framed media cell, divided by one hairline (left/right on lg, top/bottom
+  when stacked: text first, media below; a flipped panel puts the media left). Reveal on enter: the panel rises, the
+  screenshot scales in from the side and the text items follow in a stagger (global.css "Reveal on enter").
+*/}
+<article id={f.slug} data-reveal="fade" class:list={['glass relative grid overflow-hidden', flip ? 'lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]' : 'lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]']}>
+  <div class:list={['flex min-w-0 flex-col justify-center p-6 sm:p-8 lg:p-10', flip && 'lg:order-2']}>
+    <div class="flex items-center justify-between gap-3" data-reveal="fade">
+      <span class="card-index">{num}</span>
+      <span class="tag">{f.eyebrow}</span>
+    </div>
+    <h3 class="display mt-6 text-4xl sm:text-5xl" data-reveal style="--i:1">{f.title}</h3>
+    <p class="mt-4 text-base text-fg/75 sm:text-lg" data-reveal style="--i:2">{f.blurb}</p>
+    {
+      f.bullets.length > 0 && (
+        <ul class="mt-7">
+          {f.bullets.map((b, i) => (
+            <li class="fact-row" data-reveal style={`--i:${3 + i}`}>
+              <span class="min-w-0 text-sm leading-snug text-fg/85 sm:text-[0.95rem]">
+                {parts(b).map((p) => (p.fact ? <span class="fact-key">{p.t}</span> : p.t))}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )
+    }
     {f.link && (
-      <p class="mt-8">
-        <a href={f.link.href} class="btn btn-primary">{f.link.label}</a>
+      <p class="mt-8" data-reveal style={`--i:${3 + f.bullets.length}`}>
+        <a href={localePath(lang, f.link.href)} class="btn btn-primary">
+          {f.link.label}
+          <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+        </a>
       </p>
     )}
   </div>
-  <Screenshot slug={f.slug} alt={f.alt} framed={f.framed} class={flip ? 'lg:order-1' : ''} />
+
+  <div class:list={['stage flex min-w-0 items-center border-t border-[var(--hair)] p-4 sm:p-6 lg:border-t-0', flip ? 'lg:order-1 lg:border-r' : 'lg:border-l']}>
+    <div class="w-full" data-reveal={flip ? 'left' : 'right'} style="--i:2">
+      <Screenshot slug={f.slug} alt={f.alt} framed={f.framed} class="w-full" sizes="(min-width: 1024px) 700px, calc(100vw - 4rem)" />
+    </div>
+  </div>
 </article>

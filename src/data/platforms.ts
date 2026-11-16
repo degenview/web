@@ -13,11 +13,17 @@ export type Arch = 'arm64' | 'x64';
 export type PlatformId = 'macos-arm64' | 'macos-x64' | 'windows-x64' | 'windows-arm64' | 'linux-x64' | 'linux-arm64';
 
 /** One downloadable file kind. The first format of an OS is its default. */
+export type FormatKind = 'diskImage' | 'installer' | 'tarball' | 'flatpak';
+
 export interface Format {
+  /** Key of the translated name in `common.platforms.formats`. */
+  kind: FormatKind;
   /** Appended to `DegenView-<tag>-<platform id>` to form the asset name. */
   suffix: string;
+  /** English name; use `formatName()` to render it in the page language. */
   name: string;
-  ext: string;
+  /** File extension shown as a label; omitted for the obvious installer formats (.dmg, .exe). */
+  ext?: string;
 }
 
 export interface Platform {
@@ -32,16 +38,14 @@ export interface Platform {
 
 export const FORMATS: Record<OsName, [Format, ...Format[]]> = {
   macOS: [
-    { suffix: '.dmg', name: 'Disk image', ext: 'dmg' },
-    { suffix: '.zip', name: 'Zip archive', ext: 'zip' },
+    { kind: 'diskImage', suffix: '.dmg', name: 'Disk image' },
   ],
   Windows: [
-    { suffix: '-setup.exe', name: 'Installer', ext: 'exe' },
-    { suffix: '.zip', name: 'Portable zip', ext: 'zip' },
+    { kind: 'installer', suffix: '-setup.exe', name: 'Installer' },
   ],
   Linux: [
-    { suffix: '.tar.gz', name: 'Tarball', ext: 'tar.gz' },
-    { suffix: '.flatpak', name: 'Flatpak', ext: 'flatpak' },
+    { kind: 'tarball', suffix: '.tar.gz', name: 'Tarball', ext: 'tar.gz' },
+    { kind: 'flatpak', suffix: '.flatpak', name: 'Flatpak', ext: 'flatpak' },
   ],
 };
 
@@ -62,6 +66,11 @@ export const PLATFORMS: Platform[] = [
   platform('linux-x64', 'Linux', 'x64', 'x64'),
   platform('linux-arm64', 'Linux', 'arm64', 'ARM64'),
 ];
+
+/** Translated display name of a download format. `t` is `useT(lang).common`. */
+export function formatName(t: { platforms: { formats: Record<FormatKind, string> } }, f: Format): string {
+  return t.platforms.formats[f.kind];
+}
 
 export const OS_NAMES: OsName[] = ['Windows', 'macOS', 'Linux'];
 

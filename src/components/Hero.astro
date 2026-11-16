@@ -2,54 +2,107 @@
 import DownloadButton from './DownloadButton.astro';
 import PreReleaseNote from './PreReleaseNote.astro';
 import Screenshot from './Screenshot.astro';
+import { getLang, useT, localePath } from '../i18n';
+
+const lang = getLang(Astro.url);
+const h = useT(lang).home.hero;
 
 // Features TradingView paywalls (see the comparison page). First one is the static, no-JS headline.
-const phrases = ['multiple watchlists', 'unlimited indicators', 'multi-chart layouts', 'unlimited price alerts', 'more than 30 symbols'];
+const phrases = h.phrases;
+// All phrases share one font size, fitted so the widest one still fits on a line. `--w` is that phrase's width in em.
+// Latin phrases are set in uppercase Big Shoulders Display 800, so the width comes from the font's real advance widths
+// (units per em, uppercase + digits), plus the .012em tracking per character. Devanagari (hi) uses the sans stack, where
+// a flat 0.54 em per character is close enough. Chinese (zh) glyphs are full-width: 1 em per character.
+const ADV: Record<string, number> = {
+  A: .443, B: .441, C: .455, D: .461, E: .382, F: .378, G: .457, H: .455, I: .215, J: .421, K: .459, L: .374, M: .691,
+  N: .508, O: .462, P: .436, Q: .462, R: .445, S: .441, T: .385, U: .453, V: .457, W: .733, X: .435, Y: .43, Z: .388,
+  '0': .473, '1': .256, '2': .457, '3': .47, '4': .479, '5': .48, '6': .466, '7': .447, '8': .467, '9': .466,
+  ' ': .217, '-': .413, '&': .582, '.': .238, ',': .239,
+};
+const emWidth = (p: string) =>
+  [...p.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')].reduce((n, c) => n + (ADV[c] ?? 0.46) + 0.012, 0);
+const fit = lang === 'zh' ? Math.max(...phrases.map((p) => [...p].length)) * 1.04 : lang === 'hi' ? Math.max(...phrases.map((p) => [...p].length)) * 0.54 : Math.max(...phrases.map(emWidth)) * 1.04;
 ---
 
-<section class="relative overflow-hidden pb-16 pt-12 sm:pb-24 sm:pt-24">
+<section class="relative overflow-hidden pt-12 sm:pt-20">
   <div class="hero-bg" aria-hidden="true"></div>
 
-  <div class="container-x relative z-10 text-center">
-    <p class="mx-auto mb-6 inline-flex rounded-full border border-line bg-surface/60 px-4 py-1.5 text-sm font-medium text-muted backdrop-blur">Free &amp; open source <a href="/tradingview-alternative/" class="-my-2 ml-1 inline-block py-2 font-semibold text-accent-text hover:underline">TradingView alternative</a></p>
-    <h1 class="display mx-auto max-w-5xl text-5xl sm:text-7xl lg:text-8xl">
-      Where
-      <em class="rotator italic" data-rotator>
-        <span class="sr-only">{phrases[0]}</span>
-        {phrases.map((p, i) => <span class:list={['rotator-item', i === 0 && 'is-active']} aria-hidden="true">{p}</span>)}
-      </em>
-      is <span class="gradient-text">not a premium feature.</span>
-    </h1>
-    <p class="mx-auto mt-8 max-w-2xl text-balance text-lg text-muted sm:text-xl">
-      The free, open source TradingView alternative for your desktop: crypto, stocks and prediction markets in
-      multi-chart layouts, with local Pine Script, alerts and replay. No account, and it runs on your machine.
-    </p>
-    <div class="mt-8 flex flex-col items-center gap-4 sm:mt-10">
-      <DownloadButton showNote github />
-      <PreReleaseNote variant="inline" />
+  <div class="container-x relative z-10">
+    <div class="scrim max-w-6xl">
+      <span class="hero-scrim" aria-hidden="true"></span>
+      <p class="kicker" data-reveal="fade">
+        <span>{h.eyebrow}</span>
+        <span aria-hidden="true" class="opacity-50">/</span>
+        <a href={localePath(lang, '/tradingview-alternative/')} class="-my-2 py-2 text-fg transition-colors hover:text-accent-text">{h.eyebrowLink}</a>
+      </p>
+      <h1 class="display hero-h1 mt-6" style={`--w:${fit.toFixed(2)};--i:1`} data-reveal>
+        <span class="text-fg/55">{h.headlineBefore}</span>
+        <span class="rotator" data-rotator>
+          <span class="sr-only">{phrases[0]}</span>
+          {phrases.map((p, i) => <span class:list={['rotator-item', 'gradient-text', i === 0 && 'is-active']} aria-hidden="true">{p}</span>)}
+        </span>
+        <span class="text-fg/55">{h.headlineMiddle}</span> {h.headlineEmphasis}
+      </h1>
+      <p class="mt-8 max-w-2xl text-balance text-lg text-muted sm:text-xl" data-reveal style="--i:2">
+        {h.lead}
+      </p>
+      <div class="mt-8 flex flex-col items-start gap-4 sm:mt-10" data-reveal style="--i:3">
+        <DownloadButton showNote github align="start" />
+        <PreReleaseNote variant="inline" class="mx-0!" />
+      </div>
     </div>
   </div>
 
-  <div class="container-x mt-14 max-w-5xl sm:mt-20">
-    <Screenshot slug="hero" alt="DegenView dashboard with multiple live charts in a grid layout" priority framed sizes="(min-width: 1088px) 1024px, calc(100vw - 2rem)" />
+  <div class="container-x mt-12 sm:mt-16">
+    {/* The window shot sits in a lit glass frame, like a device on a stage. Not revealed: it is the LCP element. */}
+    <div class="glass stage relative p-3 sm:p-4 lg:p-5">
+      <span class="glow-line absolute inset-x-10 top-0" aria-hidden="true"></span>
+      <Screenshot slug="hero" alt={h.screenshotAlt} priority framed sizes="(min-width: 1152px) 1100px, calc(100vw - 3.5rem)" />
+    </div>
   </div>
 </section>
 
-<style>
-  /* All phrases share one grid cell, so the block is as tall as the tallest and nothing shifts. */
-  .rotator { display: grid; justify-items: center; }
-  .rotator-item { grid-area: 1 / 1; opacity: 0; will-change: transform, opacity, filter; }
+<style is:global>
+  /*
+   * Readability scrim behind the text column (headline, lead, download buttons) so the neon candles stay vivid on the right
+   * but never fight the copy: a static radial wash of the page colour, strongest on the left, fading out well inside its box
+   * and at the top edge. Painted once, no filters. Sits at z-index -1 inside `.scrim`, which isolates it from the canvas.
+   */
+  .hero-scrim {
+    position: absolute; z-index: -1; pointer-events: none;
+    top: -5rem; bottom: -4rem; left: -3rem; width: min(calc(100% + 6rem), 60rem);
+    background: radial-gradient(ellipse 72% 70% at 32% 52%,
+      color-mix(in oklab, var(--bg) 84%, transparent) 0%,
+      color-mix(in oklab, var(--bg) 62%, transparent) 42%,
+      color-mix(in oklab, var(--bg) 24%, transparent) 72%,
+      transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%);
+    mask-image: linear-gradient(to bottom, transparent, #000 14%);
+  }
+  /*
+   * Headline: condensed caps, big. The changing phrase always stays on ONE line, so the headline never grows or shrinks:
+   * a long phrase (or a narrow screen) shrinks the phrases' font size to fit the width instead of wrapping.
+   * `--w` is the widest phrase in em (see the frontmatter), 100cqw is the headline's width.
+   */
+  .hero-h1 { container-type: inline-size; font-size: clamp(3.5rem, 1.6rem + 8vw, 8.5rem); line-height: .92; }
+  html:lang(zh) .hero-h1 { font-size: clamp(2.5rem, 1.3rem + 5.2vw, 5.5rem); line-height: 1.25; }
+  html:lang(hi) .hero-h1 { font-size: clamp(2.5rem, 1.3rem + 5.2vw, 5.5rem); line-height: 1.25; }
+  .rotator { display: grid; justify-items: start; align-items: center; height: 1lh; }
+  .rotator-item {
+    grid-area: 1 / 1; opacity: 0; white-space: nowrap; will-change: transform, opacity;
+    font-size: min(1em, calc(100cqw / var(--w)));
+  }
   .rotator-item.is-active { opacity: 1; animation: rot-in .7s cubic-bezier(.2, .8, .2, 1) both; }
   .rotator-item.is-leaving { animation: rot-out .5s cubic-bezier(.5, 0, 1, .6) both; }
   /* First paint: no entrance animation, the headline is just there. */
   .rotator:not(.is-running) .rotator-item.is-active { animation: none; }
   @keyframes rot-in {
-    from { opacity: 0; transform: translateY(.45em) scale(.96); filter: blur(10px); }
-    to { opacity: 1; transform: none; filter: blur(0); }
+    from { opacity: 0; transform: translateY(.4em); }
+    to { opacity: 1; transform: none; }
   }
   @keyframes rot-out {
-    from { opacity: 1; transform: none; filter: blur(0); }
-    to { opacity: 0; transform: translateY(-.45em) scale(.96); filter: blur(10px); }
+    from { opacity: 1; transform: none; }
+    to { opacity: 0; transform: translateY(-.4em); }
   }
 </style>
 

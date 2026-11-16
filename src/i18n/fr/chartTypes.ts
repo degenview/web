@@ -1,0 +1,32 @@
+import type { Dict } from '../en';
+
+export const chartTypes: Dict['chartTypes'] = {
+  eyebrow: 'types de graphiques',
+  title: 'Les chandeliers ne sont <span class="gradient-text">que le début</span>',
+  lead: '{count} types de graphiques, à un clic. Faites votre choix.',
+  exampleAlt: 'Exemple de graphique : {name}',
+  previous: 'Type de graphique précédent',
+  next: 'Type de graphique suivant',
+  pause: 'Mettre le défilement en pause',
+  play: 'Lancer le défilement automatique',
+  items: {
+    candles: { name: 'Chandeliers', desc: 'Le classique : ouverture, plus haut, plus bas et clôture dans une seule forme de corps et de mèches.' },
+    hollowCandles: { name: 'Chandeliers creux', desc: 'Les chandeliers haussiers sont creux et les baissiers pleins : l’élan se lit d’un coup d’œil.' },
+    bars: { name: 'Barres', desc: 'Une ligne verticale d’amplitude avec un repère d’ouverture à gauche et de clôture à droite.' },
+    highLowBars: { name: 'Barres haut-bas', desc: 'Chaque barre va du plus haut au plus bas. De l’amplitude pure, sans avis sur la clôture.' },
+    volumeCandles: { name: 'Chandeliers de volume', desc: 'Des chandeliers dont la largeur croît avec le volume échangé : les grosses séances ressortent.' },
+    heikinAshi: { name: 'Heikin Ashi', desc: 'Des chandeliers moyennés qui lissent le bruit et facilitent le suivi des tendances.' },
+    line: { name: 'Ligne', desc: 'Les cours de clôture reliés en une ligne nette.' },
+    lineWithMarkers: { name: 'Ligne avec marqueurs', desc: 'La même ligne, avec un point sur chaque clôture.' },
+    stepLine: { name: 'Ligne en escalier', desc: 'Maintient chaque clôture à plat jusqu’à la suivante : on voit exactement quand le prix a changé.' },
+    area: { name: 'Aire', desc: 'Une ligne dont tout le dessous est rempli.' },
+    hlcArea: { name: 'Aire HLC', desc: 'L’amplitude plus haut–plus bas sous forme de bande autour de la ligne de clôture.' },
+    baseline: { name: 'Ligne de base', desc: 'Vert au-dessus d’un niveau de référence, rouge en dessous.' },
+    columns: { name: 'Colonnes', desc: 'Les cours de clôture en barres depuis le bas, teintées selon la direction.' },
+    renko: { name: 'Renko', desc: 'Des briques de taille fixe qui n’apparaissent que lorsque le prix bouge assez. Pas de mouvement, pas de brique.' },
+    kagi: { name: 'Kagi', desc: 'Des lignes verticales reliées par de petits paliers, qui ne changent de sens que sur un retournement significatif.' },
+    lineBreak: { name: 'Line Break', desc: 'Un nouveau bloc ne se forme que lorsque le prix casse la fourchette récente, ce qui filtre le bruit.' },
+    pointAndFigure: { name: 'Point & Figure', desc: 'Des colonnes de X et de O pour les hausses et les baisses, sans aucun axe du temps.' },
+    range: { name: 'Range', desc: 'Chaque barre couvre la même amplitude de prix : un marché calme dessine simplement moins de barres.' },
+  },
+};

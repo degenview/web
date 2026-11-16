@@ -1,0 +1,61 @@
+---
+// Table of contents for long pages: scrolling chips on phones, a sticky glass list on desktop that follows the scroll.
+// Each item points at the id of a <section> on the page.
+interface Props {
+  label: string;
+  heading?: string;
+  items: { id: string; title: string; count?: number }[];
+}
+const { label, heading, items } = Astro.props;
+---
+
+<nav aria-label={label} class="topic-nav min-w-0 lg:sticky lg:top-24 lg:self-start">
+  <div class="topic-box">
+    {heading && <p class="kicker mb-2 hidden px-3 pt-1 lg:flex">{heading}</p>}
+    <ul class="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] lg:mx-0 lg:flex-col lg:gap-0.5 lg:overflow-visible lg:px-0 lg:pb-0 [&::-webkit-scrollbar]:hidden">
+      {
+        items.map((it) => (
+          <li class="shrink-0">
+            <a
+              href={`#${it.id}`}
+              data-topic-link={it.id}
+              class="topic-link flex items-center justify-between gap-4 whitespace-nowrap rounded-lg border border-[var(--hair)] bg-bg/60 px-4 py-2 text-sm font-medium text-muted transition-colors hover:text-fg lg:whitespace-normal lg:border-transparent lg:bg-transparent lg:px-3"
+            >
+              <span>{it.title}</span>
+              {it.count !== undefined && <span class="hidden font-mono text-xs opacity-60 lg:inline">{String(it.count).padStart(2, '0')}</span>}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</nav>
+
+<style>
+  .topic-link[data-active] { background: var(--inverse); color: var(--inverse-ink); border-color: transparent; }
+  @media (min-width: 1024px) {
+    .topic-box {
+      padding: 0.5rem;
+      border-radius: 1rem;
+      border: 1px solid var(--hair);
+      background: var(--panel);
+    }
+    .topic-link[data-active] { background: var(--chrome); color: var(--fg); }
+  }
+</style>
+
+<script>
+  const links = new Map<string, HTMLElement>();
+  document.querySelectorAll<HTMLElement>('[data-topic-link]').forEach((a) => links.set(a.dataset.topicLink!, a));
+  const io = new IntersectionObserver(
+    (entries) =>
+      entries.forEach((e) => {
+        if (e.isIntersecting) links.forEach((l, id) => l.toggleAttribute('data-active', id === e.target.id));
+      }),
+    { rootMargin: '-25% 0px -65% 0px' },
+  );
+  links.forEach((_, id) => {
+    const el = document.getElementById(id);
+    if (el) io.observe(el);
+  });
+</script>

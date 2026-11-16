@@ -1,0 +1,227 @@
+---
+import { getStaticPaths as paths } from '../../i18n/paths';
+export const getStaticPaths = paths;
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import DownloadButton from '../../components/DownloadButton.astro';
+import PlatformIcon from '../../components/PlatformIcon.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import { getLang, useT, localePath, localeMeta, fmt } from '../../i18n';
+
+const lang = getLang(Astro.url);
+const t = useT(lang).alternative;
+const intl = localeMeta[lang].intl;
+
+// TradingView figures come from its public pricing page. Re-check them before changing this date.
+const CHECKED = new Date(Date.UTC(2026, 10, 1));
+const checked = new Intl.DateTimeFormat(intl, { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(CHECKED);
+const PRICING_URL = 'https://www.tradingview.com/pricing/';
+
+// Monthly prices in EUR when billed annually, as shown on TradingView's pricing page.
+const ladder = [
+  { name: 'Essential', price: 12.95 },
+  { name: 'Plus', price: 29.95 },
+  { name: 'Premium', price: 59.95 },
+  { name: 'Ultimate', price: 199.95 },
+];
+const top = ladder[ladder.length - 1].price;
+const eur = (n: number) => new Intl.NumberFormat(intl, { style: 'currency', currency: 'EUR', minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }).format(n);
+
+type Mark = 'yes' | 'limit' | 'no';
+// Row texts live in the dictionary (same order); the markers are structural and stay here.
+const tradingviewMarks: Mark[] = ['limit', 'limit', 'limit', 'limit', 'limit', 'yes', 'yes', 'no'];
+const tradingview: [Mark, string][] = t.freeVsFree.tradingview.items.map((text, i) => [tradingviewMarks[i], text]);
+
+const better = t.better.items.map((it) => [it.title, it.description] as const);
+
+const comingFrom = t.comingFrom.items.map((it) => [it.title, it.description] as const);
+
+const two = (n: number) => String(n).padStart(2, '0');
+---
+
+<Base
+  title={t.meta.title}
+  description={t.meta.description}
+  path="/tradingview-alternative/"
+  breadcrumbs={[['Home', '/'], [t.meta.breadcrumb, '/tradingview-alternative/']]}
+>
+  <Header slot="header" />
+
+  <PageHero eyebrow={t.hero.eyebrow} title={t.hero.title} lead={t.hero.lead} width="wide" align="left">
+    <div class="mt-8 flex flex-col items-start gap-3">
+      <a href={localePath(lang, '/download/')} class="btn btn-gradient px-9 py-4 text-lg">{t.hero.priceCard.download}</a>
+      <p class="text-sm text-muted">{t.hero.priceCard.note}</p>
+    </div>
+    <ul class="mt-6 flex flex-wrap items-center gap-2">
+      {t.hero.chips.map((c) => <li class="tag">{c}</li>)}
+      <li class="tag gap-3" role="group" aria-label={t.hero.priceCard.platformsAria}>
+        <PlatformIcon os="macOS" class="size-4" /><PlatformIcon os="Windows" class="size-4" /><PlatformIcon os="Linux" class="size-4" />
+      </li>
+    </ul>
+  </PageHero>
+
+  <!-- Price ladder -->
+  <section aria-labelledby="ladder-h" class="py-16 sm:py-24">
+    <div class="container-x">
+      <SectionHead id="ladder-h" align="left" eyebrow={t.ladder.eyebrow} title={t.ladder.title} lead={t.ladder.lead} />
+
+      <div class="glass mt-10 p-6 sm:mt-12 sm:p-8 lg:p-10" data-reveal="fade">
+        <ul class="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-5 lg:gap-4">
+          <li data-reveal style="--i:0" class="rounded-xl bg-gradient-to-b from-[#2962ff] to-[var(--purple)] p-px sm:col-span-2 lg:col-span-1">
+            <div class="flex h-full flex-col rounded-[calc(.75rem-1px)] bg-bg p-5 sm:p-6 lg:p-5">
+              <div class="flex items-center justify-between gap-2">
+                <span class="card-index">01</span>
+                <span class="tag !text-fg">{t.ladder.freeBadge}</span>
+              </div>
+              <h3 class="display mt-5 text-2xl">DegenView</h3>
+              <p class="mt-4"><span class="display gradient-text text-5xl lg:text-4xl xl:text-5xl">{eur(0)}</span></p>
+              <p class="mono-label mt-2">{t.ladder.perMonthForever}</p>
+              <p class="mt-4 font-mono text-xs text-up">{fmt(t.ladder.perYear, { amount: eur(0) })}</p>
+              <div class="mt-auto pt-5"><div class="h-1.5 rounded-full bg-chrome"><div class="h-full w-1.5 rounded-full bg-up"></div></div></div>
+            </div>
+          </li>
+          {
+            ladder.map((p, n) => (
+              <li data-reveal style={`--i:${n + 1}`} class="flex">
+                <div class="card flex w-full flex-col p-5 sm:p-6 lg:p-5">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="card-index">{two(n + 2)}</span>
+                  </div>
+                  <h3 class="display mt-5 text-2xl text-muted">{fmt(t.ladder.planName, { name: p.name })}</h3>
+                  <p class="mt-4"><span class="display text-5xl lg:text-4xl xl:text-5xl">{eur(p.price)}</span></p>
+                  <p class="mono-label mt-2">{t.ladder.perMonthBilledAnnually}</p>
+                  <p class="mt-4 font-mono text-xs text-muted">{fmt(t.ladder.perYear, { amount: eur(Math.round(p.price * 12)) })}</p>
+                  <div class="mt-auto pt-5"><div class="h-1.5 rounded-full bg-chrome"><div class="h-full rounded-full bg-down/80" style={`width:${Math.max(8, (p.price / top) * 100).toFixed(1)}%`}></div></div></div>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="mt-6 border-t border-[var(--hair)] pt-5 text-sm text-muted" set:html={fmt(t.ladder.note, { url: PRICING_URL, date: checked })} />
+      </div>
+    </div>
+  </section>
+
+  <!-- Free plan vs free plan -->
+  <section aria-labelledby="free-h" class="py-16 sm:py-24">
+    <div class="container-x">
+      <SectionHead id="free-h" align="left" eyebrow={t.freeVsFree.eyebrow} title={t.freeVsFree.title} lead={t.freeVsFree.lead} />
+
+      <div class="glass mt-10 overflow-hidden sm:mt-12" data-reveal="fade">
+        <div class="grid lg:grid-cols-2">
+          <div class="vs-us flex flex-col p-6 sm:p-8 lg:p-10">
+            <div class="flex items-center justify-between gap-3">
+              <span class="card-index">01</span>
+              <span class="tag !text-fg">{t.freeVsFree.degenview.subtitle}</span>
+            </div>
+            <h3 class="display mt-5 text-4xl sm:text-5xl">DegenView</h3>
+            <ul class="mt-6 divide-y divide-[var(--hair)]">
+              {
+                t.freeVsFree.degenview.items.map((text) => (
+                  <li class="flex gap-3 py-3">
+                    <svg viewBox="0 0 24 24" class="mt-0.5 size-5 shrink-0 text-up" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7" /></svg>
+                    <span><span class="sr-only">{t.freeVsFree.sr.included}</span>{text}</span>
+                  </li>
+                ))
+              }
+            </ul>
+            <div class="mt-auto pt-8">
+              <a href={localePath(lang, '/download/')} class="btn btn-gradient w-full">{t.freeVsFree.degenview.download}</a>
+            </div>
+          </div>
+
+          <div class="flex flex-col border-t border-[var(--hair)] p-6 sm:p-8 lg:border-l lg:border-t-0 lg:p-10">
+            <div class="flex items-center justify-between gap-3">
+              <span class="card-index !text-muted">02</span>
+              <span class="tag">{t.freeVsFree.tradingview.subtitle}</span>
+            </div>
+            <h3 class="display mt-5 text-4xl sm:text-5xl">TradingView</h3>
+            <ul class="mt-6 divide-y divide-[var(--hair)]">
+              {
+                tradingview.map(([m, text]) => (
+                  <li class="flex gap-3 py-3">
+                    {m === 'yes' && <svg viewBox="0 0 24 24" class="mt-0.5 size-5 shrink-0 text-muted" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7" /></svg>}
+                    {m === 'limit' && <svg viewBox="0 0 24 24" class="mt-0.5 size-5 shrink-0 text-[#f5a524]" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12" /></svg>}
+                    {m === 'no' && <svg viewBox="0 0 24 24" class="mt-0.5 size-5 shrink-0 text-down" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>}
+                    <span class:list={[m === 'yes' ? '' : 'text-muted']}><span class="sr-only">{m === 'yes' ? t.freeVsFree.sr.included : m === 'limit' ? t.freeVsFree.sr.limited : t.freeVsFree.sr.notAvailable}</span>{text}</span>
+                  </li>
+                ))
+              }
+            </ul>
+            <div class="mt-auto pt-8">
+              <a href={PRICING_URL} target="_blank" rel="nofollow noopener noreferrer" class="btn btn-ghost w-full">{t.freeVsFree.tradingview.plans}<span class="sr-only">{t.freeVsFree.sr.opensNewTab}</span></a>
+            </div>
+          </div>
+        </div>
+        <p class="mono-label flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-[var(--hair)] bg-[var(--tile)] px-6 py-4 sm:px-8 lg:px-10">
+          <span class="inline-flex items-center gap-1.5"><svg viewBox="0 0 24 24" class="size-4 shrink-0 text-[#f5a524]" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12" /></svg>{t.freeVsFree.legendLimit}</span>
+          <span aria-hidden="true">·</span>
+          <span>{fmt(t.freeVsFree.checked, { date: checked })}</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Honest section -->
+  <section aria-labelledby="better-h" class="py-16 sm:py-24">
+    <div class="container-x">
+      <SectionHead id="better-h" align="left" eyebrow={t.better.eyebrow} title={t.better.title} lead={t.better.lead} />
+      <div class="rows mt-10 sm:mt-12" data-reveal="fade">
+        {
+          better.map(([title, d], i) => (
+            <div class="row">
+              <h3 class="row-claim"><span class="card-index">{two(i + 1)}</span><span>{title}</span></h3>
+              <p class="row-text">{d}</p>
+            </div>
+          ))
+        }
+      </div>
+      <p class="card mt-4 px-5 py-4 text-center text-muted sm:mt-6 sm:px-6" data-reveal="fade">{t.better.closing}</p>
+    </div>
+  </section>
+
+  <!-- Coming from TradingView -->
+  <section aria-labelledby="from-h" class="py-16 sm:py-24">
+    <div class="container-x">
+      <SectionHead id="from-h" align="left" eyebrow={t.comingFrom.eyebrow} title={t.comingFrom.title} />
+      <ul class="mt-10 grid gap-4 sm:mt-12 sm:gap-6 md:grid-cols-3">
+        {
+          comingFrom.map(([title, d], i) => (
+            <li data-reveal style={`--i:${i}`} class="flex">
+              <div class="card card-hover flex w-full flex-col p-5 sm:p-6">
+                <span class="big-num text-[5.5rem]!" aria-hidden="true">{two(i + 1)}</span>
+                <h3 class="display mt-6 text-3xl">{title}</h3>
+                <p class="mt-3 text-fg/70">{d}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Closing call to action -->
+  <section class="pb-16 sm:pb-24">
+    <div class="container-x">
+      <div class="glass stage relative mx-auto max-w-4xl" data-reveal="scale">
+        <span class="glow-line absolute inset-x-10 top-0" aria-hidden="true"></span>
+        <div class="p-6 text-center sm:p-8 lg:p-10">
+          <p class="kicker kicker-c">{t.hero.eyebrow}</p>
+          <h2 class="display mt-4 text-5xl sm:text-6xl" set:html={t.cta.title} />
+          <p class="mx-auto mt-5 max-w-xl text-lg text-fg/75">{t.cta.lead}</p>
+          <div class="mt-8 flex justify-center"><DownloadButton showNote github /></div>
+          <p class="mx-auto mt-8 max-w-2xl border-t border-[var(--hair)] pt-6 text-xs text-muted">{t.cta.disclaimer}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+
+  <style>
+    /* DegenView half of the comparison: a faint blue-to-purple wash so the two sides read as two options. */
+    .vs-us { background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 9%, transparent), color-mix(in oklab, var(--purple) 5%, transparent)); }
+  </style>
+</Base>

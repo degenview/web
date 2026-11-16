@@ -33,10 +33,16 @@ jobs:
 
       - run: npm ci
 
+      - name: Type check (incl. translation key parity)
+        run: npm run check
+
       - name: Build
         run: npm run build
         env:
           GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Check i18n output (hreflang, canonical, locale links)
+        run: npm run i18n:check
 
       - uses: actions/configure-pages@v6
 

@@ -1,0 +1,51 @@
+---
+// Slim scroll-progress meter fixed to the right edge of the home page: a vertical tick track with a price-tag style
+// label that rides along and shows the scroll progress (0 to 100). Decorative (aria-hidden), hidden below 1360px where
+// it would overlap the content gutter. The thumb moves with a transform only; the label text changes once per percent.
+---
+
+<div class="scroll-meter hidden min-[1360px]:block" aria-hidden="true" data-scroll-meter>
+  <div class="scroll-meter-track"></div>
+  <div class="scroll-meter-thumb" data-meter-thumb>
+    <span class="scroll-meter-label" data-meter-label>0</span>
+    <span class="scroll-meter-dot"></span>
+  </div>
+</div>
+
+<script>
+  import { subscribe } from '../scripts/scroll-loop';
+
+  const root = document.querySelector<HTMLElement>('[data-scroll-meter]');
+  const thumb = root?.querySelector<HTMLElement>('[data-meter-thumb]');
+  const label = root?.querySelector<HTMLElement>('[data-meter-label]');
+  if (root && thumb && label) {
+    // Cached on resize / page height changes: a scroll frame only reads scrollY (from the shared loop) and writes one transform.
+    let maxScroll = 1;
+    let travel = 0;
+    let shownPct = -1;
+    let shownY = NaN;
+    const measure = () => {
+      maxScroll = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+      travel = Math.max(0, root.clientHeight - thumb.offsetHeight);
+      shownY = NaN;
+    };
+    const update = (y: number) => {
+      const p = Math.min(1, Math.max(0, y / maxScroll));
+      const ty = Math.round(p * travel * 10) / 10;
+      if (ty !== shownY) {
+        shownY = ty;
+        thumb.style.transform = `translate3d(0,${ty}px,0)`;
+      }
+      const pct = Math.round(p * 100);
+      if (pct !== shownPct) {
+        shownPct = pct;
+        label.textContent = String(pct);
+      }
+    };
+    const loop = subscribe(update, { order: 1 });
+    const refresh = () => { measure(); loop.invalidate(); };
+    addEventListener('resize', refresh, { passive: true });
+    new ResizeObserver(refresh).observe(document.body);
+    measure();
+  }
+</script>

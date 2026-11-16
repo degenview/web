@@ -1,0 +1,25 @@
+export const locales = ['en', 'es', 'de', 'fr', 'hi', 'zh'] as const;
+export type Lang = (typeof locales)[number];
+export const defaultLocale: Lang = 'en';
+
+export interface LocaleMeta {
+  /** Name in its own language, shown in the switcher. */
+  name: string;
+  /** BCP 47 tag for <html lang> and hreflang. */
+  htmlLang: string;
+  /** Open Graph locale. */
+  ogLocale: string;
+  /** Country flag file in src/assets/flags (without extension). */
+  flag: string;
+  /** BCP 47 tag for Intl formatting. */
+  intl: string;
+}
+
+export const localeMeta: Record<Lang, LocaleMeta> = {
+  en: { name: 'English', htmlLang: 'en', ogLocale: 'en_US', flag: 'us', intl: 'en-US' },
+  es: { name: 'Español', htmlLang: 'es', ogLocale: 'es_ES', flag: 'es', intl: 'es-ES' },
+  de: { name: 'Deutsch', htmlLang: 'de', ogLocale: 'de_DE', flag: 'de', intl: 'de-DE' },
+  fr: { name: 'Français', htmlLang: 'fr', ogLocale: 'fr_FR', flag: 'fr', intl: 'fr-FR' },
+  hi: { name: 'हिन्दी', htmlLang: 'hi', ogLocale: 'hi_IN', flag: 'in', intl: 'hi-IN' },
+  zh: { name: '简体中文', htmlLang: 'zh-Hans', ogLocale: 'zh_CN', flag: 'cn', intl: 'zh-CN' },
+};

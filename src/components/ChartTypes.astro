@@ -1,4 +1,6 @@
 ---
+import SectionHead from './SectionHead.astro';
+import { getLang, useT, fmt } from '../i18n';
 /**
  * One example per chart type, drawn at build time from the same synthetic price series, so the tiles
  * differ only in how they draw it. Names and groups mirror the app's chart type picker.
@@ -241,54 +243,54 @@ function rangeBars() {
   return candleSvg(list.slice(-22));
 }
 
+const lang = getLang(Astro.url);
+const t = useT(lang);
+
 // Display order follows the app's picker: standard, lines & areas, price-based.
-const raw: [string, string, string][] = [
-  ['Candles', 'The classic: open, high, low and close in one body-and-wick shape.', candleSvg(bars)],
-  ['Hollow Candles', 'Rising candles are hollow and falling ones are filled, so momentum reads at a glance.', candleSvg(bars, { hollow: true })],
-  ['Bars', 'A vertical range line with a tick for the open on the left and the close on the right.', ohlcBars(bars)],
-  ['High-Low Bars', 'Each bar spans just the high to the low. Pure range, no opinions about the close.', ohlcBars(bars, true)],
-  ['Volume Candles', 'Candles whose width grows with traded volume, so the heavy bars stand out.', candleSvg(bars, { volume: true })],
-  ['Heikin Ashi', 'Averaged candles that smooth out the noise and make trends easier to follow.', candleSvg(heikinAshi(bars))],
-  ['Line', 'Closing prices joined into one clean line.', lineEl()],
-  ['Line with Markers', 'The same line, with a dot on every close.', lineEl() + pts.map(([x, yy]) => `<circle cx="${x}" cy="${yy}" r="1.7" fill="var(--bg)" stroke="${LINE}" stroke-width="1"/>`).join('')],
-  ['Step Line', 'Holds each close flat until the next one, so you see exactly when price changed.', stepLine()],
-  ['Area', 'A line with everything below it filled in.', `<path d="${areaTo(Y1)}" fill="${LINE}" fill-opacity=".22"/>` + lineEl()],
-  ['HLC Area', 'The high-low range as a band around the closing line.', hlcArea()],
-  ['Baseline', 'Green above a reference level, red below it.', baseline()],
-  ['Columns', 'Closing prices as bars from the bottom, tinted by direction.', columns()],
-  ['Renko', 'Fixed-size bricks that only appear when price moves far enough. No move, no brick.', renko()],
-  ['Kagi', 'Vertical lines joined by short steps, switching direction only on a meaningful reversal.', kagi()],
-  ['Line Break', 'A new block forms only when price breaks the recent range, which filters out the noise.', lineBreak()],
-  ['Point & Figure', 'Columns of Xs and Os for rising and falling prices, with no time axis at all.', pointAndFigure()],
-  ['Range', 'Every bar covers the same price range, so a quiet market simply draws fewer bars.', rangeBars()],
+const raw: [keyof typeof t.chartTypes.items, string][] = [
+  ['candles', candleSvg(bars)],
+  ['hollowCandles', candleSvg(bars, { hollow: true })],
+  ['bars', ohlcBars(bars)],
+  ['highLowBars', ohlcBars(bars, true)],
+  ['volumeCandles', candleSvg(bars, { volume: true })],
+  ['heikinAshi', candleSvg(heikinAshi(bars))],
+  ['line', lineEl()],
+  ['lineWithMarkers', lineEl() + pts.map(([x, yy]) => `<circle cx="${x}" cy="${yy}" r="1.7" fill="var(--bg)" stroke="${LINE}" stroke-width="1"/>`).join('')],
+  ['stepLine', stepLine()],
+  ['area', `<path d="${areaTo(Y1)}" fill="${LINE}" fill-opacity=".22"/>` + lineEl()],
+  ['hlcArea', hlcArea()],
+  ['baseline', baseline()],
+  ['columns', columns()],
+  ['renko', renko()],
+  ['kagi', kagi()],
+  ['lineBreak', lineBreak()],
+  ['pointAndFigure', pointAndFigure()],
+  ['range', rangeBars()],
 ];
 // Stroke widths follow --sw, so the big display can draw thinner lines than the 160-unit canvas implies.
-const items = raw.map(([name, desc, svg]) => ({
-  name, desc,
+const items = raw.map(([key, svg]) => ({
+  ...t.chartTypes.items[key],
   svg: svg.replace(/stroke-width="([\d.]+)"/g, (_m, n) => `style="stroke-width:calc(${n}*var(--sw,1))"`),
 }));
 ---
 
-<section id="chart-types" aria-labelledby="ct-h" class="border-t border-line/50 py-16 sm:py-24">
+<section id="chart-types" aria-labelledby="ct-h" class="py-16 sm:py-24">
   <div class="container-x">
-    <div class="mx-auto max-w-2xl text-center">
-      <p class="text-sm font-semibold text-accent-text">chart types</p>
-      <h2 id="ct-h" class="display mt-3 text-4xl sm:text-6xl">Candles are <span class="gradient-text">just the start</span></h2>
-      <p class="mt-5 text-lg text-muted">{items.length} chart types, all one click away. Pick your poison.</p>
-    </div>
+    <SectionHead id="ct-h" align="left" eyebrow={t.chartTypes.eyebrow} title={t.chartTypes.title} lead={fmt(t.chartTypes.lead, { count: items.length })} />
 
-    <div data-chart-types class="relative mt-14 overflow-hidden rounded-3xl border border-line bg-bg">
+    <div data-chart-types class="glass relative mt-10 overflow-hidden sm:mt-12" data-reveal="up">
       <div class="grid lg:grid-cols-[5fr_7fr]">
-        <div data-ct-viewport class="relative h-[19rem] overflow-hidden px-6 sm:px-12 lg:h-[27rem] [mask-image:linear-gradient(to_bottom,transparent,black_14%,black_86%,transparent)]">
+        <div data-ct-viewport class="relative h-[19rem] overflow-hidden px-6 sm:px-8 lg:h-[27rem] lg:px-10 [mask-image:linear-gradient(to_bottom,transparent,black_14%,black_86%,transparent)]">
           <ul data-ct-list class="transition-transform duration-500 ease-out will-change-transform">
             {
               items.map((it, i) => (
                 <li data-ct-item data-active={i === 0 ? '' : undefined} class="group">
-                  <button type="button" data-ct-select={i} class="flex h-[4.25rem] w-full items-center text-left" aria-current={i === 0 ? 'true' : undefined}>
-                    <span class="display whitespace-nowrap text-3xl text-fg/45 transition-colors duration-300 group-hover:text-fg/60 group-data-[active]:text-fg sm:text-4xl">{it.name}</span>
+                  <button type="button" data-ct-select={i} class="flex h-[4.25rem] w-full items-center gap-4 text-left" aria-current={i === 0 ? 'true' : undefined}>
+                    <span class="card-index hidden w-6 shrink-0 opacity-50 sm:inline-block transition-opacity duration-300 group-data-[active]:opacity-100">{String(i + 1).padStart(2, '0')}</span>
+                    <span class="display whitespace-nowrap text-3xl text-fg/40 transition-colors duration-300 group-hover:text-fg/60 group-data-[active]:text-fg sm:text-5xl">{it.name}</span>
                   </button>
                   <div class="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-500 group-data-[active]:grid-rows-[1fr] group-data-[active]:opacity-100">
-                    <div class="overflow-hidden"><p class="pb-4 text-base text-muted sm:text-lg">{it.desc}</p></div>
+                    <div class="overflow-hidden"><p class="pb-4 text-base sm:pl-10 text-muted sm:text-lg">{it.desc}</p></div>
                   </div>
                 </li>
               ))
@@ -296,12 +298,11 @@ const items = raw.map(([name, desc, svg]) => ({
           </ul>
         </div>
 
-        <div class="relative aspect-[16/10] lg:aspect-auto">
-          <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--glow-a),transparent_65%)] opacity-60"></div>
-          {
+        <div class="stage relative aspect-[16/10] border-t border-[var(--hair)] lg:aspect-auto lg:border-l lg:border-t-0">
+                    {
             items.map((it, i) => (
               <svg
-                data-ct-art viewBox="0 0 160 100" preserveAspectRatio="xMidYMid meet" role="img" aria-label={`${it.name} chart example`}
+                data-ct-art viewBox="0 0 160 100" preserveAspectRatio="xMidYMid meet" role="img" aria-label={fmt(t.chartTypes.exampleAlt, { name: it.name })}
                 data-active={i === 0 ? '' : undefined}
                 style="--sw:.5"
                 class="absolute inset-0 size-full p-6 pb-16 opacity-0 transition-opacity duration-700 data-[active]:opacity-100 lg:p-14 lg:pb-14 [filter:drop-shadow(0_0_7px_rgb(34_171_148/.45))_drop-shadow(0_0_7px_rgb(247_82_95/.3))]"
@@ -312,15 +313,15 @@ const items = raw.map(([name, desc, svg]) => ({
         </div>
       </div>
 
-      <div class="absolute bottom-4 right-4 flex items-center gap-1 text-fg sm:bottom-6 sm:right-6">
-        <button type="button" data-ct-prev class="grid size-9 place-items-center rounded-lg hover:bg-chrome" aria-label="Previous chart type">
+      <div class="absolute bottom-4 right-4 flex items-center gap-1 text-fg sm:bottom-5 sm:right-5">
+        <button type="button" data-ct-prev class="grid size-9 place-items-center rounded-md border border-transparent hover:border-[var(--hair)] hover:bg-[var(--tile)]" aria-label={t.chartTypes.previous}>
           <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7" /></svg>
         </button>
-        <span class="min-w-[4.5rem] text-center font-mono text-sm tabular-nums" aria-live="off"><span data-ct-count>1</span> / {items.length}</span>
-        <button type="button" data-ct-next class="grid size-9 place-items-center rounded-lg hover:bg-chrome" aria-label="Next chart type">
+        <span class="min-w-[4.5rem] text-center font-mono text-xs tabular-nums tracking-wider text-muted" aria-live="off"><span data-ct-count>1</span> / {items.length}</span>
+        <button type="button" data-ct-next class="grid size-9 place-items-center rounded-md border border-transparent hover:border-[var(--hair)] hover:bg-[var(--tile)]" aria-label={t.chartTypes.next}>
           <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
         </button>
-        <button type="button" data-ct-play class="ml-2 grid size-9 place-items-center rounded-lg bg-chrome hover:bg-border" aria-label="Pause autoplay" aria-pressed="true">
+        <button type="button" data-ct-play class="ml-2 grid size-9 place-items-center rounded-md border border-[var(--hair)] bg-[var(--tile)] hover:border-[var(--hair-hi)]" aria-label={t.chartTypes.pause} aria-pressed="true" data-label-pause={t.chartTypes.pause} data-label-play={t.chartTypes.play}>
           <svg data-ct-icon-pause viewBox="0 0 24 24" class="size-4" fill="currentColor" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" /></svg>
           <svg data-ct-icon-play viewBox="0 0 24 24" class="hidden size-4" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
         </button>
@@ -364,7 +365,7 @@ const items = raw.map(([name, desc, svg]) => ({
       iconPause.classList.toggle('hidden', !on);
       iconPlay.classList.toggle('hidden', on);
       playBtn.setAttribute('aria-pressed', String(on));
-      playBtn.setAttribute('aria-label', on ? 'Pause autoplay' : 'Start autoplay');
+      playBtn.setAttribute('aria-label', (on ? playBtn.dataset.labelPause : playBtn.dataset.labelPlay) ?? '');
       start();
     };
 

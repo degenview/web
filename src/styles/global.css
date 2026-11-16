@@ -2,12 +2,50 @@
 @import '@fontsource-variable/inter';
 @import '@fontsource-variable/inter/wght-italic.css';
 @import '@fontsource-variable/jetbrains-mono';
+/* Condensed display face for headlines (Latin + Latin-ext + Vietnamese subsets, unicode-range split). */
+@import '@fontsource-variable/big-shoulders-display';
+/* Devanagari for /hi/. @font-face uses unicode-range, so the file only downloads on pages with Devanagari text. */
+@import '@fontsource-variable/noto-sans-devanagari';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * Palette adapted from TradingView's site: true-black canvas, neutral greys,
- * a royal blue (#2962ff) that fades into magenta-purple on hero words.
+ * DESIGN SYSTEM  ("terminal": dark, hairline borders, condensed display type, mono micro-details, glowing accents)
+ * ---------------------------------------------------------------------------------------------------------------
+ * Type
+ *   .display         Headline: Big Shoulders Display 800, UPPERCASE, line-height .95. Sizes are yours (Tailwind text-*):
+ *                    page h1 text-6xl sm:text-7xl, section h2 text-5xl sm:text-6xl, card h3 text-3xl, small h3 text-2xl.
+ *                    Hindi (html:lang(hi)) falls back to Inter + Noto Devanagari, Chinese (html:lang(zh)) to Inter + the system CJK font, no uppercase, taller leading.
+ *   .gradient-text   Accent word(s) inside a headline: brand blue to purple.
+ *   .kicker          Eyebrow: mono, uppercase, wide tracking, accent colour, short line in front. `.kicker-c` adds a line
+ *                    behind too, for centered blocks. Use on every eyebrow/section label.
+ *   .mono-label      Same mono/uppercase/tracking in muted grey, no line: micro labels, captions, meta.
+ *   .card-index      "01" style index number, mono, accent colour. Top-left of a card/panel.
+ *   .tag             Tiny mono chip with a hairline border. Top-right of a card, or inline status ("Free", "New").
+ *   .big-num         Huge condensed numerals ("01 02 03") with an accent gradient fade; set the size with text-* if needed.
+ * Surfaces
+ *   .glass           Big panel (use p-6 sm:p-8 lg:p-10). Dark translucent tint, 1px hairline, 16px radius. No backdrop-filter.
+ *   .card            Card (use p-5 sm:p-6). Same language, 12px radius, hairline border that glows blue on hover.
+ *                    `.card-hover` adds a small lift (links/tiles). Inside `.glass` a card becomes a faint inner tile.
+ *   .stage           Lit backdrop (glows + faint grid) for media/CTA areas. Combine with .glass or use inside a panel.
+ *   .glow-line       1px accent gradient line (hr-like), fades out at both ends. Put it on top of a panel or between blocks.
+ *   .scrim           Soft dark radial behind a heading block that sits directly on the candle canvas.
+ * Lists
+ *   .rows / .row     "Reasons" panel: one bordered panel, each .row = claim left + text right, hairline dividers, stacks on
+ *                    mobile. Children: `.row-claim` (condensed uppercase claim; may start with a .card-index) and
+ *                    `.row-text` (muted explanation). Markup: <div class="rows"><div class="row"><h3 class="row-claim">..</h3>
+ *                    <p class="row-text">..</p></div>..</div> (works on <ul>/<li> too).
+ *   .fact-row        One line of a fact list (hairline-separated, small square bullet). `.fact-key` = mono chip for numbers/tickers.
+ * Buttons: .btn + .btn-primary | .btn-gradient | .btn-ghost (12px radius), .dl-os (download buttons).
+ * Reveal on enter (time-based, smooth in every browser; NOT scroll-scrubbed)
+ *   Add `data-reveal="up|fade|left|right|scale"` (bare `data-reveal` = up) to any element. It starts hidden only when
+ *   `html.js-reveal` is set (inline script in Base.astro, never with JS off or reduced motion); src/scripts/reveal.ts adds
+ *   `.is-in` once via one IntersectionObserver. Stagger siblings with style="--i:N" (70ms steps). 700ms, transform + opacity only.
+ *   Do not put data-reveal on an element that has its own hover transition (.card-hover): wrap it, reveal the wrapper.
+ * Layout helpers: .container-x (max 72rem, 1rem gutters). Spacing: sections py-16 sm:py-24, header to content mt-10 sm:mt-12,
+ *   panels p-6 sm:p-8 lg:p-10, cards p-5 sm:p-6, gaps gap-4 sm:gap-6.
+ * Components: SectionHead (kicker + h2 + lead, `align="left|center"`), PageHero (sub page title block), Accordion (rows-style
+ *   FAQ), TopicNav, CheckList. Mono micro-labels everywhere; sentences stay in Inter.
  */
 :root {
   color-scheme: light;
@@ -29,32 +67,48 @@
   --glow-a: rgb(41 98 255 / 0.16);
   --glow-b: rgb(213 0 249 / 0.1);
   --grid: rgb(0 0 0 / 0.05);
+  /* Terminal surfaces: panel (big), card, tile (card inside a panel), hairline border and its hover glow, top highlight. */
+  --panel: rgb(255 255 255 / 0.9);
+  --card: rgb(255 255 255 / 0.82);
+  --tile: rgb(15 15 15 / 0.03);
+  --hair: rgb(15 15 15 / 0.11);
+  --hair-hi: rgb(41 98 255 / 0.5);
+  --hl: rgb(255 255 255 / 0.8);
+  --city-alpha: 0.3; /* candle-city canvas opacity, applied inside the WebGL blend (src/scripts/candle-city.ts) */
 }
 :root.dark {
   color-scheme: dark;
   --bg: #000000;
-  --surface: #131313;
-  --chrome: #222222;
-  --border: #303030;
+  --surface: #0c0c0e;
+  --chrome: #1b1b1e;
+  --border: #2a2a2e;
   --fg: #ffffff;
-  --muted: #b8b8b8;
+  --muted: #b3b3b8;
   --accent: #2962ff;
   --accent-hover: #3179f5;
-  --accent-text: #5b9cf6;
+  --accent-text: #6aa5ff;
   --inverse: #ffffff;
   --inverse-ink: #000000;
   --inverse-hover: #dbdbdb;
   --purple: #d500f9;
   --up: #22ab94;
   --down: #f7525f;
-  --glow-a: rgb(41 98 255 / 0.34);
-  --glow-b: rgb(213 0 249 / 0.2);
-  --grid: rgb(255 255 255 / 0.045);
+  --glow-a: rgb(41 98 255 / 0.3);
+  --glow-b: rgb(213 0 249 / 0.18);
+  --grid: rgb(255 255 255 / 0.04);
+  --panel: rgb(6 7 11 / 0.86);
+  --card: rgb(8 9 14 / 0.78);
+  --tile: rgb(255 255 255 / 0.03);
+  --hair: rgb(255 255 255 / 0.09);
+  --hair-hi: rgb(106 165 255 / 0.55);
+  --hl: rgb(255 255 255 / 0.05);
+  --city-alpha: 0.44;
 }
 
 @theme inline {
-  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, monospace;
+  --font-sans: 'Inter Variable', 'Noto Sans Devanagari Variable', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'Noto Sans SC', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'Noto Sans Devanagari Variable', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, SFMono-Regular, monospace;
+  --font-display: 'Big Shoulders Display Variable', 'Oswald', 'Arial Narrow', Impact, ui-sans-serif, sans-serif;
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-chrome: var(--chrome);
@@ -77,14 +131,81 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* Decorative glows (scrims, halos) may bleed past the gutters; `clip` (unlike `hidden`) keeps position: sticky working. */
+  overflow-x: clip;
 }
 
-:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; border-radius: 8px; }
+:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; border-radius: 6px; }
+::selection { background: color-mix(in oklab, var(--accent) 45%, transparent); }
 
 .container-x { width: min(100% - 2rem, 72rem); margin-inline: auto; }
 
-/* Big, tight, semibold display type like TradingView's section titles. */
-.display { font-weight: 600; letter-spacing: -0.035em; line-height: 1.04; text-wrap: balance; }
+/* Long translated words (de, fr, es) must wrap, never push the page wider than the viewport. */
+:where(h1, h2, h3, h4, p, li, td, th, summary, a, button) { overflow-wrap: break-word; }
+html:lang(de) :where(h1, h2, h3, h4, p, li, td, th, summary),
+html:lang(fr) :where(h1, h2, h3, h4, p, li, td, th, summary),
+html:lang(es) :where(h1, h2, h3, h4, p, li, td, th, summary) { hyphens: auto; }
+
+/* ---------- Type ---------- */
+
+/* Condensed, heavy, uppercase headlines. Tight leading, slight positive tracking (condensed caps need air). */
+.display {
+  font-family: var(--font-display); font-weight: 800; text-transform: uppercase;
+  letter-spacing: .012em; line-height: .95; text-wrap: balance;
+}
+/* Big headlines: never auto-hyphenate ("funcio-nes"); body copy still does. */
+html .display { hyphens: manual; }
+/* Devanagari has no uppercase and a condensed Latin face has no Devanagari: use the sans stack. Negative tracking breaks
+   conjuncts and tight leading clips matras above/below the line. */
+html:lang(hi) .display,
+html:lang(zh) .display { font-family: var(--font-sans); text-transform: none; letter-spacing: 0; line-height: 1.3; font-weight: 700; }
+html:lang(hi) .gradient-text,
+html:lang(zh) .gradient-text { padding-block: .08em; }
+html:lang(hi) body,
+html:lang(zh) body { line-height: 1.7; }
+/* Tracked-out mono labels: Devanagari conjuncts must not be spaced apart. */
+html:lang(hi) :is(.kicker, .mono-label, .tag, .card-index),
+html:lang(zh) :is(.kicker, .mono-label, .tag, .card-index) { letter-spacing: .02em; text-transform: none; }
+
+.gradient-text {
+  background: linear-gradient(90deg, #2962ff 25%, var(--purple));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  padding-block: .08em;
+}
+:root.dark .gradient-text { background-image: linear-gradient(90deg, #3d78ff 20%, var(--purple)); }
+
+/* Eyebrow: "— FOR EDUCATORS". The line before it is drawn, not a character, so it never wraps away from the text. */
+.kicker {
+  display: inline-flex; flex-wrap: wrap; align-items: center; gap: .25rem .75rem;
+  font-family: var(--font-mono); font-size: .72rem; font-weight: 600; line-height: 1.3;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--accent-text);
+}
+.kicker::before { content: ''; flex: none; width: 1.75rem; height: 1px; background: currentColor; opacity: .85; }
+.kicker-c::after { content: ''; flex: none; width: 1.75rem; height: 1px; background: currentColor; opacity: .85; }
+.mono-label {
+  font-family: var(--font-mono); font-size: .68rem; font-weight: 500; line-height: 1.3;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+}
+.card-index {
+  font-family: var(--font-mono); font-size: .75rem; font-weight: 600; line-height: 1;
+  letter-spacing: .12em; color: var(--accent-text); font-variant-numeric: tabular-nums;
+}
+.tag {
+  display: inline-flex; align-items: center; white-space: nowrap;
+  font-family: var(--font-mono); font-size: .64rem; font-weight: 500; line-height: 1;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+  padding: .32rem .5rem; border: 1px solid var(--hair); border-radius: .375rem;
+  /* Tile tint over a mostly opaque page colour: legible on the candle canvas without hiding it. */
+  background: linear-gradient(var(--tile), var(--tile)), color-mix(in oklab, var(--bg) 65%, transparent);
+}
+.big-num {
+  font-family: var(--font-display); font-weight: 800; line-height: .8; letter-spacing: 0;
+  font-size: clamp(4.5rem, 3rem + 7vw, 8rem); font-variant-numeric: lining-nums tabular-nums;
+  background: linear-gradient(180deg, var(--accent-text) 15%, color-mix(in oklab, var(--purple) 55%, transparent) 90%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* ---------- Buttons ---------- */
 
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
@@ -92,56 +213,138 @@ body {
   transition: transform .15s, background-color .15s, border-color .15s, box-shadow .15s;
 }
 .btn:active { transform: translateY(1px); }
-/* Inverse pill: white on black, black on white. Same as TradingView's "Get started". */
+/* Inverse: white on black, black on white. */
 .btn-primary { background: var(--inverse); color: var(--inverse-ink); }
 .btn-primary:hover { background: var(--inverse-hover); }
-/* Blue to purple call-to-action, like the gradient button on TradingView's pricing page. */
+/* Blue to purple call-to-action. */
 .btn-gradient { background: linear-gradient(90deg, #2962ff 25%, var(--purple)); color: #fff; box-shadow: 0 10px 30px -10px rgb(41 98 255 / .7); }
 .btn-gradient:hover { filter: brightness(1.12); }
-.btn-ghost { border: 1px solid var(--border); background: transparent; }
-.btn-ghost:hover { border-color: var(--muted); background: var(--surface); }
+.btn-ghost { border: 1px solid var(--hair); background: transparent; }
+.btn-ghost:hover { border-color: var(--hair-hi); background: var(--tile); }
 
-/* Per-OS download buttons: outlined like TradingView's desktop page; the detected OS is filled. */
+/* Per-OS download buttons: outlined; the detected OS is filled. */
 .dl-os {
   display: inline-flex; align-items: center; gap: .75rem;
   width: 100%; min-height: 3.5rem; padding: .5rem 1.1rem .5rem .95rem;
-  border: 1px solid var(--border); border-radius: .75rem; background: transparent;
+  border: 1px solid var(--hair); border-radius: .75rem; background: var(--card);
   transition: transform .15s, background-color .15s, border-color .15s, color .15s;
 }
-.dl-os .dl-os-top { color: var(--muted); }
+.dl-os .dl-os-top { color: var(--muted); font-family: var(--font-mono); font-weight: 500; letter-spacing: .14em; }
 @media (min-width: 40rem) { .dl-os { width: auto; min-width: 10.5rem; } }
-.dl-os:hover { border-color: var(--muted); background: var(--surface); }
+.dl-os:hover { border-color: var(--hair-hi); background: var(--tile); }
 .dl-os:active { transform: translateY(1px); }
 .dl-menu[data-selected] > .dl-os { background: var(--inverse); color: var(--inverse-ink); border-color: var(--inverse); }
 .dl-menu[data-selected] > .dl-os .dl-os-top { color: inherit; opacity: .6; }
 .dl-menu[data-selected] > .dl-os:hover { background: var(--inverse-hover); }
 .dl-menu[open] > .dl-os .dl-chevron { transform: rotate(180deg); }
-.dl-menu[open] > .dl-os { border-color: var(--muted); }
+.dl-menu[open] > .dl-os { border-color: var(--hair-hi); }
 
 /* Dropdown panel under each OS button. */
 .dl-panel {
   position: absolute; left: 0; right: 0; top: calc(100% + .5rem); z-index: 30; padding: .375rem;
-  background: var(--surface); border: 1px solid var(--border); border-radius: .875rem;
-  box-shadow: 0 24px 60px -20px rgb(0 0 0 / .6);
+  background: var(--surface); border: 1px solid var(--hair); border-radius: .75rem;
+  box-shadow: 0 24px 60px -20px rgb(0 0 0 / .7);
 }
 @media (min-width: 40rem) { .dl-panel { right: auto; min-width: max(100%, 17.5rem); max-width: calc(100vw - 2rem); } }
+/* The last two OS buttons sit near the right edge on tablets: open their panel leftwards so it stays on screen. */
+@media (min-width: 40rem) { .dl-menu:nth-last-of-type(-n+2) .dl-panel { left: auto; right: 0; } }
 .dl-item {
   display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-  padding: .75rem; border-radius: .6rem; transition: background-color .12s;
+  padding: .75rem; border-radius: .5rem; transition: background-color .12s;
 }
 .dl-item:hover, .dl-item:focus-visible { background: var(--chrome); }
 .dl-item:hover svg { color: var(--fg); }
 
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: .875rem; }
+/* ---------- Surfaces ---------- */
 
-.gradient-text {
-  background: linear-gradient(90deg, #2962ff 30%, var(--purple));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  padding-bottom: .08em;
+/*
+ * Big panels are `.glass` with `p-6 sm:p-8 lg:p-10`, cards inside or beside them are `.card` with `p-5 sm:p-6`.
+ * They sit over the candle-city canvas, which repaints every frame. A `backdrop-filter` there would make the compositor
+ * re-blur every visible panel every frame (the main scroll cost), so the "glass" is a plain, mostly opaque dark tint.
+ */
+.glass {
+  background-color: var(--panel);
+  border: 1px solid var(--hair);
+  border-radius: 1rem;
+  box-shadow: inset 0 1px 0 var(--hl), 0 30px 80px -50px rgb(0 0 0 / .7);
+}
+:root:not(.dark) .glass { box-shadow: inset 0 1px 0 var(--hl), 0 24px 60px -40px rgb(15 15 15 / .25); }
+@media (max-width: 639px) { .glass { border-radius: .875rem; } }
+
+/*
+ * A lit backdrop for media and call-to-action areas: two soft glows over a faint grid that fades towards the bottom.
+ * Combine with `.glass` (it only sets background-image, so the glass tint stays) or use on its own inside a panel.
+ */
+.stage {
+  background-image:
+    radial-gradient(70% 70% at 50% 0%, var(--glow-a), transparent 72%),
+    radial-gradient(55% 60% at 100% 100%, var(--glow-b), transparent 72%),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: auto, auto, 40px 40px, 40px 40px;
+  background-position: 0 0, 0 0, -1px -1px, -1px -1px;
 }
 
-/* Blue/purple halo under product screenshots. */
-/* Hero backdrop: two soft glows and a 56px grid that fades out down the first screen. Same recipe as the Flatpak repo page. */
+/* Centered section heading block with no panel: a soft radial darkening behind the text keeps it legible over the candles, without a visible box. */
+.scrim { position: relative; isolation: isolate; }
+.scrim::before {
+  content: ''; position: absolute; inset: -2rem -1rem; z-index: -1; pointer-events: none;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--bg) 80%, transparent), transparent);
+}
+@media (min-width: 640px) { .scrim::before { inset: -3rem -4rem; } }
+
+.card {
+  background-color: var(--card);
+  border: 1px solid var(--hair);
+  border-radius: .75rem;
+  transition: border-color .2s, transform .2s, box-shadow .2s, background-color .2s;
+}
+.card:not(.shot-glow):hover {
+  border-color: var(--hair-hi);
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--accent) 16%, transparent), 0 14px 44px -26px rgb(41 98 255 / .7);
+}
+/* A card inside a glass panel is a faint inner tile; window screenshots (opaque image on top) stay opaque. */
+.glass .card { background-color: var(--tile); }
+.card.shot-glow { background: var(--surface); }
+/* Interactive cards (link tiles) lift slightly. */
+.card-hover:hover { transform: translateY(-2px); }
+
+.glow-line {
+  display: block; height: 1px; border: 0;
+  background: linear-gradient(90deg, transparent, var(--accent) 28%, var(--purple) 72%, transparent);
+  box-shadow: 0 0 14px 0 color-mix(in oklab, var(--accent) 55%, transparent);
+}
+
+/* ---------- Rows ("reasons" list) ---------- */
+
+.rows {
+  border: 1px solid var(--hair); border-radius: 1rem; overflow: hidden;
+  background-color: var(--panel); box-shadow: inset 0 1px 0 var(--hl);
+}
+.row {
+  display: grid; gap: .5rem 2.5rem; align-items: center;
+  padding: 1.25rem 1.25rem; border-top: 1px solid var(--hair);
+  transition: background-color .2s;
+}
+.row:first-child { border-top: 0; }
+.row:hover { background-color: var(--tile); }
+.row-claim {
+  display: flex; align-items: baseline; gap: .9rem;
+  font-family: var(--font-display); font-weight: 800; text-transform: uppercase; letter-spacing: .012em; line-height: .95;
+  font-size: clamp(1.6rem, 1.1rem + 1.6vw, 2.4rem); text-wrap: balance; hyphens: manual;
+}
+html:lang(hi) .row-claim,
+html:lang(zh) .row-claim { font-family: var(--font-sans); text-transform: none; letter-spacing: 0; line-height: 1.3; font-weight: 700; }
+.row-text { color: var(--muted); font-size: 1rem; line-height: 1.6; }
+@media (min-width: 40rem) { .row { padding: 1.5rem 1.75rem; } }
+@media (min-width: 48rem) {
+  .row { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); padding: 1.75rem 2.5rem; }
+  .row-text { font-size: 1.0625rem; }
+}
+
+/* ---------- Hero backdrop and candle canvas ---------- */
+
+/* Hero backdrop: two soft glows and a 56px grid that fades out down the first screen. */
 .hero-bg {
   position: absolute; inset: 0 0 auto 0; z-index: -10; height: 44rem; pointer-events: none;
   background:
@@ -153,12 +356,88 @@ body {
   mask-image: linear-gradient(to bottom, #000 55%, transparent);
 }
 
-.shot-glow { box-shadow: 0 0 0 1px rgb(41 98 255 / .18), 0 30px 90px -30px rgb(41 98 255 / .55), 0 20px 60px -40px rgb(213 0 249 / .4); }
+/*
+ * 3D wireframe candlestick city flying past behind the whole page (src/scripts/candle-city.ts). Fixed to the viewport; the camera follows scroll.
+ * No CSS `opacity` on purpose: a full-screen layer with opacity is an extra compositing group every frame. The script
+ * applies --city-alpha (.44 dark / .3 light, see :root above) inside its blend, so the canvas arrives pre-faded.
+ */
+.candle-city {
+  position: fixed; inset: 0; z-index: -10; width: 100%; height: 100vh; height: 100lvh; pointer-events: none;
+}
 
-/* Window shots that carry their own title bar and transparent rounded corners: the glow follows the alpha. */
-.shot-framed { filter: drop-shadow(0 0 1px rgb(41 98 255 / .35)) drop-shadow(0 30px 60px rgb(41 98 255 / .28)) drop-shadow(0 20px 50px rgb(213 0 249 / .16)); }
+/* Fixed scroll-progress meter at the right edge of the home page (src/components/ScrollMeter.astro). */
+.scroll-meter { position: fixed; right: .875rem; top: 50%; z-index: 20; height: min(58vh, 30rem); width: 4.5rem; transform: translateY(-50%); pointer-events: none; }
+.scroll-meter-track {
+  position: absolute; right: 0; top: 0; bottom: 0; width: 1px;
+  background:
+    repeating-linear-gradient(to bottom, color-mix(in oklab, var(--fg) 38%, transparent) 0 1px, transparent 1px 3.2rem) right / 7px 100% no-repeat,
+    color-mix(in oklab, var(--fg) 14%, transparent);
+}
+.scroll-meter-thumb { position: absolute; right: 0; top: 0; display: flex; align-items: center; justify-content: flex-end; will-change: transform; }
+.scroll-meter-label {
+  position: relative; margin-right: .6rem; padding: .22rem .45rem .22rem .5rem;
+  font-family: var(--font-mono); font-size: .62rem; font-weight: 600; line-height: 1; letter-spacing: .06em; font-variant-numeric: tabular-nums;
+  color: var(--fg); background: color-mix(in oklab, var(--accent) 22%, var(--bg)); border: 1px solid color-mix(in oklab, var(--accent) 60%, transparent);
+  border-radius: .25rem 0 0 .25rem;
+  clip-path: polygon(0 0, calc(100% - .4rem) 0, 100% 50%, calc(100% - .4rem) 100%, 0 100%);
+  min-width: 2.6rem; text-align: left;
+}
+.scroll-meter-dot { width: .5rem; height: .5rem; margin-right: -.25rem; border-radius: 9999px; background: var(--accent-text); box-shadow: 0 0 10px 2px color-mix(in oklab, var(--accent) 70%, transparent); }
+
+/* ---------- Screenshots ---------- */
+
+.shot-glow { box-shadow: 0 0 0 1px rgb(41 98 255 / .22), 0 30px 90px -34px rgb(41 98 255 / .55), 0 20px 60px -44px rgb(213 0 249 / .4); }
+
+/*
+ * Window shots that carry their own title bar and transparent rounded corners get the same glow as a plain box-shadow:
+ * a hairline plus two soft halos. A box-shadow is a cached blurred rect, whereas `filter: drop-shadow()` makes the browser
+ * re-rasterize from the image alpha. The radius is a percentage so it scales with the image;
+ * it is a hair above the real window corner (about 0.7 to 1.2% of the width), the image covers any excess.
+ * Clips (mp4) are clipped by their own `rounded-[14px]` instead, see Screenshot.astro.
+ */
+.shot-framed { box-shadow: 0 0 1px rgb(41 98 255 / .35), 0 30px 60px rgb(41 98 255 / .26), 0 20px 50px rgb(213 0 249 / .15); }
+.shot-framed-img { border-radius: 1.2% / 1.8%; }
 
 /* Theme-aware screenshot swap */
 .shot-dark { display: none; }
 .dark .shot-dark { display: block; }
 .dark .shot-light { display: none; }
+
+/* ---------- Feature panels (src/components/Feature.astro): fact list in the text cell ---------- */
+
+.fact-row {
+  display: flex; align-items: baseline; gap: .85rem;
+  padding: .7rem .1rem; border-bottom: 1px solid var(--hair);
+}
+.fact-row:first-child { border-top: 1px solid var(--hair); }
+.fact-row::before {
+  content: ''; flex: none; align-self: center; width: .38rem; height: .38rem; border-radius: 1px;
+  background: var(--accent-text); box-shadow: 0 0 8px 1px color-mix(in oklab, var(--accent) 65%, transparent);
+}
+/* Numbers, units and tickers inside a fact: small mono chips. */
+.fact-key {
+  font-family: var(--font-mono); font-size: .86em; font-weight: 600; letter-spacing: -.01em; color: var(--fg);
+  padding: .04em .32em; margin-inline: .04em; border-radius: .3rem;
+  background: color-mix(in oklab, var(--accent) 14%, transparent);
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+
+/* ---------- Reveal on enter ---------- */
+
+/*
+ * Hidden only while `html.js-reveal` is set (inline script in Base.astro: JS on, no reduced motion). Without it every
+ * element is simply visible. src/scripts/reveal.ts adds `.is-in` once. Time-based, transform + opacity only.
+ */
+html.js-reveal [data-reveal] {
+  opacity: 0;
+  transition: opacity .7s cubic-bezier(.2, .8, .2, 1), transform .7s cubic-bezier(.2, .8, .2, 1);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+html.js-reveal [data-reveal=''], html.js-reveal [data-reveal='up'] { transform: translate3d(0, 28px, 0); }
+html.js-reveal [data-reveal='left'] { transform: translate3d(-36px, 0, 0); }
+html.js-reveal [data-reveal='right'] { transform: translate3d(36px, 0, 0); }
+html.js-reveal [data-reveal='scale'] { transform: scale(.955); }
+html.js-reveal [data-reveal].is-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html.js-reveal [data-reveal] { opacity: 1; transform: none; transition: none; }
+}

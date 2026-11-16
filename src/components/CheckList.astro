@@ -1,0 +1,16 @@
+---
+// Short list with a glowing square bullet in front of every line. Keep lines to about eight words.
+interface Props { items: string[]; class?: string }
+const { items, class: className = '' } = Astro.props;
+---
+
+<ul class:list={['space-y-3', className]}>
+  {
+    items.map((b) => (
+      <li class="flex gap-3">
+        <span class="mt-[9px] size-1.5 shrink-0 rounded-[1px] bg-accent-text shadow-[0_0_8px_1px_color-mix(in_oklab,var(--accent)_65%,transparent)]" aria-hidden="true"></span>
+        <span class="text-fg/90">{b}</span>
+      </li>
+    ))
+  }
+</ul>

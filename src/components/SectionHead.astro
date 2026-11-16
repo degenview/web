@@ -1,0 +1,43 @@
+---
+// Heading block of a section: kicker, h2 and an optional lead. Content follows with `mt-10 sm:mt-12`.
+// `center` (default): stacked and centered, a line each side of the kicker. `left`: terminal layout, kicker + h2 on the
+// left and the lead on the right from lg (stacked on mobile). Reveals on enter (data-reveal), see global.css.
+interface Props {
+  eyebrow?: string;
+  /** HTML: may contain <span class="gradient-text">. */
+  title: string;
+  lead?: string;
+  /** Lead that carries inline markup (e.g. a mono-set file name). Wins over `lead`. */
+  leadHtml?: string;
+  id?: string;
+  width?: 'narrow' | 'default';
+  align?: 'center' | 'left';
+}
+const { eyebrow, title, lead, leadHtml, id, width = 'narrow', align = 'center' } = Astro.props;
+---
+
+{
+  align === 'left' ? (
+    <div class="scrim grid items-end gap-5 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-12">
+      <div>
+        {eyebrow && <p class="kicker" data-reveal="fade">{eyebrow}</p>}
+        <h2 id={id} class:list={['display text-5xl sm:text-6xl', eyebrow && 'mt-4']} set:html={title} data-reveal style="--i:1" />
+      </div>
+      {leadHtml ? (
+        <p class="text-lg text-muted lg:pb-1.5 lg:text-xl" data-reveal style="--i:2" set:html={leadHtml} />
+      ) : (
+        lead && <p class="text-lg text-muted lg:pb-1.5 lg:text-xl" data-reveal style="--i:2">{lead}</p>
+      )}
+    </div>
+  ) : (
+    <div class:list={['scrim mx-auto text-center', width === 'narrow' ? 'max-w-2xl' : 'max-w-3xl']}>
+      {eyebrow && <p class="kicker kicker-c" data-reveal="fade">{eyebrow}</p>}
+      <h2 id={id} class:list={['display text-5xl sm:text-6xl', eyebrow && 'mt-4']} set:html={title} data-reveal style="--i:1" />
+      {leadHtml ? (
+        <p class="mt-4 text-lg text-muted" data-reveal style="--i:2" set:html={leadHtml} />
+      ) : (
+        lead && <p class="mt-4 text-lg text-muted" data-reveal style="--i:2">{lead}</p>
+      )}
+    </div>
+  )
+}

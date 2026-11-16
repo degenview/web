@@ -2,6 +2,9 @@
 // A small consent card in the bottom-left corner. Google Tag Manager is only requested after the visitor accepts;
 // until then (and after declining) nothing from Google loads. The choice is kept in localStorage, and the footer's
 // "Cookie settings" button opens the card again. Consent Mode defaults are set to "denied" before anything else.
+import { getLang, useT, localePath } from '../i18n';
+const lang = getLang(Astro.url);
+const t = useT(lang).common;
 ---
 
 <div
@@ -11,16 +14,16 @@
   aria-labelledby="cookie-consent-title"
   aria-describedby="cookie-consent-text"
   hidden
-  class="fixed bottom-4 left-4 z-40 w-[min(22rem,calc(100vw-2rem))] rounded-2xl border border-line bg-surface/95 p-4 text-sm shadow-[0_20px_60px_-20px_rgb(0_0_0/.7)] backdrop-blur-xl transition duration-300 data-[leaving]:translate-y-2 data-[leaving]:opacity-0 starting:translate-y-2 starting:opacity-0"
+  class="fixed bottom-4 left-4 z-40 w-[min(22rem,calc(100vw-2rem))] rounded-xl border border-[var(--hair)] bg-bg/95 p-4 text-sm shadow-[0_20px_60px_-20px_rgb(0_0_0/.8)] transition duration-300 data-[leaving]:translate-y-2 data-[leaving]:opacity-0 starting:translate-y-2 starting:opacity-0"
 >
-  <p id="cookie-consent-title" class="font-semibold">Cookies, but only if you say so</p>
+  <p id="cookie-consent-title" class="kicker !text-fg">{t.cookies.title}</p>
   <p id="cookie-consent-text" class="mt-1.5 text-muted">
-    We’d like to use cookies to measure visits to this site.{' '}
-    <a href="/privacy-policy/" class="whitespace-nowrap font-medium text-fg underline underline-offset-4">Privacy policy</a>
+    {t.cookies.text}{' '}
+    <a href={localePath(lang, '/privacy-policy/')} class="whitespace-nowrap font-medium text-fg underline underline-offset-4">{t.nav.privacyPolicy}</a>
   </p>
   <div class="mt-4 grid grid-cols-2 gap-2">
-    <button type="button" id="cookie-reject" class="rounded-lg border border-line px-3 py-2 font-medium transition-colors hover:border-muted hover:bg-chrome">Decline</button>
-    <button type="button" id="cookie-accept" class="rounded-lg bg-[var(--inverse)] px-3 py-2 font-medium text-[var(--inverse-ink)] transition-colors hover:bg-[var(--inverse-hover)]">Accept</button>
+    <button type="button" id="cookie-reject" class="rounded-lg border border-[var(--hair)] px-3 py-2 font-medium transition-colors hover:border-[var(--hair-hi)] hover:bg-fg/[0.06]">{t.cookies.decline}</button>
+    <button type="button" id="cookie-accept" class="rounded-lg bg-[var(--inverse)] px-3 py-2 font-medium text-[var(--inverse-ink)] transition-colors hover:bg-[var(--inverse-hover)]">{t.cookies.accept}</button>
   </div>
 </div>
 
