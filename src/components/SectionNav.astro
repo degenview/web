@@ -1,26 +1,18 @@
 ---
 // A floating pill under the header that appears once the hero is behind you and jumps between the
 // home page's sections, highlighting the one you're in.
+import { getLang, useT } from '../i18n';
 interface Props { sections?: [id: string, label: string][] }
+const t = useT(getLang(Astro.url)).common.sectionNav;
 const {
-  sections = [
-    ['markets', 'Markets'],
-    ['pine-script', 'Pine Script'],
-    ['mcp', 'MCP'],
-    ['portfolio', 'Portfolio'],
-    ['paper-trading', 'Paper trading'],
-    ['replay', 'Replay'],
-    ['chart-types', 'Chart types'],
-    ['more', 'More'],
-    ['download', 'Download'],
-  ],
+  sections = Object.entries(t.sections) as [string, string][],
 } = Astro.props;
 ---
 
 <div data-section-nav class="pointer-events-none fixed inset-x-0 top-[4.75rem] z-30 flex justify-center px-4 transition-[opacity,transform] duration-300 data-[hidden]:-translate-y-2 data-[hidden]:opacity-0" data-hidden inert>
   <nav
-    aria-label="Sections"
-    class="pointer-events-auto max-w-full overflow-x-auto rounded-full border border-line bg-bg/95 p-1.5 shadow-[0_12px_40px_-12px_rgb(0_0_0/.6)] backdrop-blur-xl [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    aria-label={t.ariaLabel}
+    class="pointer-events-auto max-w-full overflow-x-auto rounded-xl border border-[var(--hair)] bg-bg/95 p-1 shadow-[0_12px_40px_-12px_rgb(0_0_0/.7)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
   >
     <ul class="flex w-max items-center gap-0.5">
       {
@@ -29,7 +21,7 @@ const {
             <a
               href={`#${id}`}
               data-section-link={id}
-              class="block whitespace-nowrap rounded-full px-4 py-2.5 text-sm font-medium text-muted transition-colors hover:text-fg data-[active]:bg-[var(--inverse)] data-[active]:text-[var(--inverse-ink)]"
+              class="block whitespace-nowrap rounded-lg px-3.5 py-2.5 font-mono text-[0.68rem] font-medium uppercase tracking-[0.12em] text-muted transition-colors hover:text-fg data-[active]:bg-[var(--inverse)] data-[active]:text-[var(--inverse-ink)]"
             >{label}</a>
           </li>
         ))
@@ -39,6 +31,8 @@ const {
 </div>
 
 <script>
+  import { subscribe } from '../scripts/scroll-loop';
+
   const bar = document.querySelector<HTMLElement>('[data-section-nav]');
   const nav = bar?.querySelector('nav');
   if (bar && nav) {
@@ -48,18 +42,38 @@ const {
       .filter((t): t is { a: HTMLAnchorElement; el: HTMLElement } => !!t.el);
     // Where the content of a section should land under the header and the bar.
     const LINE = 150;
-    const contentTop = (el: HTMLElement) => el.getBoundingClientRect().top + scrollY + parseFloat(getComputedStyle(el).paddingTop) - LINE;
+    // Document positions are cached and re-measured only when sizes change, so a scroll frame reads nothing but scrollY.
+    let tops: number[] = [];
+    let pageEnd = 0;
+    let viewH = innerHeight;
+    // Layout position via the offsetParent chain: unlike getBoundingClientRect it ignores the scroll-reveal transforms
+    // the feature panels carry, so the result does not depend on how far a panel has animated in.
+    const docTop = (el: HTMLElement) => {
+      let t = 0;
+      for (let e: HTMLElement | null = el; e; e = e.offsetParent as HTMLElement | null) t += e.offsetTop;
+      return t;
+    };
+    const measure = () => {
+      viewH = innerHeight;
+      pageEnd = document.documentElement.scrollHeight - 4;
+      tops = targets.map(({ el }) => docTop(el) + parseFloat(getComputedStyle(el).paddingTop) - LINE);
+    };
+    const contentTop = (i: number) => tops[i];
 
     let current: HTMLAnchorElement | null = null;
-    const update = () => {
-      const show = scrollY > innerHeight * 0.7;
-      bar.toggleAttribute('data-hidden', !show);
-      bar.toggleAttribute('inert', !show);
+    let shown: boolean | null = null;
+    const update = (y: number) => {
+      const show = y > viewH * 0.7;
+      if (show !== shown) {
+        shown = show;
+        bar.toggleAttribute('data-hidden', !show);
+        bar.toggleAttribute('inert', !show);
+      }
 
       let active: HTMLAnchorElement | null = null;
-      for (const { a, el } of targets) if (contentTop(el) - 40 <= scrollY) active = a;
+      for (let i = 0; i < targets.length; i++) if (contentTop(i) - 40 <= y) active = targets[i].a;
       // At the very bottom the last section wins, even when it is too short to reach its own line.
-      if (targets.length && scrollY + innerHeight >= document.documentElement.scrollHeight - 4) active = targets[targets.length - 1].a;
+      if (targets.length && y + viewH >= pageEnd) active = targets[targets.length - 1].a;
       if (active === current) return;
       current?.removeAttribute('data-active');
       current?.removeAttribute('aria-current');
@@ -74,12 +88,16 @@ const {
         const el = document.getElementById(a.dataset.sectionLink!);
         if (!el) return;
         e.preventDefault();
-        scrollTo({ top: contentTop(el), behavior: 'smooth' });
+        const i = targets.findIndex((t) => t.el === el);
+        scrollTo({ top: tops[i], behavior: 'smooth' });
         history.replaceState(null, '', `#${el.id}`);
       }),
     );
-    addEventListener('scroll', update, { passive: true });
-    addEventListener('resize', update);
-    update();
+    // Scroll position comes from the page's shared scroll loop: one rAF, one scrollY read per frame for every effect.
+    subscribe(update, { order: 1 });
+    const refresh = () => { measure(); update(scrollY); };
+    addEventListener('resize', refresh, { passive: true });
+    new ResizeObserver(refresh).observe(document.body); // page height changes (images, fonts, accordions); fires once on observe
+    refresh();
   }
 </script>

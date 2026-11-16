@@ -3,6 +3,8 @@
  * They only use the site's color tokens, so they follow the light and dark themes.
  */
 
+import { useT, type Dict, type Lang } from '../i18n';
+
 // Small seeded PRNG so the candles in the "tools" picture are the same on every build.
 function rng(seed: number) {
   return () => {
@@ -26,19 +28,48 @@ const candleSvg = Array.from({ length: 17 }, (_, i) => {
   return `<path d="M${x} ${y(h)}V${y(l)}" stroke="${col}" stroke-width="1.2"/><rect x="${f(Number(x) - 3.4)}" y="${y(Math.max(o, c))}" width="6.8" height="${Math.max(2, f(Math.abs(y(o) - y(c))))}" rx="1" fill="${col}"/>`;
 }).join('');
 
+const esc = (v: string) => v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
 const MONO = "font-family=\"'JetBrains Mono Variable', ui-monospace, monospace\"";
 const GRAD = 'style="stop-color:var(--purple)"';
 
-export const art: Record<string, string> = {
+type Labels = Dict['home']['illustrations'];
+
+/**
+ * SVG text does not wrap, and translations are longer than English. Returns a font size that fits `text`
+ * into `avail` px (never below 70% of `size`). English is left alone: its labels were drawn to fit.
+ */
+const fit = (lang: Lang, text: string, size: number, avail: number): number => {
+  if (lang === 'en') return size;
+  const est = [...text].length * size * 0.55;
+  return est <= avail ? size : Math.max(size * 0.7, Math.round(((size * avail) / est) * 10) / 10);
+};
+
+/** Builds all illustrations with their text labels (the only translatable part) taken from `L`. */
+const mapEsc = <T extends Record<string, string>>(o: T): T =>
+  Object.fromEntries(Object.entries(o).map(([k, v]) => [k, esc(v)])) as T;
+
+function build(labels: Labels, lang: Lang): Record<string, string> {
+  const L = {
+    noAccount: mapEsc(labels.noAccount),
+    watchlists: mapEsc(labels.watchlists),
+    indicators: mapEsc(labels.indicators),
+    alerts: mapEsc(labels.alerts),
+    ai: mapEsc(labels.ai),
+    free: mapEsc(labels.free),
+    shield: mapEsc(labels.shield),
+    smartscreen: mapEsc(labels.smartscreen),
+  };
+  return {
   // A signup form, struck through, and the one button you actually need.
   'no-account': `
     <defs><linearGradient id="mf-na" x1="0" x2="1"><stop offset="0" stop-color="#2962ff"/><stop offset="1" ${GRAD}/></linearGradient></defs>
     <g opacity=".6">
       <rect x="48" y="24" width="150" height="126" rx="12" fill="var(--surface)" stroke="var(--border)"/>
       <rect x="64" y="40" width="58" height="8" rx="4" fill="var(--chrome)"/>
-      <text x="64" y="66" font-size="7" fill="var(--muted)">Email</text>
+      <text x="64" y="66" font-size="7" fill="var(--muted)">${L.noAccount.email}</text>
       <rect x="64" y="70" width="118" height="16" rx="5" fill="none" stroke="var(--border)"/>
-      <text x="64" y="102" font-size="7" fill="var(--muted)">Password</text>
+      <text x="64" y="102" font-size="7" fill="var(--muted)">${L.noAccount.password}</text>
       <rect x="64" y="106" width="118" height="16" rx="5" fill="none" stroke="var(--border)"/>
       <rect x="64" y="130" width="118" height="12" rx="6" fill="var(--chrome)"/>
     </g>
@@ -47,7 +78,7 @@ export const art: Record<string, string> = {
     <path d="m198.5 22.5 11 11m0-11-11 11" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
     <g style="filter:drop-shadow(0 8px 14px rgb(41 98 255/.55))">
       <rect x="152" y="142" width="136" height="38" rx="19" fill="url(#mf-na)"/>
-      <text x="213" y="165.5" font-size="12.5" font-weight="600" fill="#fff" text-anchor="middle">Just open it</text>
+      <text x="213" y="165.5" font-size="${fit(lang, labels.noAccount.cta, 12.5, 98)}" font-weight="600" fill="#fff" text-anchor="middle">${L.noAccount.cta}</text>
     </g>
     <path d="m268 160 0 20 5-4.5 3.5 7 3-1.5-3.5-7 7-.5z" fill="#fff" stroke="#000" stroke-width="1.2" stroke-linejoin="round"/>`,
 
@@ -57,9 +88,9 @@ export const art: Record<string, string> = {
     <rect x="86" y="18" width="164" height="150" rx="12" fill="var(--surface)" stroke="var(--border)" opacity=".35"/>
     <rect x="72" y="30" width="178" height="150" rx="12" fill="var(--surface)" stroke="var(--border)" opacity=".6"/>
     <rect x="56" y="42" width="200" height="136" rx="12" fill="var(--surface)" stroke="var(--border)"/>
-    <text x="72" y="63" font-size="9" font-weight="600" fill="var(--muted)">Watchlist 7</text>
+    <text x="72" y="63" font-size="9" font-weight="600" fill="var(--muted)">${L.watchlists.title}</text>
     <rect x="206" y="53" width="40" height="15" rx="7.5" fill="var(--chrome)"/>
-    <text x="226" y="63.4" font-size="8" fill="var(--fg)" text-anchor="middle">+ New</text>
+    <text x="226" y="63.4" font-size="${fit(lang, labels.watchlists.newButton, 8, 32)}" fill="var(--fg)" text-anchor="middle">${L.watchlists.newButton}</text>
     ${[
       ['BTC', '#f7931a', '0,12 12,8 24,10 36,2 48,5 60,-3', '+2.1%', 84],
       ['ETH', '#627eea', '0,2 12,6 24,0 36,3 48,-5 60,-8', '+0.8%', 104],
@@ -119,8 +150,8 @@ export const art: Record<string, string> = {
     </g>
     <rect x="238" y="122" width="68" height="9" rx="4.5" fill="var(--chrome)"/>
     <rect x="238" y="122" width="52" height="9" rx="4.5" fill="url(#mf-ix)"/>
-    <text x="238" y="147" font-size="8" fill="var(--muted)">load</text><text x="306" y="147" font-size="8.5" font-weight="700" fill="var(--down)" text-anchor="end">77%</text>
-    <text x="238" y="170" font-size="8" fill="var(--muted)">indicators</text><text x="306" y="170" font-size="8.5" font-weight="700" fill="var(--fg)" text-anchor="end">42</text>`,
+    <text x="238" y="147" font-size="8" fill="var(--muted)">${L.indicators.load}</text><text x="306" y="147" font-size="8.5" font-weight="700" fill="var(--down)" text-anchor="end">77%</text>
+    <text x="238" y="170" font-size="8" fill="var(--muted)">${L.indicators.indicators}</text><text x="306" y="170" font-size="8.5" font-weight="700" fill="var(--fg)" text-anchor="end">42</text>`,
 
   // Price crosses a level, a toast pops up.
   alerts: `
@@ -133,7 +164,7 @@ export const art: Record<string, string> = {
       <circle cx="46" cy="43" r="12" fill="var(--accent)"/>
       <path d="M46 36.5a5 5 0 0 0-5 5v3.2l-1.4 2.3h12.8L51 44.7v-3.2a5 5 0 0 0-5-5zm-1.6 12.3a1.7 1.7 0 0 0 3.2 0" fill="#fff"/>
       <text x="66" y="40" font-size="9.5" font-weight="700" fill="var(--fg)">BTC/USDT</text>
-      <text x="66" y="53" font-size="8.5" fill="var(--muted)">Crossed above 76,000</text>
+      <text x="66" y="53" font-size="8.5" fill="var(--muted)">${L.alerts.crossedAbove}</text>
     </g>`,
 
   // Alert fires, a request leaves, something on the other end does a thing.
@@ -182,7 +213,7 @@ export const art: Record<string, string> = {
     <g style="filter:drop-shadow(0 8px 16px rgb(110 80 255/.5))">
       <rect x="168" y="146" width="124" height="30" rx="15" fill="url(#mf-ai)"/>
       <path d="m186 161 2.2-5.2 2.2 5.2 5.2 2.2-5.2 2.2-2.2 5.2-2.2-5.2-5.2-2.2z" fill="#fff"/>
-      <text x="200" y="164.5" font-size="9.5" font-weight="600" fill="#fff">Add an RSI alert</text>
+      <text x="200" y="164.5" font-size="${fit(lang, labels.ai.suggestion, 9.5, 84)}" font-weight="600" fill="#fff">${L.ai.suggestion}</text>
     </g>`,
 
   // Two Macs, one cloud, no server of ours in sight.
@@ -203,22 +234,22 @@ export const art: Record<string, string> = {
     <defs><linearGradient id="fq-fr" x1="0" x2="1"><stop offset="0" stop-color="#2962ff"/><stop offset="1" ${GRAD}/></linearGradient></defs>
     <rect x="62" y="36" width="196" height="130" rx="20" fill="var(--surface)" stroke="var(--border)"/>
     <text x="160" y="116" font-size="70" font-weight="700" text-anchor="middle" fill="url(#fq-fr)" style="filter:drop-shadow(0 0 14px rgb(110 80 255/.45))">$0</text>
-    <text x="160" y="143" font-size="11" text-anchor="middle" fill="var(--muted)">forever</text>
+    <text x="160" y="143" font-size="11" text-anchor="middle" fill="var(--muted)">${L.free.forever}</text>
     <rect x="30" y="20" width="108" height="28" rx="14" fill="var(--accent)" style="filter:drop-shadow(0 6px 12px rgb(41 98 255/.5))"/>
     <text x="84" y="38.5" ${MONO} font-size="11" font-weight="700" fill="#fff" text-anchor="middle">&lt;/&gt; GPL-3.0</text>
     <rect x="186" y="150" width="106" height="28" rx="14" fill="var(--surface)" stroke="var(--border)"/>
     <path d="m200 164 5 5 9-10" fill="none" stroke="var(--up)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="256" y="168" font-size="10.5" font-weight="600" fill="var(--fg)" text-anchor="middle">No account</text>`,
+    <text x="256" y="168" font-size="10.5" font-weight="600" fill="var(--fg)" text-anchor="middle">${L.free.noAccount}</text>`,
 
   // FAQ: a shield, and a short list of things the app does not do.
   shield: `
     <defs><linearGradient id="fq-sh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2962ff"/><stop offset="1" ${GRAD}/></linearGradient></defs>
     <path d="M160 18 242 50V108C242 150 208 174 160 192 112 174 78 150 78 108V50Z" fill="var(--surface)" stroke="url(#fq-sh)" stroke-width="5" stroke-linejoin="round" style="filter:drop-shadow(0 0 14px rgb(110 80 255/.4))"/>
     <path d="m126 108 24 24 44-52" fill="none" stroke="var(--up)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
-    ${[['No analytics', 6, 58], ['No telemetry', 222, 100], ['No account', 6, 142]].map(([t, x, y]) => `
+    ${[[L.shield.noAnalytics, 6, 58], [L.shield.noTelemetry, 222, 100], [L.shield.noAccount, 6, 142]].map(([t, x, y]) => `
     <rect x="${x}" y="${y}" width="92" height="28" rx="14" fill="var(--surface)" stroke="var(--border)"/>
     <circle cx="${Number(x) + 15}" cy="${Number(y) + 14}" r="4" fill="var(--up)"/>
-    <text x="${Number(x) + 56}" y="${Number(y) + 18}" font-size="10.5" font-weight="600" fill="var(--fg)" text-anchor="middle">${t}</text>`).join('')}`,
+    <text x="${Number(x) + 56}" y="${Number(y) + 18}" font-size="${fit(lang, String(t).replace(/&amp;/g, '&'), 10.5, 62)}" font-weight="600" fill="var(--fg)" text-anchor="middle">${t}</text>`).join('')}`,
 
   // FAQ: one window per platform, each with the file you download.
   platforms: `
@@ -234,11 +265,11 @@ export const art: Record<string, string> = {
   // FAQ: the dialog you will meet on Windows, with the button to press.
   smartscreen: `
     <rect x="34" y="14" width="252" height="172" rx="6" fill="#1565c0" style="filter:drop-shadow(0 12px 24px rgb(0 0 0/.45))"/>
-    <text x="52" y="44" font-size="13.5" font-weight="700" fill="#fff">Windows protected your PC</text>
+    <text x="52" y="44" font-size="13.5" font-weight="700" fill="#fff">${L.smartscreen.title}</text>
     <rect x="52" y="58" width="214" height="6" rx="3" fill="#fff" opacity=".6"/><rect x="52" y="72" width="196" height="6" rx="3" fill="#fff" opacity=".6"/><rect x="52" y="86" width="150" height="6" rx="3" fill="#fff" opacity=".6"/>
-    <text x="52" y="124" font-size="11" fill="#fff" text-decoration="underline">More info</text>
+    <text x="52" y="124" font-size="11" fill="#fff" text-decoration="underline">${L.smartscreen.moreInfo}</text>
     <rect x="174" y="146" width="96" height="28" rx="4" fill="#fff"/>
-    <text x="222" y="164.5" font-size="11.5" font-weight="700" fill="#1565c0" text-anchor="middle">Run anyway</text>
+    <text x="222" y="164.5" font-size="${fit(lang, labels.smartscreen.runAnyway, 11.5, 76)}" font-weight="700" fill="#1565c0" text-anchor="middle">${L.smartscreen.runAnyway}</text>
     <rect x="170" y="142" width="104" height="36" rx="7" fill="none" stroke="var(--up)" stroke-width="3" stroke-dasharray="6 4"/>
     <path d="m266 168 0 20 5-4.500 3.600 7.200 3.200-1.600-3.600-7.200 6.400-.5z" fill="#fff" stroke="#000" stroke-width="1.200" stroke-linejoin="round"/>`,
 
@@ -253,3 +284,15 @@ export const art: Record<string, string> = {
     <rect x="116" y="82" width="88" height="40" rx="12" fill="url(#fq-so)" style="filter:drop-shadow(0 0 14px rgb(110 80 255/.55))"/>
     <text x="160" y="106" font-size="11.5" font-weight="700" fill="#fff" text-anchor="middle">DegenView</text>`,
 };
+}
+
+const cache = new Map<Lang, Record<string, string>>();
+
+/** Illustrations for a language, keyed by name (no-account, watchlists, …, free, shield, platforms, smartscreen, sources). */
+export function getArt(lang: Lang): Record<string, string> {
+  let a = cache.get(lang);
+  if (!a) cache.set(lang, (a = build(useT(lang).home.illustrations, lang)));
+  return a;
+}
+
+/** English illustrations. Prefer `getArt(lang)`. */

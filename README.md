@@ -31,10 +31,18 @@
 | [**FAQ**](https://degenview.app/faq/) | Searchable answers, grouped by topic |
 | [**Privacy policy**](https://degenview.app/privacy-policy/) | Cookies and analytics, opt-in only |
 
+## 🌍 Languages
+
+English (default, unprefixed), [Español](https://degenview.app/es/), [Français](https://degenview.app/fr/), [हिन्दी](https://degenview.app/hi/) and [Deutsch](https://degenview.app/de/). Every page lives at the same path under a language prefix (`/faq/` → `/es/faq/`), with a canonical URL and `hreflang` alternates per page. There is no automatic redirect by browser language; the flag menu in the header and footer switches language.
+
+Copy lives in `src/i18n/<lang>/*.ts`, with `src/i18n/en/` as the source of truth: a missing or extra key fails `npm run check`. `npm run i18n:check` verifies the built site (lang, canonical, hreflang, locale links). To fix or add a translation, edit the matching file under `src/i18n/<lang>/` and follow `src/i18n/GLOSSARY.md`; a new language also needs an entry in `src/i18n/locales.ts` and `astro.config.mjs`. Translations are machine-assisted, and native-speaker fixes are very welcome.
+
+Flags are from [flag-icons](https://github.com/lipis/flag-icons) (MIT).
+
 ## 🎨 Design
 
 - **Dark-first, light-ready.** True-black canvas, neutral greys and a royal blue that fades into magenta, with a system / light / dark toggle.
-- **Phone-friendly.** Checked at 375px: no sideways scrolling, 40px-ish touch targets and a hamburger menu under `md`.
+- **Phone-friendly.** Checked at 375px in every language: no sideways scrolling, 40px-ish touch targets and a hamburger menu under `lg`.
 - **Fast and light.** Static HTML, self-hosted fonts and no client framework; the few scripts that exist are small and progressive.
 - **Accessible.** Skip link, keyboard-friendly menus and carousels, visible focus rings and reduced-motion support.
 

@@ -3,6 +3,21 @@ import {
   type PlatformId, type ReleaseInfo,
 } from '../data/platforms';
 
+/** Runtime strings, emitted as JSON by Footer.astro (`<script type="application/json" id="dv-i18n">`). */
+interface Strings {
+  downloadFor?: string;
+  chooseDownload?: string;
+  mobileNote?: string;
+}
+
+function readStrings(): Strings {
+  try {
+    return JSON.parse(document.getElementById('dv-i18n')?.textContent ?? '{}') as Strings;
+  } catch {
+    return {};
+  }
+}
+
 export interface Detection {
   id: PlatformId | null;
   note: string | null;
@@ -13,10 +28,10 @@ interface UAData {
   getHighEntropyValues?: (hints: string[]) => Promise<{ architecture?: string; platform?: string }>;
 }
 
-export async function detectPlatform(): Promise<Detection> {
+export async function detectPlatform(strings: Strings = readStrings()): Promise<Detection> {
   const ua = navigator.userAgent;
   const uaData = (navigator as unknown as { userAgentData?: UAData }).userAgentData;
-  if (/iPhone|iPad|iPod|Android/i.test(ua)) return { id: null, note: 'DegenView is a desktop app — grab it on your computer.' };
+  if (/iPhone|iPad|iPod|Android/i.test(ua)) return { id: null, note: strings.mobileNote ?? null };
 
   let arch: string | undefined;
   try {
@@ -53,7 +68,8 @@ async function refreshRelease(initial: ReleaseInfo): Promise<ReleaseInfo> {
 export async function initDownloads() {
   const root = document.documentElement;
   let release = releaseFromTag(root.dataset.releaseTag || null);
-  const detected = await detectPlatform();
+  const strings = readStrings();
+  const detected = await detectPlatform(strings);
   const current = detected.id;
 
   const render = () => {
@@ -107,11 +123,11 @@ export async function initDownloads() {
       if (platform && file) {
         a.href = file.href;
         a.removeAttribute('data-anchor');
-        if (label) label.textContent = `Download for ${platform.os}`;
+        if (label && strings.downloadFor) label.textContent = strings.downloadFor.replace('{os}', platform.os);
         if (meta) meta.textContent = file.dataset.meta ?? '';
       } else {
         a.href = '#all';
-        if (label) label.textContent = 'Choose your download';
+        if (label && strings.chooseDownload) label.textContent = strings.chooseDownload;
         if (meta) meta.textContent = '';
       }
     });

@@ -1,28 +1,35 @@
 ---
-import Base from '../layouts/Base.astro';
-import Header from '../components/Header.astro';
-import Hero from '../components/Hero.astro';
-import Sources from '../components/Sources.astro';
-import Feature from '../components/Feature.astro';
-import ChartTypes from '../components/ChartTypes.astro';
-import MoreFeatures from '../components/MoreFeatures.astro';
-import Privacy from '../components/Privacy.astro';
-import DownloadButton from '../components/DownloadButton.astro';
-import Footer from '../components/Footer.astro';
-import CoffeeButton from '../components/CoffeeButton.astro';
-import SectionNav from '../components/SectionNav.astro';
-import PreReleaseNote from '../components/PreReleaseNote.astro';
-import { features, extras } from '../data/features';
+import { getStaticPaths as paths } from '../../i18n/paths';
+export const getStaticPaths = paths;
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Hero from '../../components/Hero.astro';
+import Sources from '../../components/Sources.astro';
+import Feature from '../../components/Feature.astro';
+import ChartTypes from '../../components/ChartTypes.astro';
+import MoreFeatures from '../../components/MoreFeatures.astro';
+import DownloadButton from '../../components/DownloadButton.astro';
+import Footer from '../../components/Footer.astro';
+import CoffeeButton from '../../components/CoffeeButton.astro';
+import SectionNav from '../../components/SectionNav.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import ScrollMeter from '../../components/ScrollMeter.astro';
+import PreReleaseNote from '../../components/PreReleaseNote.astro';
+import { getFeatures, getExtras } from '../../data/features';
 import { getImage } from 'astro:assets';
-import heroImage from '../assets/screens/hero-dark.webp';
-import AlternativeTeaser from '../components/AlternativeTeaser.astro';
-import { getRelease } from '../data/release';
-import { LATEST_URL, REPO_URL } from '../data/platforms';
+import heroImage from '../../assets/screens/hero-dark.webp';
+import { getRelease } from '../../data/release';
+import { LATEST_URL, REPO_URL } from '../../data/platforms';
+import { getLang, useT, localePath, localeMeta, fmt, SITE } from '../../i18n';
 
 const release = await getRelease();
-const SITE = 'https://degenview.app';
-const description =
-  'A free, open source TradingView alternative for desktop: multi-chart layouts, local Pine Script v6, alerts, replay and portfolios. macOS, Windows, Linux.';
+const lang = getLang(Astro.url);
+const t = useT(lang).home;
+const inLanguage = localeMeta[lang].htmlLang;
+const features = getFeatures(lang);
+const extras = getExtras(lang);
+const description = t.meta.description;
+const homeUrl = lang === 'en' ? SITE : SITE + localePath(lang, '/');
 const heroShot = await getImage({ src: heroImage, width: 1280 });
 
 const jsonLd = [
@@ -30,8 +37,8 @@ const jsonLd = [
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: 'DegenView',
-    alternateName: ['DegenView – open source TradingView alternative', 'DegenView Charts'],
-    url: SITE,
+    alternateName: t.jsonLd.alternateNames,
+    url: homeUrl,
     description,
     applicationCategory: 'FinanceApplication',
     operatingSystem: 'macOS, Windows, Linux',
@@ -40,52 +47,55 @@ const jsonLd = [
     image: `${SITE}/og.png`,
     screenshot: `${SITE}${heroShot.src}`,
     sameAs: [REPO_URL],
-    softwareHelp: `${SITE}/faq/`,
+    softwareHelp: SITE + localePath(lang, '/faq/'),
     ...(release.tag ? { softwareVersion: release.tag.replace(/^v/, '') } : {}),
     downloadUrl: LATEST_URL,
     codeRepository: REPO_URL,
     author: { '@type': 'Person', name: 'Nico Oelgart' },
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
     featureList: [...features.map((f) => f.title), ...extras.map((e) => e.title.replace(/\*$/, ''))],
+    inLanguage,
   },
-  { '@context': 'https://schema.org', '@type': 'WebSite', name: 'DegenView', url: SITE },
+  { '@context': 'https://schema.org', '@type': 'WebSite', name: 'DegenView', url: homeUrl, inLanguage },
 ];
 ---
 
-<Base title="DegenView – Free, Open Source TradingView Alternative" description={description} jsonLd={jsonLd}>
+<Base title={t.meta.title} description={description} jsonLd={jsonLd}>
   <Header slot="header" />
   <SectionNav />
+  <ScrollMeter />
   <Hero />
   <Sources />
-  <section id="features" aria-labelledby="features-h" class="pb-10">
+  <section id="features" aria-labelledby="features-h" class="overflow-x-clip py-16 sm:py-24">
     <div class="container-x">
-      <div class="mx-auto max-w-2xl text-center">
-        <p class="text-sm font-semibold text-accent-text">features</p>
-        <h2 id="features-h" class="display mt-3 text-4xl sm:text-6xl">Everything a market dashboard <span class="gradient-text">should have</span></h2>
-      </div>
-      <div class="divide-y divide-line/50">
-        {features.map((f, i) => <Feature feature={f} flip={i % 2 === 1} />)}
+      <SectionHead id="features-h" align="left" eyebrow={t.features.eyebrow} title={t.features.heading} />
+      <div class="mt-10 space-y-6 sm:mt-12">
+        {features.map((f, i) => <Feature feature={f} index={i + 1} flip={i % 2 === 1} />)}
       </div>
     </div>
   </section>
   <ChartTypes />
   <MoreFeatures />
-  <AlternativeTeaser />
-  <Privacy />
-  <section id="download" aria-labelledby="dl-h" class="py-20 sm:py-32">
-    <div class="container-x text-center">
-      <h2 id="dl-h" class="display text-4xl sm:text-7xl">Get DegenView. <span class="gradient-text block">It’s free.</span></h2>
-      <p class="mx-auto mt-4 max-w-xl text-lg text-muted">Latest release <span class="font-mono" data-dl-version>{release.tag ?? ''}</span>. No account, no trial, no catch.</p>
-      <div class="mt-8 flex justify-center"><DownloadButton showNote /></div>
-      <PreReleaseNote variant="inline" class="mt-6" />
-      <p class="mt-6 flex justify-center gap-x-6 text-sm text-muted">
-        <a class="py-2 font-medium text-accent-text underline underline-offset-4" href="/download/">All downloads</a>
-        <a class="py-2 font-medium text-accent-text underline underline-offset-4" href="/faq/">FAQ</a>
-      </p>
-      <p class="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm text-muted">
-        Free forever. If it earns a spot on your screen:
-        <CoffeeButton />
-      </p>
+  <section id="download" aria-labelledby="dl-h" class="py-16 sm:py-24">
+    <div class="container-x">
+      <div class="glass stage relative mx-auto max-w-4xl" data-reveal="scale">
+        <span class="glow-line absolute inset-x-10 top-0" aria-hidden="true"></span>
+        <div class="p-6 text-center sm:p-8 lg:p-10">
+          <p class="kicker kicker-c">{useT(lang).common.nav.download}</p>
+          <h2 id="dl-h" class="display mt-4 text-6xl sm:text-7xl" set:html={t.download.heading} />
+          <p class="mx-auto mt-5 max-w-xl text-lg text-fg/75"><Fragment set:html={fmt(t.download.latest, { version: `<span class="fact-key" data-dl-version>${release.tag ?? ''}</span>` })} /></p>
+          <div class="mt-8 flex justify-center"><DownloadButton showNote /></div>
+          <PreReleaseNote variant="inline" class="mt-6" wrapClass="-mx-5 w-auto! sm:mx-0" />
+          <p class="mt-6 flex justify-center gap-x-6 font-mono text-xs uppercase tracking-[0.14em]">
+            <a class="py-2 font-medium text-accent-text underline underline-offset-4" href={localePath(lang, '/download/')}>{t.download.allDownloads}</a>
+            <a class="py-2 font-medium text-accent-text underline underline-offset-4" href={localePath(lang, '/faq/')}>{t.download.faq}</a>
+          </p>
+        </div>
+        <p class="flex flex-wrap items-center justify-center gap-x-4 gap-y-3 border-t border-[var(--hair)] px-6 py-5 text-center text-sm text-muted sm:px-8">
+          {t.download.freeForever}
+          <CoffeeButton />
+        </p>
+      </div>
     </div>
   </section>
   <Footer slot="footer" />

@@ -2,25 +2,44 @@
 // Shown while the newest release is a pre-release or release candidate, and gone once a stable one ships.
 import { getRelease } from '../data/release';
 import { REPO_URL } from '../data/platforms';
-interface Props { variant?: 'block' | 'inline'; class?: string }
-const { variant = 'block', class: className = '' } = Astro.props;
+import { fmt, getLang, useT } from '../i18n';
+interface Props { variant?: 'block' | 'inline'; class?: string; wrapClass?: string }
+const { variant = 'block', class: className = '', wrapClass = '' } = Astro.props;
 
 const release = await getRelease();
 const pre = !!release.tag && (/-(rc|beta|alpha)\b/.test(release.tag) || release.prerelease === true);
-const what = release.tag && /-rc\b/.test(release.tag) ? 'release candidate' : 'pre-release';
+const lang = getLang(Astro.url);
+const t = useT(lang).common;
+const rc = !!release.tag && /-rc\b/.test(release.tag);
+const block = rc ? t.preRelease.block.releaseCandidate : t.preRelease.block.preRelease;
+const inline = rc ? t.preRelease.inline.releaseCandidate : t.preRelease.inline.preRelease;
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const newTab = `<span class="sr-only"> ${t.opensInNewTab}</span>`;
+const issuesHref = `${REPO_URL}/issues`;
+const linkClass = 'font-medium text-accent-text underline underline-offset-4';
+const blockBody = fmt(block.body, {
+  version: `<span class="font-mono text-fg" data-dl-version>${esc(release.tag ?? '')}</span>`,
+  issues: `<a class="${linkClass}" href="${issuesHref}" target="_blank" rel="noopener noreferrer">${t.preRelease.block.issuesLink}${newTab}</a>`,
+});
+const inlineBody = fmt(inline, {
+  issues: `<a class="${linkClass}" href="${issuesHref}" target="_blank" rel="noopener noreferrer">${t.preRelease.inline.issuesLink}${newTab}</a>`,
+});
+// The inline note stays on one line: the font shrinks with its container (capped at text-sm) so the whole sentence fits
+// beside the icon and padding (~52px). The per-character factor is the rough average glyph width in em.
+const inlineChars = [...fmt(inline, { issues: t.preRelease.inline.issuesLink })].length;
+const inlineFit = `font-size:min(.875rem,max(.5rem,calc((100cqw - 52px) / ${(inlineChars * (lang === 'hi' ? 0.62 : 0.54)).toFixed(1)})))`;
 const warn = 'M12 9v4m0 4h.01M10.3 3.9 2.4 17.5A2 2 0 0 0 4.1 20.5h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z';
 ---
 
 {
   pre && variant === 'block' && (
-    <aside class:list={['mx-auto flex max-w-2xl items-start gap-4 rounded-2xl border border-[#f5a524]/40 bg-[#f5a524]/[0.07] p-5 text-left', className]} aria-label="Pre-release notice">
+    <aside class:list={['mx-auto flex max-w-2xl items-start gap-4 rounded-xl border border-[#f5a524]/40 bg-[color-mix(in_oklab,#f5a524_8%,color-mix(in_oklab,var(--bg)_58%,transparent))] p-5 text-left sm:p-6', className]} aria-label={t.preRelease.ariaLabel}>
       <svg viewBox="0 0 24 24" class="mt-0.5 size-5 shrink-0 text-[#f5a524]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={warn} /></svg>
       <div>
-        <p class="font-semibold">DegenView is in {what} testing</p>
-        <p class="mt-1 text-sm text-muted">
-          <span class="font-mono text-fg" data-dl-version>{release.tag}</span> is a {what} of the next stable version, so you may hit rough edges. Found one?{' '}
-          <a class="font-medium text-accent-text underline underline-offset-4" href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer">Tell us on GitHub<span class="sr-only"> (opens in a new tab)</span></a>.
-          <a class="ml-1 font-medium text-accent-text underline underline-offset-4" href={release.htmlUrl} target="_blank" rel="noopener noreferrer">Release notes<span class="sr-only"> (opens in a new tab)</span></a>
+        <p class="font-semibold">{block.title}</p>
+        <p class="mt-1 text-sm text-fg/70">
+          <Fragment set:html={blockBody} />
+          <a class="ml-1 font-medium text-accent-text underline underline-offset-4" href={release.htmlUrl} target="_blank" rel="noopener noreferrer">{t.preRelease.block.releaseNotes}<span class="sr-only"> {t.opensInNewTab}</span></a>
         </p>
       </div>
     </aside>
@@ -28,12 +47,13 @@ const warn = 'M12 9v4m0 4h.01M10.3 3.9 2.4 17.5A2 2 0 0 0 4.1 20.5h15.8a2 2 0 0 
 }
 {
   pre && variant === 'inline' && (
-    <p class:list={['mx-auto flex max-w-xl items-start justify-center gap-2 text-sm text-muted', className]}>
-      <svg viewBox="0 0 24 24" class="mt-0.5 size-4 shrink-0 text-[#f5a524]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={warn} /></svg>
+    <div class:list={['w-full [container-type:inline-size]', wrapClass]}>
+    <p class:list={['mx-auto flex w-fit max-w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-[#f5a524]/30 bg-[color-mix(in_oklab,#f5a524_8%,color-mix(in_oklab,var(--bg)_65%,transparent))] px-3 py-2.5 text-left text-fg/70 sm:gap-2 sm:px-4', className]} style={inlineFit}>
+      <svg viewBox="0 0 24 24" class="size-4 shrink-0 text-[#f5a524]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={warn} /></svg>
       <span>
-        This is a {what}, so expect some rough edges.{' '}
-        <a class="font-medium text-accent-text underline underline-offset-4" href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer">Report issues on GitHub<span class="sr-only"> (opens in a new tab)</span></a>.
+        <Fragment set:html={inlineBody} />
       </span>
     </p>
+    </div>
   )
 }

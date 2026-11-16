@@ -5,7 +5,7 @@ Drop PNGs here; the site picks them up automatically (missing ones render a "com
 - Naming: `<slug>-dark.png` and `<slug>-light.png`. Light is optional (falls back to dark), and so is dark.
 - Size: 2400×1500 (16:10), PNG, crop to the app window without OS chrome (the site adds only a rounded border and glow, no title bar).
 - Video: `<slug>.mp4` (+ `<slug>-poster.webp`) replaces the screenshot with a muted looping clip, e.g. `pine-script.mp4`. Encode: H.264, no audio, 1920px wide, CRF 18, `+faststart` (~0.5 MB for 7 s).
-- Exception: `hero-dark.webp` and `paper-trading-dark.webp` are full macOS window shots (own title bar, rounded transparent corners), cropped to the window edge and stored as near-lossless WebP (q98). They render with `framed` so the site skips its own frame. WebP is picked up like PNG. Astro resizes and recompresses at build time (quality 90), never upscaling.
+- Exception: `hero-dark.webp`, `hero-light.webp` and `paper-trading-dark.webp` are full macOS window shots (own title bar, rounded transparent corners), cropped to the window edge (no OS shadow) and stored as near-lossless WebP (q98). They render with `framed` so the site skips its own frame. WebP is picked up like PNG. Astro resizes and recompresses at build time (quality 90), never upscaling.
 
 | slug | show |
 |---|---|

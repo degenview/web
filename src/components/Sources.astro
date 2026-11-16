@@ -8,6 +8,9 @@ import polymarket from '../assets/sources/polymarket.png';
 import kalshi from '../assets/sources/kalshi.png';
 import cmc from '../assets/sources/coinmarketcap.svg';
 import alpaca from '../assets/sources/alpaca.png';
+import { getLang, useT } from '../i18n';
+
+const t = useT(getLang(Astro.url)).home.sources;
 
 const sources = [
   { name: 'Binance', img: binance }, { name: 'Coinbase', img: coinbase }, { name: 'CoinGecko', img: coingecko },
@@ -16,18 +19,21 @@ const sources = [
 ];
 ---
 
-<section aria-labelledby="sources-h" class="py-12">
+<section aria-labelledby="sources-h" class="pt-6 sm:pt-8">
   <div class="container-x">
-    <h2 id="sources-h" class="mb-8 text-center text-sm text-muted">Data from the sources you already use</h2>
-    <ul class="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
-      {
-        sources.map((s) => (
-          <li class="flex items-center gap-2.5 text-sm font-medium text-muted">
-            <Image src={s.img} alt="" width={28} height={28} class="size-7 rounded-md object-contain" loading="lazy" />
-            {s.name}
-          </li>
-        ))
-      }
-    </ul>
+    <div class="glass flex flex-col gap-5 p-6 sm:p-8 lg:flex-row lg:items-center lg:gap-10 lg:py-6 lg:pl-10 lg:pr-6" data-reveal>
+      <h2 id="sources-h" class="kicker shrink-0 lg:max-w-[13rem]">{t.heading}</h2>
+      {/* One bordered grid: the panel colour shows through a 1px gap, which draws the hairlines between cells. */}
+      <ul class="grid w-full grid-cols-2 gap-px overflow-hidden rounded-lg border border-[var(--hair)] bg-[var(--hair)] sm:grid-cols-4">
+        {
+          sources.map((s) => (
+            <li class="flex items-center gap-3 bg-bg/80 px-3.5 py-3 text-sm font-medium text-fg/85">
+              <Image src={s.img} alt="" width={28} height={28} class="size-6 shrink-0 rounded object-contain" loading="lazy" />
+              <span class="min-w-0 truncate">{s.name}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
   </div>
 </section>
