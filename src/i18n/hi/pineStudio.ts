@@ -46,7 +46,7 @@ export const pineStudio: Dict['pineStudio'] = {
     lead: 'Pine Script v6 लिखें, किसी भी लाइन पर रुकें, धीमे हिस्सों को profile करें और AI से मदद लें। आपकी मशीन पर, लाइव डेटा के साथ चलता है। फ्री, ओपन सोर्स, कोई अकाउंट नहीं।',
     docsLink: 'Pine Studio docs पढ़ें',
     chips: ['Pine Script v6', '100% लोकल चलता है', 'macOS · Windows · Linux', 'ओपन सोर्स · GPL-3.0'],
-    screenshotAlt: 'एडिटर में Trend Strength script, लाइव BTC/USDT प्रीव्यू chart और script के इनपुट के साथ Pine Studio',
+    screenshotAlt: 'एडिटर में Pivot Levels script, अपने लेवल के साथ लाइव BTC/USDT chart, script के इनपुट और एक लाइन पर रुके debugger के साथ Pine Studio',
   },
 
   write: {

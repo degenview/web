@@ -44,7 +44,7 @@ export const pineStudio = {
     lead: 'Write Pine Script v6, break on any line, profile the slow parts and get AI help. Runs on your machine, on live data. Free, open source, no account.',
     docsLink: 'Read the Pine Studio docs',
     chips: ['Pine Script v6', 'Runs 100% locally', 'macOS · Windows · Linux', 'Open source · GPL-3.0'],
-    screenshotAlt: "Pine Studio with the Trend Strength script in the editor, a live BTC/USDT preview chart and the script's inputs",
+    screenshotAlt: "Pine Studio with the Pivot Levels script in the editor, a live BTC/USDT chart with its levels, the script's inputs and the debugger paused on a line",
   },
 
   write: {

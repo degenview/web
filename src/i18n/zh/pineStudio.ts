@@ -46,7 +46,7 @@ export const pineStudio: Dict['pineStudio'] = {
     lead: '编写 Pine Script v6，在任意一行中断，找出性能瓶颈，还有 AI 帮忙。在你的电脑上基于实时数据运行。免费开源，无需账号。',
     docsLink: '阅读 Pine Studio 文档',
     chips: ['Pine Script v6', '100% 本地运行', 'macOS · Windows · Linux', '开源 · GPL-3.0'],
-    screenshotAlt: 'Pine Studio：编辑器中打开 Trend Strength 脚本，旁边是实时 BTC/USDT 预览图表和脚本的输入项',
+    screenshotAlt: 'Pine Studio：编辑器中打开 Pivot Levels 脚本，旁边是带有价位线的实时 BTC/USDT 图表、脚本的输入项，以及暂停在某一行的调试器',
   },
 
   write: {
