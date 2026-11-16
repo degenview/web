@@ -76,7 +76,7 @@ const revealInline = `try{var d=document.documentElement;if('IntersectionObserve
     <meta name="twitter:image:alt" content={ogAlt} />
 
     <link rel="preload" as="font" type="font/woff2" href={interLatin} crossorigin />
-    {lang !== 'hi' && <link rel="preload" as="font" type="font/woff2" href={displayLatin} crossorigin />}
+    {lang !== 'hi' && lang !== 'zh' && <link rel="preload" as="font" type="font/woff2" href={displayLatin} crossorigin />}
     <script is:inline set:html={themeInline}></script>
     <script is:inline set:html={revealInline}></script>
     {[...jsonLd, ...(crumbs ? [crumbs] : [])].map((d) => <script is:inline type="application/ld+json" set:html={JSON.stringify(d)} />)}

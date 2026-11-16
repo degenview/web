@@ -4,13 +4,14 @@ import { es } from './es';
 import { fr } from './fr';
 import { hi } from './hi';
 import { de } from './de';
+import { zh } from './zh';
 
 export { defaultLocale, localeMeta, locales, type Lang };
 export type { Dict };
 
 export const SITE = 'https://degenview.app';
 
-const dicts: Record<Lang, Dict> = { en, es, fr, hi, de };
+const dicts: Record<Lang, Dict> = { en, es, fr, hi, de, zh };
 
 /** Dictionary for a language. */
 export const useT = (lang: Lang): Dict => dicts[lang];

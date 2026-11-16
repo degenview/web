@@ -14,12 +14,13 @@ DegenView is an independent project and is not affiliated with TradingView.
 - [Privacy policy](https://degenview.app/privacy-policy/): cookies and analytics
 
 ## Languages
-The site is available in English (default), Spanish, French, Hindi and German. Each page has the same path under a language prefix.
+The site is available in English (default), Spanish, French, Hindi, German and Simplified Chinese. Each page has the same path under a language prefix.
 - [English](https://degenview.app/)
 - [Español](https://degenview.app/es/)
 - [Français](https://degenview.app/fr/)
 - [हिन्दी](https://degenview.app/hi/)
 - [Deutsch](https://degenview.app/de/)
+- [简体中文](https://degenview.app/zh/)
 
 ## Source
 - [GitHub](https://github.com/degenview/degenview): source code and releases

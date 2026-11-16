@@ -15,7 +15,7 @@
  * Type
  *   .display         Headline: Big Shoulders Display 800, UPPERCASE, line-height .95. Sizes are yours (Tailwind text-*):
  *                    page h1 text-6xl sm:text-7xl, section h2 text-5xl sm:text-6xl, card h3 text-3xl, small h3 text-2xl.
- *                    Hindi (html:lang(hi)) falls back to Inter + Noto Devanagari, no uppercase, taller leading.
+ *                    Hindi (html:lang(hi)) falls back to Inter + Noto Devanagari, Chinese (html:lang(zh)) to Inter + the system CJK font, no uppercase, taller leading.
  *   .gradient-text   Accent word(s) inside a headline: brand blue to purple.
  *   .kicker          Eyebrow: mono, uppercase, wide tracking, accent colour, short line in front. `.kicker-c` adds a line
  *                    behind too, for centered blocks. Use on every eyebrow/section label.
@@ -106,8 +106,8 @@
 }
 
 @theme inline {
-  --font-sans: 'Inter Variable', 'Noto Sans Devanagari Variable', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono Variable', 'Noto Sans Devanagari Variable', ui-monospace, SFMono-Regular, monospace;
+  --font-sans: 'Inter Variable', 'Noto Sans Devanagari Variable', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'Noto Sans SC', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'Noto Sans Devanagari Variable', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, SFMono-Regular, monospace;
   --font-display: 'Big Shoulders Display Variable', 'Oswald', 'Arial Narrow', Impact, ui-sans-serif, sans-serif;
   --color-bg: var(--bg);
   --color-surface: var(--surface);
@@ -157,11 +157,15 @@ html:lang(es) :where(h1, h2, h3, h4, p, li, td, th, summary) { hyphens: auto; }
 html .display { hyphens: manual; }
 /* Devanagari has no uppercase and a condensed Latin face has no Devanagari: use the sans stack. Negative tracking breaks
    conjuncts and tight leading clips matras above/below the line. */
-html:lang(hi) .display { font-family: var(--font-sans); text-transform: none; letter-spacing: 0; line-height: 1.3; font-weight: 700; }
-html:lang(hi) .gradient-text { padding-block: .08em; }
-html:lang(hi) body { line-height: 1.7; }
+html:lang(hi) .display,
+html:lang(zh) .display { font-family: var(--font-sans); text-transform: none; letter-spacing: 0; line-height: 1.3; font-weight: 700; }
+html:lang(hi) .gradient-text,
+html:lang(zh) .gradient-text { padding-block: .08em; }
+html:lang(hi) body,
+html:lang(zh) body { line-height: 1.7; }
 /* Tracked-out mono labels: Devanagari conjuncts must not be spaced apart. */
-html:lang(hi) :is(.kicker, .mono-label, .tag, .card-index) { letter-spacing: .02em; text-transform: none; }
+html:lang(hi) :is(.kicker, .mono-label, .tag, .card-index),
+html:lang(zh) :is(.kicker, .mono-label, .tag, .card-index) { letter-spacing: .02em; text-transform: none; }
 
 .gradient-text {
   background: linear-gradient(90deg, #2962ff 25%, var(--purple));
@@ -329,7 +333,8 @@ html:lang(hi) :is(.kicker, .mono-label, .tag, .card-index) { letter-spacing: .02
   font-family: var(--font-display); font-weight: 800; text-transform: uppercase; letter-spacing: .012em; line-height: .95;
   font-size: clamp(1.6rem, 1.1rem + 1.6vw, 2.4rem); text-wrap: balance; hyphens: manual;
 }
-html:lang(hi) .row-claim { font-family: var(--font-sans); text-transform: none; letter-spacing: 0; line-height: 1.3; font-weight: 700; }
+html:lang(hi) .row-claim,
+html:lang(zh) .row-claim { font-family: var(--font-sans); text-transform: none; letter-spacing: 0; line-height: 1.3; font-weight: 700; }
 .row-text { color: var(--muted); font-size: 1rem; line-height: 1.6; }
 @media (min-width: 40rem) { .row { padding: 1.5rem 1.75rem; } }
 @media (min-width: 48rem) {

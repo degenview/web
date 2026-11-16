@@ -9,6 +9,7 @@ DegenView, Pine Script, Pine Studio, TradingView, GitHub, macOS, Windows, Linux,
 - es: informal *tú*
 - fr: *vous*
 - de: *du*
+- zh (Simplified Chinese, `zh-Hans`): informal 你 (not 您), mainland terminology; full-width punctuation （，。：；！？「」 as 「」 only where a quote is needed, otherwise “ ”）; a thin space is not needed between Chinese and Latin/digits but keep one space before and after inline Latin product names/numbers only when it reads better; Latin product and feature names stay in Latin script.
 - hi: polite-informal *आप*; common English tech nouns (watchlist, alert, chart, replay, download) are kept in Latin script or transliterated, as in Indian tech marketing.
 
 ## Rules

@@ -12,7 +12,7 @@ const phrases = h.phrases;
 // All phrases share one font size, fitted so the widest one still fits on a line. `--w` is that phrase's width in em.
 // Latin phrases are set in uppercase Big Shoulders Display 800, so the width comes from the font's real advance widths
 // (units per em, uppercase + digits), plus the .012em tracking per character. Devanagari (hi) uses the sans stack, where
-// a flat 0.54 em per character is close enough.
+// a flat 0.54 em per character is close enough. Chinese (zh) glyphs are full-width: 1 em per character.
 const ADV: Record<string, number> = {
   A: .443, B: .441, C: .455, D: .461, E: .382, F: .378, G: .457, H: .455, I: .215, J: .421, K: .459, L: .374, M: .691,
   N: .508, O: .462, P: .436, Q: .462, R: .445, S: .441, T: .385, U: .453, V: .457, W: .733, X: .435, Y: .43, Z: .388,
@@ -21,7 +21,7 @@ const ADV: Record<string, number> = {
 };
 const emWidth = (p: string) =>
   [...p.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')].reduce((n, c) => n + (ADV[c] ?? 0.46) + 0.012, 0);
-const fit = lang === 'hi' ? Math.max(...phrases.map((p) => [...p].length)) * 0.54 : Math.max(...phrases.map(emWidth)) * 1.04;
+const fit = lang === 'zh' ? Math.max(...phrases.map((p) => [...p].length)) * 1.04 : lang === 'hi' ? Math.max(...phrases.map((p) => [...p].length)) * 0.54 : Math.max(...phrases.map(emWidth)) * 1.04;
 ---
 
 <section class="relative overflow-hidden pt-12 sm:pt-20">
@@ -85,6 +85,7 @@ const fit = lang === 'hi' ? Math.max(...phrases.map((p) => [...p].length)) * 0.5
    * `--w` is the widest phrase in em (see the frontmatter), 100cqw is the headline's width.
    */
   .hero-h1 { container-type: inline-size; font-size: clamp(3.5rem, 1.6rem + 8vw, 8.5rem); line-height: .92; }
+  html:lang(zh) .hero-h1 { font-size: clamp(2.5rem, 1.3rem + 5.2vw, 5.5rem); line-height: 1.25; }
   html:lang(hi) .hero-h1 { font-size: clamp(2.5rem, 1.3rem + 5.2vw, 5.5rem); line-height: 1.25; }
   .rotator { display: grid; justify-items: start; align-items: center; height: 1lh; }
   .rotator-item {

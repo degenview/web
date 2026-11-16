@@ -33,7 +33,7 @@
 
 ## 🌍 Languages
 
-English (default, unprefixed), [Español](https://degenview.app/es/), [Français](https://degenview.app/fr/), [हिन्दी](https://degenview.app/hi/) and [Deutsch](https://degenview.app/de/). Every page lives at the same path under a language prefix (`/faq/` → `/es/faq/`), with a canonical URL and `hreflang` alternates per page. There is no automatic redirect by browser language; the flag menu in the header and footer switches language.
+English (default, unprefixed), [Español](https://degenview.app/es/), [Français](https://degenview.app/fr/), [हिन्दी](https://degenview.app/hi/), [Deutsch](https://degenview.app/de/) and [简体中文](https://degenview.app/zh/). Every page lives at the same path under a language prefix (`/faq/` → `/es/faq/`), with a canonical URL and `hreflang` alternates per page. There is no automatic redirect by browser language; the flag menu in the header and footer switches language.
 
 Copy lives in `src/i18n/<lang>/*.ts`, with `src/i18n/en/` as the source of truth: a missing or extra key fails `npm run check`. `npm run i18n:check` verifies the built site (lang, canonical, hreflang, locale links). To fix or add a translation, edit the matching file under `src/i18n/<lang>/` and follow `src/i18n/GLOSSARY.md`; a new language also needs an entry in `src/i18n/locales.ts` and `astro.config.mjs`. Translations are machine-assisted, and native-speaker fixes are very welcome.
 

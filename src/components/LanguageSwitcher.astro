@@ -44,7 +44,7 @@ const current = items.find((i) => i.current)!;
         class="inline-flex cursor-pointer list-none items-center gap-2 rounded-lg px-2.5 py-2 text-sm font-medium text-fg/75 transition-colors hover:bg-fg/[0.06] hover:text-fg xl:px-3.5 [&::-webkit-details-marker]:hidden"
       >
         <img src={current.flagSrc} alt="" width="20" height="15" class="h-[15px] w-5 rounded-[2px] object-cover ring-1 ring-black/10" />
-        <span aria-hidden="true" class="font-mono text-xs uppercase tracking-[0.1em]">{current.htmlLang}</span>
+        <span aria-hidden="true" class="font-mono text-xs uppercase tracking-[0.1em]">{current.htmlLang.split('-')[0]}</span>
         <svg viewBox="0 0 24 24" class="size-3.5 shrink-0 opacity-70" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
       </summary>
       <div

@@ -5,7 +5,7 @@ import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
 const SITE = 'https://degenview.app';
-const LOCALES = { en: 'en', es: 'es', fr: 'fr', hi: 'hi', de: 'de' };
+const LOCALES = { en: 'en', es: 'es', fr: 'fr', hi: 'hi', de: 'de', zh: 'zh-Hans' };
 const DEFAULT = 'en';
 const prefixed = Object.keys(LOCALES).filter((l) => l !== DEFAULT);
 const dist = process.argv[2] ?? 'dist';
@@ -25,7 +25,7 @@ const pages = Object.fromEntries(Object.keys(LOCALES).map((l) => [l, new Set()])
 for (const f of walk(dist)) {
   if (!f.endsWith('index.html')) continue;
   const rel = '/' + relative(dist, f).replace(/index\.html$/, '');
-  const m = rel.match(/^\/(es|fr|hi|de)(\/.*)$/);
+  const m = rel.match(/^\/(es|fr|hi|de|zh)(\/.*)$/);
   if (m) pages[m[1]].add(m[2]);
   else if (!rel.startsWith('/why-free')) pages[DEFAULT].add(rel);
 }
@@ -53,7 +53,7 @@ for (const p of enPages) {
     const alts = [...html.matchAll(/<link rel="alternate" hreflang="([^"]+)" href="([^"]+)"/g)].map((m) => [m[1], m[2]]);
     for (const k of [...Object.keys(LOCALES), 'x-default']) {
       const want = href(k === 'x-default' ? DEFAULT : k, p);
-      if (!alts.some(([h, u]) => h === k && u === want)) err(page, `missing/incorrect hreflang ${k}`);
+      if (!alts.some(([h, u]) => h === (k === 'x-default' ? k : LOCALES[k]) && u === want)) err(page, `missing/incorrect hreflang ${k}`);
     }
 
     // Internal links in non-default locales must stay inside the locale.

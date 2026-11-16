@@ -1,4 +1,4 @@
-export const locales = ['en', 'es', 'fr', 'hi', 'de'] as const;
+export const locales = ['en', 'es', 'fr', 'hi', 'de', 'zh'] as const;
 export type Lang = (typeof locales)[number];
 export const defaultLocale: Lang = 'en';
 
@@ -21,4 +21,5 @@ export const localeMeta: Record<Lang, LocaleMeta> = {
   fr: { name: 'Français', htmlLang: 'fr', ogLocale: 'fr_FR', flag: 'fr', intl: 'fr-FR' },
   hi: { name: 'हिन्दी', htmlLang: 'hi', ogLocale: 'hi_IN', flag: 'in', intl: 'hi-IN' },
   de: { name: 'Deutsch', htmlLang: 'de', ogLocale: 'de_DE', flag: 'de', intl: 'de-DE' },
+  zh: { name: '简体中文', htmlLang: 'zh-Hans', ogLocale: 'zh_CN', flag: 'cn', intl: 'zh-CN' },
 };
