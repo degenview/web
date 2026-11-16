@@ -16,7 +16,7 @@ export interface LocaleMeta {
 }
 
 export const localeMeta: Record<Lang, LocaleMeta> = {
-  en: { name: 'English', htmlLang: 'en', ogLocale: 'en_US', flag: 'gb', intl: 'en-US' },
+  en: { name: 'English', htmlLang: 'en', ogLocale: 'en_US', flag: 'us', intl: 'en-US' },
   es: { name: 'Español', htmlLang: 'es', ogLocale: 'es_ES', flag: 'es', intl: 'es-ES' },
   fr: { name: 'Français', htmlLang: 'fr', ogLocale: 'fr_FR', flag: 'fr', intl: 'fr-FR' },
   hi: { name: 'हिन्दी', htmlLang: 'hi', ogLocale: 'hi_IN', flag: 'in', intl: 'hi-IN' },
