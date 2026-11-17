@@ -35,9 +35,9 @@ export const home: Dict['home'] = {
       eyebrow: 'मार्केट और लाइव डेटा',
       title: 'हर मार्केट, एक ही स्क्रीन पर।',
       blurb:
-        'Binance, Coinbase, CoinGecko और DEXScreener को साथ-साथ खोजें, US स्टॉक जोड़ें, और Polymarket व Kalshi को प्रोबेबिलिटी के रूप में chart करें।',
+        'Binance, Coinbase, OKX, Kraken, Bybit, Gate.io, MEXC, CoinGecko और DEXScreener को साथ-साथ खोजें, US स्टॉक जोड़ें, और Polymarket व Kalshi को प्रोबेबिलिटी के रूप में chart करें।',
       bullets: [
-        'Binance और Coinbase की लाइव कीमतें',
+        'Binance, OKX, Kraken, Bybit, Gate.io, MEXC और Coinbase की लाइव कीमतें',
         'Alpaca की फ्री IEX फ़ीड से US स्टॉक',
         'ज़्यादातर सोर्स के लिए API key नहीं चाहिए',
       ],

@@ -33,9 +33,9 @@ export const home = {
       eyebrow: 'Markets & live data',
       title: 'Every market, one screen.',
       blurb:
-        'Search Binance, Coinbase, CoinGecko and DEXScreener side by side, add US stocks, and chart Polymarket and Kalshi as probabilities.',
+        'Search Binance, Coinbase, OKX, Kraken, Bybit, Gate.io, MEXC, CoinGecko and DEXScreener side by side, add US stocks, and chart Polymarket and Kalshi as probabilities.',
       bullets: [
-        'Live prices from Binance and Coinbase',
+        'Live prices from Binance, OKX, Kraken, Bybit, Gate.io, MEXC and Coinbase',
         'US stocks via Alpaca’s free IEX feed',
         'No API key for most sources',
       ],

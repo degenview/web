@@ -34,6 +34,11 @@ type Provider = { name: string; use: string; terms?: string; privacy?: string; s
 const marketData: Provider[] = [
   { name: 'Binance', use: t.app.uses.binance, terms: 'https://www.binance.com/en/terms', privacy: 'https://www.binance.com/en/privacy' },
   { name: 'Coinbase', use: t.app.uses.coinbase, terms: 'https://www.coinbase.com/legal/user_agreement', privacy: 'https://www.coinbase.com/legal/privacy' },
+  { name: 'OKX', use: t.app.uses.binance, site: 'https://www.okx.com/' },
+  { name: 'Kraken', use: t.app.uses.binance, terms: 'https://www.kraken.com/legal', privacy: 'https://www.kraken.com/legal/privacy' },
+  { name: 'Bybit', use: t.app.uses.binance, terms: 'https://www.bybit.com/en/help-center/article/Terms-of-Service', privacy: 'https://www.bybit.com/en/help-center/article/Privacy-Policy' },
+  { name: 'Gate.io', use: t.app.uses.binance, site: 'https://www.gate.com/' },
+  { name: 'MEXC', use: t.app.uses.binance, site: 'https://www.mexc.com/' },
   { name: 'CoinGecko', use: t.app.uses.coingecko, terms: 'https://www.coingecko.com/en/terms', privacy: 'https://www.coingecko.com/en/privacy' },
   { name: 'GeckoTerminal', use: t.app.uses.geckoterminal, terms: 'https://www.coingecko.com/en/terms', privacy: 'https://www.coingecko.com/en/privacy' },
   { name: 'DEXScreener', use: t.app.uses.dexscreener, terms: 'https://dexscreener.com/terms-and-conditions', privacy: 'https://dexscreener.com/privacy-policy' },
