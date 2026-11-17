@@ -33,9 +33,9 @@ export const home: Dict['home'] = {
       eyebrow: 'Marchés et données en direct',
       title: 'Tous les marchés, un seul écran.',
       blurb:
-        'Cherchez sur Binance, Coinbase, CoinGecko et DEXScreener côte à côte, ajoutez des actions américaines et affichez Polymarket et Kalshi sous forme de probabilités.',
+        'Cherchez sur Binance, Coinbase, OKX, Kraken, Bybit, Gate.io, MEXC, CoinGecko et DEXScreener côte à côte, ajoutez des actions américaines et affichez Polymarket et Kalshi sous forme de probabilités.',
       bullets: [
-        'Prix en direct de Binance et Coinbase',
+        'Prix en direct de Binance, OKX, Kraken, Bybit, Gate.io, MEXC et Coinbase',
         'Actions américaines via le flux IEX gratuit d’Alpaca',
         'Pas de clé API pour la plupart des sources',
       ],

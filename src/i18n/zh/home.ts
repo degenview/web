@@ -35,9 +35,9 @@ export const home: Dict['home'] = {
       eyebrow: '市场与实时数据',
       title: '所有市场，一个屏幕。',
       blurb:
-        '并排搜索 Binance、Coinbase、CoinGecko 和 DEXScreener，添加美股，还能把 Polymarket 和 Kalshi 当作概率来画图。',
+        '并排搜索 Binance、Coinbase、OKX、Kraken、Bybit、Gate.io、MEXC、CoinGecko 和 DEXScreener，添加美股，还能把 Polymarket 和 Kalshi 当作概率来画图。',
       bullets: [
-        '来自 Binance 和 Coinbase 的实时价格',
+        '来自 Binance、OKX、Kraken、Bybit、Gate.io、MEXC 和 Coinbase 的实时价格',
         '通过 Alpaca 免费的 IEX 数据源获取美股行情',
         '大多数数据源无需 API 密钥',
       ],

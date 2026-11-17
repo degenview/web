@@ -34,9 +34,9 @@ export const home: Dict['home'] = {
       eyebrow: 'Märkte & Live-Daten',
       title: 'Jeder Markt, ein Bildschirm.',
       blurb:
-        'Durchsuche Binance, Coinbase, CoinGecko und DEXScreener nebeneinander, füge US-Aktien hinzu und zeige Polymarket und Kalshi als Wahrscheinlichkeiten im Chart.',
+        'Durchsuche Binance, Coinbase, OKX, Kraken, Bybit, Gate.io, MEXC, CoinGecko und DEXScreener nebeneinander, füge US-Aktien hinzu und zeige Polymarket und Kalshi als Wahrscheinlichkeiten im Chart.',
       bullets: [
-        'Live-Kurse von Binance und Coinbase',
+        'Live-Kurse von Binance, OKX, Kraken, Bybit, Gate.io, MEXC und Coinbase',
         'US-Aktien über Alpacas kostenlosen IEX-Feed',
         'Für die meisten Quellen kein API-Key nötig',
       ],
