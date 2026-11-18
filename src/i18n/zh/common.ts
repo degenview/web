@@ -109,6 +109,7 @@ export const common: Dict['common'] = {
       replay: '回放',
       'chart-types': '图表类型',
       more: '更多',
+      feedback: '用户反馈',
       download: '下载',
     },
   },

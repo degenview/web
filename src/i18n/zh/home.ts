@@ -15,13 +15,21 @@ export const home: Dict['home'] = {
     eyebrow: '免费开源',
     eyebrowLink: 'TradingView 替代品',
     // Features TradingView paywalls. The first one is the static, no-JS headline.
-    phrases: ['多个自选列表', '无限指标', '多图表布局', '无限价格警报', '30 个以上品种'],
+    phrases: ['多个自选列表', '无限指标', '多图表布局', '无限价格警报', '30 个以上品种', '多个绘图'],
     // Headline = headlineBefore + rotating phrase + headlineMiddle + headlineEmphasis (gradient).
     headlineBefore: '在这里，',
     headlineMiddle: '不是',
     headlineEmphasis: '付费功能。',
     lead: '免费开源的桌面端 TradingView 替代品：加密货币、股票和预测市场尽在多图表布局中，配备本地 Pine Script、警报和回放。无需账号，在你自己的电脑上运行。',
     screenshotAlt: 'DegenView 仪表盘，网格布局中显示多个实时图表',
+  },
+
+  // Labels around the quotes in src/data/testimonials.ts (the quotes themselves are verbatim and never translated).
+  testimonials: {
+    eyebrow: '用户反馈',
+    heading: '大家<span class="gradient-text">怎么说</span>',
+    author: '用户反馈',
+    tags: { debugger: '调试', pine: 'Pine Script', impression: '第一印象' },
   },
 
   sources: {

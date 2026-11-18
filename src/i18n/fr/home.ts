@@ -14,12 +14,20 @@ export const home: Dict['home'] = {
   hero: {
     eyebrow: 'Gratuit et open source',
     eyebrowLink: 'Alternative à TradingView',
-    phrases: ['les listes de suivi', 'indicateurs illimités', 'plusieurs graphiques', 'alertes illimitées', 'plus de 30 symboles'],
+    phrases: ['les listes de suivi', 'indicateurs illimités', 'plusieurs graphiques', 'alertes illimitées', 'plus de 30 symboles', 'plusieurs dessins'],
     headlineBefore: 'Ici,',
     headlineMiddle: 'c’est',
     headlineEmphasis: 'inclus, pas premium.',
     lead: 'L’alternative à TradingView gratuite et open source pour votre bureau : crypto, actions et marchés de prédiction dans des mises en page multigraphiques, avec Pine Script en local, alertes et replay. Sans compte, et tout tourne sur votre machine.',
     screenshotAlt: 'Tableau de bord DegenView avec plusieurs graphiques en direct dans une grille',
+  },
+
+  // Labels around the quotes in src/data/testimonials.ts (the quotes themselves are verbatim and never translated).
+  testimonials: {
+    eyebrow: 'avis',
+    heading: 'Ce que les gens <span class="gradient-text">en disent</span>',
+    author: 'Avis d’un utilisateur',
+    tags: { debugger: 'Débogueur', pine: 'Pine Script', impression: 'Première impression' },
   },
 
   sources: {

@@ -100,6 +100,7 @@ export const common: Dict['common'] = {
       replay: 'Replay',
       'chart-types': 'Types de graphiques',
       more: 'Plus',
+      feedback: 'Avis',
       download: 'Télécharger',
     },
   },

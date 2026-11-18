@@ -15,12 +15,20 @@ export const home: Dict['home'] = {
     eyebrow: 'Kostenlos & Open Source',
     eyebrowLink: 'TradingView-Alternative',
     // Features, die TradingView hinter eine Paywall stellt. Die erste ist die statische Überschrift ohne JS.
-    phrases: ['mehrere Watchlists', 'unbegrenzte Indikatoren', 'Multi-Chart-Layouts', 'unbegrenzte Preisalarme', 'mehr als 30 Symbole'],
+    phrases: ['mehrere Watchlists', 'unbegrenzte Indikatoren', 'Multi-Chart-Layouts', 'unbegrenzte Preisalarme', 'mehr als 30 Symbole', 'mehrere Zeichnungen'],
     headlineBefore: 'Bei uns sind',
     headlineMiddle: 'keine',
     headlineEmphasis: 'Premium-Features.',
     lead: 'Die kostenlose Open-Source-Alternative zu TradingView für deinen Desktop: Krypto, Aktien und Prognosemärkte in Multi-Chart-Layouts, mit lokalem Pine Script, Alarmen und Replay. Ohne Konto, und alles läuft auf deinem Rechner.',
     screenshotAlt: 'DegenView-Dashboard mit mehreren Live-Charts in einem Rasterlayout',
+  },
+
+  // Labels around the quotes in src/data/testimonials.ts (the quotes themselves are verbatim and never translated).
+  testimonials: {
+    eyebrow: 'Feedback',
+    heading: 'Was Leute <span class="gradient-text">sagen</span>',
+    author: 'Nutzer-Feedback',
+    tags: { debugger: 'Debugger', pine: 'Pine Script', impression: 'Erster Eindruck' },
   },
 
   sources: {
