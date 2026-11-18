@@ -20,7 +20,7 @@ import { getFeatures, getExtras } from '../../data/features';
 import { getImage } from 'astro:assets';
 import heroImage from '../../assets/screens/hero-dark.webp';
 import { getRelease } from '../../data/release';
-import { LATEST_URL, REPO_URL } from '../../data/platforms';
+import { LATEST_URL, REDDIT_URL, REPO_URL } from '../../data/platforms';
 import { getLang, useT, localePath, localeMeta, fmt, SITE } from '../../i18n';
 
 const release = await getRelease();
@@ -47,7 +47,7 @@ const jsonLd = [
     license: 'https://www.gnu.org/licenses/gpl-3.0.html',
     image: `${SITE}/og.png`,
     screenshot: `${SITE}${heroShot.src}`,
-    sameAs: [REPO_URL],
+    sameAs: [REPO_URL, REDDIT_URL],
     softwareHelp: SITE + localePath(lang, '/faq/'),
     ...(release.tag ? { softwareVersion: release.tag.replace(/^v/, '') } : {}),
     downloadUrl: LATEST_URL,
