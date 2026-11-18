@@ -13,13 +13,21 @@ export const home = {
     eyebrow: 'Free & open source',
     eyebrowLink: 'TradingView alternative',
     // Features TradingView paywalls. The first one is the static, no-JS headline.
-    phrases: ['multiple watchlists', 'unlimited indicators', 'multi-chart layouts', 'unlimited price alerts', 'more than 30 symbols'],
+    phrases: ['multiple watchlists', 'unlimited indicators', 'multi-chart layouts', 'unlimited price alerts', 'more than 30 symbols', 'multiple drawings'],
     // Headline = headlineBefore + rotating phrase + headlineMiddle + headlineEmphasis (gradient).
     headlineBefore: 'Where',
     headlineMiddle: 'is',
     headlineEmphasis: 'not a premium feature.',
     lead: 'The free, open source TradingView alternative for your desktop: crypto, stocks and prediction markets in multi-chart layouts, with local Pine Script, alerts and replay. No account, and it runs on your machine.',
     screenshotAlt: 'DegenView dashboard with multiple live charts in a grid layout',
+  },
+
+  // Labels around the quotes in src/data/testimonials.ts (the quotes themselves are verbatim and never translated).
+  testimonials: {
+    eyebrow: 'feedback',
+    heading: 'What people are <span class="gradient-text">saying</span>',
+    author: 'User feedback',
+    tags: { debugger: 'Debugger', pine: 'Pine Script', impression: 'First impression' },
   },
 
   sources: {

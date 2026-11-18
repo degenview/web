@@ -15,13 +15,21 @@ export const home: Dict['home'] = {
     eyebrow: 'फ्री और ओपन सोर्स',
     eyebrowLink: 'TradingView का विकल्प',
     // Features TradingView paywalls. The first one is the static, no-JS headline.
-    phrases: ['कई watchlist', 'असीमित indicator', 'multi-chart लेआउट', 'असीमित price alert', '30 से ज़्यादा symbol'],
+    phrases: ['कई watchlist', 'असीमित indicator', 'multi-chart लेआउट', 'असीमित price alert', '30 से ज़्यादा symbol', 'कई drawing'],
     // Headline = headlineBefore + rotating phrase + headlineMiddle + headlineEmphasis (gradient).
     headlineBefore: 'यहाँ',
     headlineMiddle: 'फ्री हैं,',
     headlineEmphasis: 'प्रीमियम फ़ीचर नहीं।',
     lead: 'आपके डेस्कटॉप के लिए फ्री, ओपन सोर्स TradingView का विकल्प: क्रिप्टो, स्टॉक और prediction market, multi-chart लेआउट में, साथ में लोकल Pine Script, alert और replay। कोई अकाउंट नहीं, और सब कुछ आपकी अपनी मशीन पर चलता है।',
     screenshotAlt: 'ग्रिड लेआउट में कई लाइव chart वाला DegenView डैशबोर्ड',
+  },
+
+  // Labels around the quotes in src/data/testimonials.ts (the quotes themselves are verbatim and never translated).
+  testimonials: {
+    eyebrow: 'फ़ीडबैक',
+    heading: 'लोग <span class="gradient-text">क्या कह रहे हैं</span>',
+    author: 'यूज़र फ़ीडबैक',
+    tags: { debugger: 'Debugger', pine: 'Pine Script', impression: 'पहली छाप' },
   },
 
   sources: {

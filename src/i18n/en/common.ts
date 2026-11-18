@@ -107,6 +107,7 @@ export const common = {
       replay: 'Replay',
       'chart-types': 'Chart types',
       more: 'More',
+      feedback: 'Feedback',
       download: 'Download',
     },
   },
