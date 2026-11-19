@@ -327,7 +327,7 @@ export const pineStudio: Dict['pineStudio'] = {
       },
       {
         q: 'Kann ich eine Strategie backtesten?',
-        a: 'Ja. Eine Pine-Strategie platziert simulierte Trades auf den Kerzen des Charts, und der Tab Report zeigt Kennzahlen, Equity-Kurve und Trade-Liste. Eine Monte-Carlo-Simulation zieht deine abgeschlossenen Trades anschließend zufällig neu, um zu zeigen, wie stark das Ergebnis von ihrer Reihenfolge abhing. Backtests nutzen nur Kerzen und haben kein Margin-Modell. Sie sind ein Werkzeug, um eine Strategie zu untersuchen, kein Ergebnisversprechen.',
+        a: 'Ja. Eine Pine-Strategie platziert simulierte Trades auf den Kerzen des Charts, und der Tab Report zeigt Kennzahlen, Equity-Kurve und Trade-Liste. Eine Monte-Carlo-Simulation zieht deine abgeschlossenen Trades anschließend zufällig mit Zurücklegen, um zu zeigen, wie stark das Ergebnis schwanken könnte, wenn Gewinne und Verluste anders ausgefallen wären. Backtests nutzen nur Kerzen und haben kein Margin-Modell. Sie sind ein Werkzeug, um eine Strategie zu untersuchen, kein Ergebnisversprechen.',
       },
       {
         q: 'Schickt der KI-Assistent meinen Code irgendwohin?',

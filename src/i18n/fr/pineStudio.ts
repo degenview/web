@@ -327,7 +327,7 @@ export const pineStudio: Dict['pineStudio'] = {
       },
       {
         q: 'Puis-je backtester une stratégie ?',
-        a: 'Oui. Une stratégie Pine passe des ordres simulés sur les bougies du graphique, et l’onglet Report affiche ses chiffres, sa courbe de capital et sa liste de trades. Une simulation Monte Carlo retire ensuite au hasard vos trades clôturés pour montrer dans quelle mesure le résultat dépendait de leur ordre d’arrivée. Les backtests n’utilisent que les bougies, sans modèle de marge. Ils servent à étudier une stratégie, pas à promettre des résultats.',
+        a: 'Oui. Une stratégie Pine passe des ordres simulés sur les bougies du graphique, et l’onglet Report affiche ses chiffres, sa courbe de capital et sa liste de trades. Une simulation Monte Carlo tire ensuite au hasard vos trades clôturés, avec remise, pour montrer de combien le résultat pourrait varier si les gains et les pertes étaient tombés autrement. Les backtests n’utilisent que les bougies, sans modèle de marge. Ils servent à étudier une stratégie, pas à promettre des résultats.',
       },
       {
         q: 'L’assistant IA envoie-t-il mon code quelque part ?',

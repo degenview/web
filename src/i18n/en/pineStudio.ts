@@ -341,7 +341,7 @@ export const pineStudio = {
       },
       {
         q: 'Can I backtest a strategy?',
-        a: 'Yes. A Pine strategy places simulated trades on the chart’s candles, and the Report tab shows its figures, equity curve and trade list. A Monte Carlo simulation then redraws your closed trades at random to show how much the result depended on the order they came in. Backtests use candles only, with no margin model, so they are a way to study a strategy, not a promise of results.',
+        a: 'Yes. A Pine strategy places simulated trades on the chart’s candles, and the Report tab shows its figures, equity curve and trade list. A Monte Carlo simulation then draws your closed trades at random, repeats allowed, to show how far the result could move if the wins and losses had come out differently. Backtests use candles only, with no margin model, so they are a way to study a strategy, not a promise of results.',
       },
       {
         q: 'Does the AI assistant send my code anywhere?',

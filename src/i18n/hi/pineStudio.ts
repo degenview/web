@@ -343,7 +343,7 @@ export const pineStudio: Dict['pineStudio'] = {
       },
       {
         q: 'क्या strategy का backtest किया जा सकता है?',
-        a: 'हाँ। Pine strategy chart की candles पर simulated trades रखती है, और Report टैब उसके आँकड़े, equity curve और trade list दिखाता है। Monte Carlo simulation फिर आपके बंद trades को random तरीके से दोबारा खींचता है, ताकि दिखे कि नतीजा उनके आने के क्रम पर कितना निर्भर था। Backtest सिर्फ़ candles इस्तेमाल करते हैं और इनमें margin मॉडल नहीं है, इसलिए ये strategy को परखने का औज़ार हैं, नतीजों का वादा नहीं।',
+        a: 'हाँ। Pine strategy chart की candles पर simulated trades रखती है, और Report टैब उसके आँकड़े, equity curve और trade list दिखाता है। Monte Carlo simulation फिर आपके बंद trades को random तरीके से, दोहराव की छूट के साथ, खींचता है, ताकि दिखे कि अगर जीत और हार अलग तरह से आतीं तो नतीजा कितना बदल सकता था। Backtest सिर्फ़ candles इस्तेमाल करते हैं और इनमें margin मॉडल नहीं है, इसलिए ये strategy को परखने का औज़ार हैं, नतीजों का वादा नहीं।',
       },
       {
         q: 'क्या AI असिस्टेंट मेरा कोड कहीं भेजता है?',

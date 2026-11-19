@@ -343,7 +343,7 @@ export const pineStudio: Dict['pineStudio'] = {
       },
       {
         q: '¿Puedo hacer backtesting de una estrategia?',
-        a: 'Sí. Una estrategia de Pine coloca operaciones simuladas sobre las velas del gráfico, y la pestaña Report muestra sus cifras, la curva de capital y la lista de operaciones. Después, una simulación Monte Carlo reordena al azar tus operaciones cerradas para mostrar cuánto dependió el resultado del orden en que llegaron. Los backtests usan solo velas y no tienen modelo de margen, así que sirven para estudiar una estrategia, no como promesa de resultados.',
+        a: 'Sí. Una estrategia de Pine coloca operaciones simuladas sobre las velas del gráfico, y la pestaña Report muestra sus cifras, la curva de capital y la lista de operaciones. Después, una simulación Monte Carlo toma al azar tus operaciones cerradas, con repetición, para mostrar cuánto podría variar el resultado si las ganancias y las pérdidas hubieran salido de otra manera. Los backtests usan solo velas y no tienen modelo de margen, así que sirven para estudiar una estrategia, no como promesa de resultados.',
       },
       {
         q: '¿El asistente de IA envía mi código a algún sitio?',
