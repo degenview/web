@@ -60,6 +60,7 @@ export const home: Dict['home'] = {
         'Vibe coding con tu asistente de IA vía MCP',
         'Depurador paso a paso con puntos de interrupción',
         'Perfilador integrado: ve dónde pierde tiempo tu script',
+        'Backtesting de estrategias con curva de capital y simulación Monte Carlo',
       ],
       alt: 'Pine Studio de DegenView con un editor de Pine Script y un gráfico de vista previa en vivo',
       linkLabel: 'Descubre Pine Studio',

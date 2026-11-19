@@ -32,6 +32,7 @@ export const pineStudio: Dict['pineStudio'] = {
       'Gráfico de vista previa en vivo con controles de entrada',
       'Depurador paso a paso con puntos de interrupción, inspección de variables y pila de llamadas',
       'Perfilador por línea',
+      'Backtesting de estrategias con curva de capital, lista de operaciones y simulación Monte Carlo',
       'Asistente de IA con los modos Preguntar, Planificar y Editar',
       'Servidor MCP para que otros asistentes de IA puedan leer, editar y aplicar scripts',
       'Temas de editor personalizables',
@@ -339,6 +340,10 @@ export const pineStudio: Dict['pineStudio'] = {
       {
         q: '¿Hay un perfilador de Pine Script?',
         a: 'Sí. Activa el perfilador y DegenView mide el tiempo de tu script sobre las barras del gráfico de vista previa. Dibuja una barra y un porcentaje junto a cada línea y ordena las líneas, bloques y funciones más pesados, para que veas qué corregir primero.',
+      },
+      {
+        q: '¿Puedo hacer backtesting de una estrategia?',
+        a: 'Sí. Una estrategia de Pine coloca operaciones simuladas sobre las velas del gráfico, y la pestaña Report muestra sus cifras, la curva de capital y la lista de operaciones. Después, una simulación Monte Carlo reordena al azar tus operaciones cerradas para mostrar cuánto dependió el resultado del orden en que llegaron. Los backtests usan solo velas y no tienen modelo de margen, así que sirven para estudiar una estrategia, no como promesa de resultados.',
       },
       {
         q: '¿El asistente de IA envía mi código a algún sitio?',

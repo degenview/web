@@ -60,6 +60,7 @@ export const home: Dict['home'] = {
         'MCP से AI असिस्टेंट के साथ vibe coding',
         'ब्रेकपॉइंट और watch वाला step debugger',
         'बिल्ट-इन profiler से देखें script का समय कहाँ जाता है',
+        'Equity curve और Monte Carlo simulation के साथ strategy backtest',
       ],
       alt: 'Pine Script एडिटर और लाइव प्रीव्यू chart के साथ DegenView Pine Studio',
       linkLabel: 'Pine Studio देखें',
