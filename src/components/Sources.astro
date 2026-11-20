@@ -24,27 +24,99 @@ const sources = [
   { name: 'Polymarket', img: polymarket }, { name: 'Kalshi', img: kalshi }, { name: 'CoinMarketCap', img: cmc },
   { name: 'Alpaca', img: alpaca },
 ];
-// The list is not a multiple of the grid's 2 or 4 columns: empty cells finish the last row, so the
-// hairline colour behind the grid does not show through as a grey block.
-const fillers = [{ always: true }, { always: false }, { always: false }];
 ---
 
 <section aria-labelledby="sources-h" class="pt-6 sm:pt-8">
   <div class="container-x">
     <div class="glass flex flex-col gap-5 p-6 sm:p-8 lg:flex-row lg:items-center lg:gap-10 lg:py-6 lg:pl-10 lg:pr-6" data-reveal>
       <h2 id="sources-h" class="kicker shrink-0 lg:max-w-[13rem]">{t.heading}</h2>
-      {/* One bordered grid: the panel colour shows through a 1px gap, which draws the hairlines between cells. */}
-      <ul class="grid w-full grid-cols-2 gap-px overflow-hidden rounded-lg border border-[var(--hair)] bg-[var(--hair)] sm:grid-cols-4">
-        {
-          sources.map((s) => (
-            <li class="flex items-center gap-3 bg-bg/80 px-3.5 py-3 text-sm font-medium text-fg/85">
-              <Image src={s.img} alt="" width={28} height={28} class="size-6 shrink-0 rounded object-contain" loading="lazy" />
-              <span class="min-w-0 truncate">{s.name}</span>
-            </li>
-          ))
-        }
-        {fillers.map((f) => <li aria-hidden="true" class:list={['bg-bg/80', !f.always && 'hidden sm:block']}></li>)}
-      </ul>
+      {/* Infinite marquee, right to left. The list is rendered twice and the track slides by exactly one copy
+          (-50%), so the loop is seamless at any width. The second copy is hidden from assistive tech. */}
+      <div class="marquee min-w-0 flex-1">
+        <div class="marquee-track">
+          {
+            [false, true].map((dup) => (
+              <ul class="marquee-group" aria-hidden={dup ? 'true' : undefined}>
+                {sources.map((s) => (
+                  <li class="source">
+                    <Image src={s.img} alt="" width={28} height={28} class="size-6 shrink-0 rounded object-contain" loading="lazy" />
+                    <span>{s.name}</span>
+                  </li>
+                ))}
+              </ul>
+            ))
+          }
+        </div>
+      </div>
     </div>
   </div>
 </section>
+
+<style>
+  .marquee {
+    overflow: hidden;
+    /* Fade the ends so logos glide in and out instead of being clipped. */
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 48s linear infinite;
+    will-change: transform;
+  }
+  .marquee-group {
+    display: flex;
+    flex-shrink: 0;
+    gap: 0.625rem;
+    /* Trailing gap keeps the spacing between the two copies equal to the spacing inside a copy. */
+    padding-inline-end: 0.625rem;
+  }
+  .source {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.5rem 1rem 0.5rem 0.625rem;
+    border: 1px solid var(--hair);
+    border-radius: 9999px;
+    background: var(--tile);
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    color: color-mix(in srgb, currentColor 85%, transparent);
+    transition: border-color 0.2s, background-color 0.2s, color 0.2s;
+  }
+  .source:hover {
+    border-color: var(--hair-hi);
+    color: currentColor;
+  }
+  @media (hover: hover) {
+    .marquee:hover .marquee-track {
+      animation-play-state: paused;
+    }
+  }
+  @keyframes marquee {
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+  /* No motion: drop the duplicate and the fade, and let the logos wrap as a static list. */
+  @media (prefers-reduced-motion: reduce) {
+    .marquee {
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+    .marquee-track {
+      width: auto;
+      animation: none;
+    }
+    .marquee-group {
+      flex-wrap: wrap;
+      padding-inline-end: 0;
+    }
+    .marquee-group[aria-hidden='true'] {
+      display: none;
+    }
+  }
+</style>
