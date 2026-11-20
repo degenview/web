@@ -1,5 +1,5 @@
 ---
-import { DOCS_URL, REDDIT_URL, REPO_URL } from '../data/platforms';
+import { DISCORD_URL, DOCS_URL, REDDIT_URL, REPO_URL } from '../data/platforms';
 import PlatformIcon from './PlatformIcon.astro';
 import LanguageSwitcher from './LanguageSwitcher.astro';
 import { getLang, useT, localePath, stripLocale } from '../i18n';
@@ -29,6 +29,7 @@ const download = item('/download/', t.nav.download);
       ))}
       <a class="inline-flex items-center gap-2 rounded-lg px-2.5 py-2 text-fg/75 transition-colors hover:bg-fg/[0.06] hover:text-fg xl:px-3.5" href={REPO_URL} target="_blank" rel="noopener noreferrer"><PlatformIcon os="GitHub" class="size-4" /><span class="sr-only">GitHub {t.opensInNewTab}</span></a>
       <a class="inline-flex items-center gap-2 rounded-lg px-2.5 py-2 text-fg/75 transition-colors hover:bg-fg/[0.06] hover:text-fg xl:px-3.5" href={REDDIT_URL} target="_blank" rel="noopener noreferrer"><PlatformIcon os="Reddit" class="size-4" /><span class="sr-only">Reddit {t.opensInNewTab}</span></a>
+      <a class="inline-flex items-center gap-2 rounded-lg px-2.5 py-2 text-fg/75 transition-colors hover:bg-fg/[0.06] hover:text-fg xl:px-3.5" href={DISCORD_URL} target="_blank" rel="noopener noreferrer"><PlatformIcon os="Discord" class="size-4" /><span class="sr-only">Discord {t.opensInNewTab}</span></a>
       <LanguageSwitcher />
       <a class="btn btn-primary ml-2 rounded-lg! px-4! py-2! text-sm" href={download.href} aria-current={download.current ? 'page' : undefined}>{download.label}</a>
     </nav>
@@ -56,6 +57,7 @@ const download = item('/download/', t.nav.download);
       ))}
       <a class="inline-flex items-center gap-2 rounded-lg px-3.5 py-3 text-fg/90 transition-colors hover:bg-fg/[0.06] hover:text-fg" href={REPO_URL} target="_blank" rel="noopener noreferrer"><PlatformIcon os="GitHub" class="size-5" />GitHub<span class="sr-only"> {t.opensInNewTab}</span></a>
       <a class="inline-flex items-center gap-2 rounded-lg px-3.5 py-3 text-fg/90 transition-colors hover:bg-fg/[0.06] hover:text-fg" href={REDDIT_URL} target="_blank" rel="noopener noreferrer"><PlatformIcon os="Reddit" class="size-5" />Reddit<span class="sr-only"> {t.opensInNewTab}</span></a>
+      <a class="inline-flex items-center gap-2 rounded-lg px-3.5 py-3 text-fg/90 transition-colors hover:bg-fg/[0.06] hover:text-fg" href={DISCORD_URL} target="_blank" rel="noopener noreferrer"><PlatformIcon os="Discord" class="size-5" />Discord<span class="sr-only"> {t.opensInNewTab}</span></a>
       <div class="my-1 border-t border-[var(--hair)]"></div>
       <LanguageSwitcher variant="list" />
       <a class="btn btn-primary mx-1 mb-1 mt-1" href={download.href}>{download.label}</a>
