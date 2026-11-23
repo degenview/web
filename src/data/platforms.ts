@@ -8,6 +8,7 @@ export const COFFEE_URL = 'https://buymeacoffee.com/nicoswd';
 export const REDDIT_URL = 'https://www.reddit.com/r/degenview/';
 /** The community Discord server (permanent invite, lands in #welcome). */
 export const DISCORD_URL = 'https://discord.gg/ANVqhRxGFt';
+export const YOUTUBE_URL = 'https://www.youtube.com/@DegenView';
 export const RELEASES_URL = `${REPO_URL}/releases`;
 /** `/releases/latest` 404s while only pre-releases exist, so the fallback is the releases list. */
 export const LATEST_URL = RELEASES_URL;

@@ -1,5 +1,5 @@
 ---
-import { DISCORD_URL, DOCS_URL, REDDIT_URL, REPO_URL } from '../data/platforms';
+import { DISCORD_URL, DOCS_URL, REDDIT_URL, REPO_URL, YOUTUBE_URL } from '../data/platforms';
 import ThemeToggle from './ThemeToggle.astro';
 import CoffeeButton from './CoffeeButton.astro';
 import LanguageSwitcher from './LanguageSwitcher.astro';
@@ -39,6 +39,7 @@ const year = new Date().getFullYear();
             <li><a class="inline-block py-1.5 transition-colors hover:text-fg" href={REPO_URL} target="_blank" rel="noopener noreferrer">GitHub<span class="sr-only"> {t.opensInNewTab}</span></a></li>
             <li><a class="inline-block py-1.5 transition-colors hover:text-fg" href={REDDIT_URL} target="_blank" rel="noopener noreferrer">Reddit<span class="sr-only"> {t.opensInNewTab}</span></a></li>
             <li><a class="inline-block py-1.5 transition-colors hover:text-fg" href={DISCORD_URL} target="_blank" rel="noopener noreferrer">Discord<span class="sr-only"> {t.opensInNewTab}</span></a></li>
+            <li><a class="inline-block py-1.5 transition-colors hover:text-fg" href={YOUTUBE_URL} target="_blank" rel="noopener noreferrer">YouTube<span class="sr-only"> {t.opensInNewTab}</span></a></li>
             <li><a class="inline-block py-1.5 transition-colors hover:text-fg" href={localePath(lang, '/privacy-policy/')}>{t.nav.privacyPolicy}</a></li>
             <li><button type="button" data-cookie-settings class="inline-block py-1.5 text-left transition-colors hover:text-fg">{t.nav.cookieSettings}</button></li>
           </ul>
