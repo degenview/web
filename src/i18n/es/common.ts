@@ -21,6 +21,9 @@ export const common: Dict['common'] = {
     github: 'GitHub',
     privacyPolicy: 'Política de privacidad',
     cookieSettings: 'Ajustes de cookies',
+    support: 'Apoyar',
+    /** Footer link text. */
+    supportDegenView: 'Apoyar a DegenView',
   },
 
   /** Screen-reader suffix for links that open a new tab. Rendered as `<span class="sr-only"> {text}</span>`. */

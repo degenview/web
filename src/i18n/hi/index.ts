@@ -8,5 +8,6 @@ import { faq } from './faq';
 import { alternative } from './alternative';
 import { privacyPolicy } from './privacyPolicy';
 import { switcher } from './switcher';
+import { support } from './support';
 
-export const hi: Dict = { common, home, pineStudio, chartTypes, download, faq, alternative, privacyPolicy, switcher };
+export const hi: Dict = { common, home, pineStudio, chartTypes, download, faq, alternative, privacyPolicy, switcher, support };

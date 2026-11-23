@@ -7,6 +7,7 @@ import { faq } from './faq';
 import { alternative } from './alternative';
 import { privacyPolicy } from './privacyPolicy';
 import { switcher } from './switcher';
+import { support } from './support';
 
-export const en = { common, home, pineStudio, chartTypes, download, faq, alternative, privacyPolicy, switcher };
+export const en = { common, home, pineStudio, chartTypes, download, faq, alternative, privacyPolicy, switcher, support };
 export type Dict = typeof en;
