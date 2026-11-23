@@ -20,6 +20,9 @@ export const common: Dict['common'] = {
     github: 'GitHub',
     privacyPolicy: 'Datenschutzerklärung',
     cookieSettings: 'Cookie-Einstellungen',
+    support: 'Unterstützen',
+    /** Footer link text. */
+    supportDegenView: 'DegenView unterstützen',
   },
 
   opensInNewTab: '(öffnet in einem neuen Tab)',

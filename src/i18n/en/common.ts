@@ -19,6 +19,9 @@ export const common = {
     github: 'GitHub',
     privacyPolicy: 'Privacy policy',
     cookieSettings: 'Cookie settings',
+    support: 'Support',
+    /** Footer link text. */
+    supportDegenView: 'Support DegenView',
   },
 
   /** Screen-reader suffix for links that open a new tab. Rendered as `<span class="sr-only"> {text}</span>`. */

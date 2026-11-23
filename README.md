@@ -29,6 +29,7 @@
 | [**Download**](https://degenview.app/download/) | Installers for macOS, Windows and Linux, with checksums and install steps |
 | [**TradingView alternative**](https://degenview.app/tradingview-alternative/) | An honest free-vs-free comparison |
 | [**FAQ**](https://degenview.app/faq/) | Searchable answers, grouped by topic |
+| [**Support**](https://degenview.app/support/) | Ways to keep DegenView free: coffee, crypto, a GitHub star, bug reports, translations |
 | [**Privacy policy**](https://degenview.app/privacy-policy/) | Cookies and analytics, opt-in only |
 
 ## 🌍 Languages
@@ -60,7 +61,7 @@ Found a typo, a broken layout or a phone-size glitch? [Open an issue](https://gi
 
 ## ☕ Support
 
-DegenView is free forever. If it earns a spot on your screen, you can [buy the maintainer a coffee](https://buymeacoffee.com/nicoswd).
+DegenView is free forever. If it earns a spot on your screen, you can [support it](https://degenview.app/support/): buy the maintainer a coffee, send crypto, star the repo or spread the word.
 
 ---
 

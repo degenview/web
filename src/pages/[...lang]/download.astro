@@ -339,19 +339,8 @@ const two = (n: number) => String(n).padStart(2, '0');
 
   <script>
     // Copy buttons for commands and checksums.
-    document.addEventListener('click', async (e) => {
-      const btn = (e.target as Element).closest<HTMLButtonElement>('[data-copy]');
-      if (!btn) return;
-      const original = btn.textContent;
-      const labels = document.querySelector<HTMLElement>('[data-copy-labels]');
-      try {
-        await navigator.clipboard.writeText(btn.dataset.copy ?? '');
-        btn.textContent = labels?.dataset.copied ?? 'Copied';
-      } catch {
-        btn.textContent = labels?.dataset.copyFailed ?? 'Press ⌘/Ctrl+C';
-      }
-      setTimeout(() => (btn.textContent = original), 1800);
-    });
+    import { initCopy } from '../../scripts/copy';
+    initCopy();
   </script>
 
   <style>
