@@ -93,11 +93,36 @@ const revealInline = `try{var d=document.documentElement;if('IntersectionObserve
       import '../scripts/reveal';
       import { initThemeToggle } from '../scripts/theme';
       import { initDownloads } from '../scripts/platform';
-      import { initCandleCity } from '../scripts/candle-city';
       initThemeToggle();
       initDownloads();
+
+      // The WebGL background is decoration: keep it (and its ~20 KB of script) out of the critical path. It is imported
+      // only after the page has loaded and the main thread is idle; on narrow screens (mostly phones, the slowest CPUs
+      // and GPUs) it waits for the first interaction instead, so it never competes with the initial render or input.
       const cityCanvas = document.querySelector<HTMLCanvasElement>('[data-candle-city]');
-      if (cityCanvas) initCandleCity(cityCanvas);
+      if (cityCanvas) {
+        let started = false;
+        const start = (): void => {
+          if (started) return;
+          started = true;
+          void import('../scripts/candle-city').then((m) => m.initCandleCity(cityCanvas));
+        };
+        const whenIdle = (): void => {
+          if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 3000 });
+          else setTimeout(start, 1500);
+        };
+        const afterLoad = (fn: () => void): void => {
+          if (document.readyState === 'complete') fn();
+          else addEventListener('load', fn, { once: true });
+        };
+        if (matchMedia('(max-width: 767px)').matches) {
+          for (const type of ['scroll', 'touchstart', 'pointerdown', 'keydown'] as const) {
+            addEventListener(type, () => afterLoad(whenIdle), { once: true, passive: true });
+          }
+        } else {
+          afterLoad(whenIdle);
+        }
+      }
     </script>
   </body>
 </html>

@@ -330,7 +330,16 @@ export function initCandleCity(canvas: HTMLCanvasElement): void {
   // MSAA stays on: the wicks are only 0.12 units wide and drop below a pixel with distance, without coverage
   // antialiasing they would shimmer as the camera moves (shader-drawn edges are aliased either way). On tile-based
   // GPUs the 4x resolve is nearly free.
-  const gl = canvas.getContext('webgl2', { antialias: true, alpha: true, premultipliedAlpha: true, depth: false, powerPreference: 'low-power' });
+  // failIfMajorPerformanceCaveat: with only a software rasteriser (SwiftShader, llvmpipe, headless/CI, GPU blocklisted)
+  // this scene saturates the CPU and blocks input, so no context is created and the page simply has no background.
+  const gl = canvas.getContext('webgl2', {
+    antialias: true,
+    alpha: true,
+    premultipliedAlpha: true,
+    depth: false,
+    powerPreference: 'low-power',
+    failIfMajorPerformanceCaveat: true,
+  });
   if (!gl) return;
 
   const compile = (type: number, src: string): WebGLShader | null => {
