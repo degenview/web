@@ -72,6 +72,11 @@ export const faq = {
       q: 'Is it affiliated with TradingView or the data providers?',
       a: 'No. DegenView is an independent project. Pine Script and TradingView are trademarks of TradingView, Inc. Pine Script is TradingView’s language, and DegenView runs its own engine for scripts written in it. All other trademarks belong to their owners.',
     }),
+    languages: entry({
+      q: 'Which languages does DegenView support?',
+      a: 'The app is available in English, Spanish, German, Russian and Simplified Chinese. It follows your system language, or you can pick one under Settings ▸ Appearance ▸ Language.',
+      links: ['How to switch language'],
+    }),
     runPine: entry({
       q: 'Can I run my TradingView Pine Scripts in DegenView?',
       a: 'Yes. DegenView runs its own engine for Pine Script v6, locally. It is an independent implementation, so very exotic scripts may behave differently from TradingView.',

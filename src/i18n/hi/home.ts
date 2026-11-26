@@ -167,6 +167,7 @@ export const home: Dict['home'] = {
     heading: 'DegenView लें। <span class="gradient-text block">यह फ्री है।</span>',
     // {version} is replaced with the release tag (rendered in monospace).
     latest: 'नवीनतम रिलीज़ {version}। कोई अकाउंट नहीं, कोई ट्रायल नहीं, कोई छिपी शर्त नहीं।',
+    languages: 'ऐप अंग्रेज़ी, स्पेनिश, जर्मन, रूसी और सरलीकृत चीनी में उपलब्ध है।',
     allDownloads: 'सभी downloads',
     faq: 'FAQ',
     freeForever: 'हमेशा फ्री। अगर यह आपकी स्क्रीन पर जगह कमा ले:',

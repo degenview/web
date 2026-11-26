@@ -164,6 +164,7 @@ export const home: Dict['home'] = {
   download: {
     heading: 'Hol dir DegenView. <span class="gradient-text block">Kostenlos.</span>',
     latest: 'Neueste Version {version}. Kein Konto, keine Testphase, kein Haken.',
+    languages: 'Die App spricht Englisch, Spanisch, Deutsch, Russisch und vereinfachtes Chinesisch.',
     allDownloads: 'Alle Downloads',
     faq: 'FAQ',
     freeForever: 'Für immer kostenlos. Wenn es sich einen Platz auf deinem Bildschirm verdient:',
