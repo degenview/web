@@ -167,6 +167,7 @@ export const home: Dict['home'] = {
     heading: '获取 DegenView。<span class="gradient-text block">它是免费的。</span>',
     // {version} is replaced with the release tag (rendered in monospace).
     latest: '最新版本 {version}。无需账号，无需试用，没有任何附加条件。',
+    languages: '应用支持英语、西班牙语、德语、俄语和简体中文。',
     allDownloads: '全部下载',
     faq: '常见问题',
     freeForever: '永久免费。如果它在你的屏幕上占得一席之地：',

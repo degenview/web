@@ -64,6 +64,11 @@ export const faq: Dict['faq'] = {
       q: '它和 TradingView 或数据提供商有关联吗？',
       a: '没有。DegenView 是独立项目。Pine Script 和 TradingView 是 TradingView, Inc. 的商标。Pine Script 是 TradingView 的语言，DegenView 用自己的引擎运行用它编写的脚本。其他所有商标均归其各自所有者所有。',
     },
+    languages: {
+      q: 'DegenView 支持哪些语言？',
+      a: '应用支持英语、西班牙语、德语、俄语和简体中文。默认跟随系统语言，你也可以在 设置 ▸ 外观 ▸ 语言 中自行选择。',
+      links: ['如何切换语言（英文）'],
+    },
     runPine: {
       q: '我能在 DegenView 中运行自己的 TradingView Pine 脚本吗？',
       a: '可以。DegenView 在本地运行自己的 Pine Script v6 引擎。它是独立实现，所以非常冷门的脚本可能与 TradingView 上的表现不同。',

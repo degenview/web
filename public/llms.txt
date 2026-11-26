@@ -23,5 +23,8 @@ The site is available in English (default), Spanish, German, French, Hindi and S
 - [हिन्दी](https://degenview.app/hi/)
 - [简体中文](https://degenview.app/zh/)
 
+## App languages
+The app's interface is available in English, Spanish, German, Russian and Simplified Chinese. How to switch: https://docs.degenview.app/workspace/language
+
 ## Source
 - [GitHub](https://github.com/degenview/degenview): source code and releases

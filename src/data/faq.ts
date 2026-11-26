@@ -38,6 +38,7 @@ const itemMeta: { key: FaqKey; id: string; group: FaqGroupId; art?: string; link
   { key: 'openSource', id: 'is-degenview-open-source', group: 'basics' },
   { key: 'account', id: 'do-i-need-an-account', group: 'basics' },
   { key: 'affiliation', id: 'is-it-affiliated-with-tradingview-or-the-data-providers', group: 'basics' },
+  { key: 'languages', id: 'which-languages-does-degenview-support', group: 'basics', links: ['https://docs.degenview.app/workspace/language'] },
   { key: 'runPine', id: 'can-i-run-my-tradingview-pine-scripts-in-degenview', group: 'scripts' },
   { key: 'pinePrivacy', id: 'where-do-my-pine-scripts-go', group: 'scripts' },
   { key: 'aiAssistant', id: 'can-i-connect-an-ai-assistant', group: 'scripts' },

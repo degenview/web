@@ -165,6 +165,7 @@ export const home = {
     heading: 'Get DegenView. <span class="gradient-text block">It’s free.</span>',
     // {version} is replaced with the release tag (rendered in monospace).
     latest: 'Latest release {version}. No account, no trial, no catch.',
+    languages: 'The app speaks English, Spanish, German, Russian and Simplified Chinese.',
     allDownloads: 'All downloads',
     faq: 'FAQ',
     freeForever: 'Free forever. If it earns a spot on your screen:',
