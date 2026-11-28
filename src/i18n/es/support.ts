@@ -33,6 +33,12 @@ export const support: Dict['support'] = {
     },
   },
 
+  supporters: {
+    title: 'Apoyos <span class="gradient-text">recientes</span>',
+    lead: 'Gracias por aportar y ayudar a que DegenView siga siendo gratis.',
+    anonymous: 'Donante anónimo',
+  },
+
   crypto: {
     eyebrow: 'cripto',
     title: 'Gracias <span class="gradient-text">on-chain</span>',

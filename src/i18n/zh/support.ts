@@ -32,6 +32,12 @@ export const support: Dict['support'] = {
     },
   },
 
+  supporters: {
+    title: '近期<span class="gradient-text">支持者</span>',
+    lead: '感谢每一份支持，让 DegenView 继续免费。',
+    anonymous: '匿名支持者',
+  },
+
   crypto: {
     eyebrow: '加密货币',
     title: '链上的<span class="gradient-text">谢意</span>',
