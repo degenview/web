@@ -27,7 +27,7 @@ export const home = {
     eyebrow: 'feedback',
     heading: 'What people are <span class="gradient-text">saying</span>',
     author: 'User feedback',
-    tags: { debugger: 'Debugger', pine: 'Pine Script', impression: 'First impression' },
+    tags: { debugger: 'Debugger', pine: 'Pine Script', impression: 'First impression', xUser: 'X user' },
   },
 
   sources: {

@@ -27,7 +27,7 @@ export const home: Dict['home'] = {
     eyebrow: 'avis',
     heading: 'Ce que les gens <span class="gradient-text">en disent</span>',
     author: 'Avis d’un utilisateur',
-    tags: { debugger: 'Débogueur', pine: 'Pine Script', impression: 'Première impression' },
+    tags: { debugger: 'Débogueur', pine: 'Pine Script', impression: 'Première impression', xUser: 'Utilisateur de X' },
   },
 
   sources: {

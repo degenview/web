@@ -29,7 +29,7 @@ export const home: Dict['home'] = {
     eyebrow: '用户反馈',
     heading: '大家<span class="gradient-text">怎么说</span>',
     author: '用户反馈',
-    tags: { debugger: '调试', pine: 'Pine Script', impression: '第一印象' },
+    tags: { debugger: '调试', pine: 'Pine Script', impression: '第一印象', xUser: 'X 用户' },
   },
 
   sources: {

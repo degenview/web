@@ -4,7 +4,7 @@
 export interface Testimonial {
   quote: string;
   highlight?: string;
-  tag?: 'debugger' | 'pine' | 'impression';
+  tag: 'debugger' | 'pine' | 'impression' | 'xUser';
   /** The big card: it gets the lit backdrop and larger type. */
   featured?: boolean;
 }
@@ -29,5 +29,6 @@ export const testimonials: Testimonial[] = [
   {
     quote: 'The one who made DegenView is genius',
     highlight: 'genius',
+    tag: 'xUser',
   },
 ];
