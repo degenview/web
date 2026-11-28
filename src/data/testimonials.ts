@@ -4,7 +4,7 @@
 export interface Testimonial {
   quote: string;
   highlight?: string;
-  tag: 'debugger' | 'pine' | 'impression';
+  tag?: 'debugger' | 'pine' | 'impression';
   /** The big card: it gets the lit backdrop and larger type. */
   featured?: boolean;
 }
@@ -25,5 +25,9 @@ export const testimonials: Testimonial[] = [
     quote: 'I\'d move away from pine garbage coding language',
     highlight: 'move away',
     tag: 'pine',
+  },
+  {
+    quote: 'The one who made DegenView is genius',
+    highlight: 'genius',
   },
 ];

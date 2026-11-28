@@ -1,5 +1,5 @@
 ---
-// "What people are saying": one big quote and two smaller ones. The quotes are real and verbatim (src/data/testimonials.ts),
+// "What people are saying": one featured quote and three smaller ones. The quotes are verbatim (src/data/testimonials.ts),
 // so they stay in their original language on every locale and are marked lang="en"; only the labels are translated.
 import SectionHead from './SectionHead.astro';
 import { testimonials } from '../data/testimonials';
@@ -18,13 +18,13 @@ const parts = (q: string, hl?: string): [string, string, string] => {
   <div class="container-x">
     <SectionHead id="feedback-h" eyebrow={t.eyebrow} title={t.heading} />
 
-    {/* The reveal sits on the <li>, the hover glow on the card inside. Featured quote on the left, the other two stacked on the right from lg. */}
-    <ul class="mt-10 grid gap-4 sm:mt-12 sm:gap-6 lg:grid-cols-5 lg:grid-rows-2">
+    {/* The reveal sits on the <li>, with the hover glow on the card inside. */}
+    <ul class="mt-10 grid gap-4 sm:mt-12 sm:gap-6 lg:grid-cols-5">
       {
         testimonials.map((q, i) => {
           const [before, hl, after] = parts(q.quote, q.highlight);
           return (
-            <li data-reveal style={`--i:${i}`} class:list={['flex', q.featured ? 'lg:col-span-3 lg:row-span-2' : 'lg:col-span-2']}>
+            <li data-reveal style={`--i:${i}`} class:list={['flex', q.featured ? 'lg:col-span-3 lg:row-span-3' : 'lg:col-span-2']}>
               <figure class:list={['card relative flex w-full flex-col overflow-hidden', q.featured && 'stage']}>
                 {q.featured && <span class="glow-line absolute inset-x-10 top-0" aria-hidden="true"></span>}
                 {/* Oversized quote mark as a watermark. */}
@@ -34,10 +34,10 @@ const parts = (q: string, hl?: string): [string, string, string] => {
 
                 <div class:list={['relative flex items-center justify-between gap-3', q.featured ? 'p-6 pb-0 sm:p-8 sm:pb-0 lg:p-10 lg:pb-0' : 'p-5 pb-0 sm:p-6 sm:pb-0']}>
                   <span class="card-index">{String(i + 1).padStart(2, '0')}</span>
-                  <span class="tag">{t.tags[q.tag]}</span>
+                  {q.tag && <span class="tag">{t.tags[q.tag]}</span>}
                 </div>
 
-                <blockquote lang="en" class:list={['relative flex-1', q.featured ? 'p-6 sm:p-8 lg:p-10 lg:pt-8' : 'p-5 sm:p-6']}>
+                <blockquote lang="en" class:list={['relative flex-1', q.featured ? 'p-6 sm:p-8 lg:flex lg:flex-col lg:justify-center lg:p-10 lg:pt-8' : 'p-5 sm:p-6']}>
                   <svg viewBox="0 0 24 24" aria-hidden="true" class:list={['mb-4 fill-current text-accent-text drop-shadow-[0_0_12px_color-mix(in_oklab,var(--accent)_60%,transparent)]', q.featured ? 'size-9 sm:size-11' : 'size-7']}>
                     <path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z" />
                   </svg>
