@@ -30,12 +30,17 @@ function readNumber(value: unknown): number {
 }
 
 function profilePhoto(row: ApiRow): string | undefined {
-  const photo = text(row.profile_picture_url);
-  if (!photo || photo === row.default_profile_picture_url) return;
+  const defaultPhoto = text(row.default_profile_picture_url);
+  for (const value of [row.profile_picture, row.profile_picture_url]) {
+    const photo = text(value);
+    if (!photo || photo === defaultPhoto) continue;
 
-  const url = URL.parse(photo);
-  if (url?.origin === 'https://cdn.buymeacoffee.com' && url.pathname.startsWith('/uploads/profile_pictures/')) {
-    return url.href;
+    const url = URL.parse(photo);
+    if (url?.origin === 'https://cdn.buymeacoffee.com' &&
+      url.pathname.startsWith('/uploads/profile_pictures/') &&
+      !url.pathname.startsWith('/uploads/profile_pictures/default/')) {
+      return url.href;
+    }
   }
 }
 
