@@ -8,6 +8,7 @@ import PageHero from '../../components/PageHero.astro';
 import SectionHead from '../../components/SectionHead.astro';
 import { COFFEE_URL, REDDIT_URL, REPO_URL } from '../../data/platforms';
 import { DOCS_REPO_URL, ISSUES_URL, WALLETS, WEB_REPO_URL, getStars } from '../../data/support';
+import { getSupporters } from '../../data/supporters';
 import PlatformIcon from '../../components/PlatformIcon.astro';
 import { SITE, fmt, getLang, localeMeta, localePath, useT } from '../../i18n';
 
@@ -15,7 +16,9 @@ const lang = getLang(Astro.url);
 const dict = useT(lang);
 const t = dict.support;
 const sr = ' ' + dict.common.opensInNewTab;
-const stars = await getStars();
+const [stars, supporters] = await Promise.all([getStars(), getSupporters()]);
+const locale = localeMeta[lang].intl;
+const graphemes = new Intl.Segmenter(locale, { granularity: 'grapheme' });
 const starsLabel = stars ? fmt(t.free.star.count, { count: new Intl.NumberFormat(localeMeta[lang].intl, { notation: 'compact', maximumFractionDigits: 1 }).format(stars) }) : undefined;
 const hasWallets = WALLETS.length > 0;
 // X post composer, pre-filled with a line about DegenView and this language's home page.
@@ -180,6 +183,39 @@ const free: { icon: Icon; title: string; body: string; links: [string, string, (
     </section>
   )}
 
+  {supporters.length > 0 && (
+    <section id="supporters" aria-labelledby="supporters-h" class="scroll-mt-20 pb-16 sm:pb-24">
+      <div class="container-x">
+        <div class="glass stage relative p-6 sm:p-8 lg:p-10">
+          <span class="glow-line absolute inset-x-10 top-0" aria-hidden="true"></span>
+          <SectionHead id="supporters-h" align="left" title={t.supporters.title} lead={t.supporters.lead} />
+
+          <ul class="mt-8 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {supporters.map(({ name, photo, amount, currency }) => {
+              const initial = name ? graphemes.segment(name).containing(0)?.segment.toLocaleUpperCase(locale) : undefined;
+              const formattedAmount = new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount);
+
+              return (
+                <li class="card flex min-w-0 items-center gap-x-3 px-3 py-3 sm:gap-x-4 sm:px-4">
+                  <span class="supporter-avatar relative grid size-11 shrink-0 place-items-center overflow-hidden rounded-full border font-mono text-sm font-semibold text-accent-text" aria-hidden="true">
+                    {initial ?? (
+                      <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d={icons.coffee} /></svg>
+                    )}
+                    {photo && <img src={photo} alt="" width="44" height="44" class="absolute inset-0 size-full bg-bg object-cover" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-supporter-photo />}
+                  </span>
+                  <div class="flex min-w-0 flex-1 flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                    <bdi class="min-w-0 font-semibold wrap-anywhere">{name ?? t.supporters.anonymous}</bdi>
+                    <bdi class="shrink-0 whitespace-nowrap font-mono text-sm font-semibold text-accent-text tabular-nums">{formattedAmount}</bdi>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </div>
+    </section>
+  )}
+
   <!-- Free ways -->
   <section id="free" aria-labelledby="free-h" class="pb-16 sm:pb-24">
     <div class="container-x">
@@ -258,9 +294,20 @@ const free: { icon: Icon; title: string; body: string; links: [string, string, (
   <script>
     import { initCopy } from '../../scripts/copy';
     initCopy();
+
+    for (const photo of document.querySelectorAll<HTMLImageElement>('[data-supporter-photo]')) {
+      const showFallback = () => photo.remove();
+      if (photo.complete && photo.naturalWidth === 0) showFallback();
+      else photo.addEventListener('error', showFallback, { once: true });
+    }
   </script>
 
   <style>
+    .supporter-avatar {
+      background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 14%, var(--surface)), color-mix(in oklab, var(--purple) 12%, var(--surface)));
+      border-color: color-mix(in oklab, var(--accent) 25%, var(--hair));
+    }
+
     /* Candles bobbing above the cup: each one drifts up and down, out of step with its neighbours. */
     @keyframes candle { 0%, 100% { transform: translateY(6px); } 50% { transform: translateY(-6px); } }
     .candle { animation: candle 2.4s ease-in-out infinite; }

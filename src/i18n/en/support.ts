@@ -32,6 +32,12 @@ export const support = {
     },
   },
 
+  supporters: {
+    title: 'Recent <span class="gradient-text">supporters</span>',
+    lead: 'Thank you for chipping in and helping keep DegenView free.',
+    anonymous: 'Anonymous supporter',
+  },
+
   crypto: {
     eyebrow: 'crypto',
     title: 'On-chain <span class="gradient-text">thanks</span>',

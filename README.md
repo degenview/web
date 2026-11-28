@@ -63,6 +63,8 @@ Found a typo, a broken layout or a phone-size glitch? [Open an issue](https://gi
 
 DegenView is free forever. If it earns a spot on your screen, you can [support it](https://degenview.app/support/): buy the maintainer a coffee, send crypto, star the repo or spread the word.
 
+The GitHub Pages build refreshes the recent supporters list from Buy Me a Coffee on each deployment. Generate an access token in the [Buy Me a Coffee developer dashboard](https://developers.buymeacoffee.com/dashboard) and save it as the `BUY_ME_A_COFFEE_API_TOKEN` GitHub Actions repository secret. For a local build, export the same variable before running `npm run build`. The list is hidden when the token or supporter data is unavailable.
+
 ---
 
 <div align="center">
