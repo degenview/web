@@ -30,6 +30,7 @@ export const pineStudio = {
       'Live preview chart with input controls',
       'Step debugger with breakpoints, watches and call stack',
       'Per-line profiler',
+      'Strategy backtesting with equity curve, trade list and Monte Carlo simulation',
       'AI assistant with Ask, Plan and Edit modes',
       'MCP server so other AI assistants can read, edit and apply scripts',
       'Customizable editor themes',
@@ -337,6 +338,10 @@ export const pineStudio = {
       {
         q: 'Is there a Pine Script profiler?',
         a: 'Yes. Turn on the profiler and DegenView times your script over the preview chart’s bars. It draws a bar and a share beside each line and ranks the hottest lines, blocks and functions, so you can see what to fix first.',
+      },
+      {
+        q: 'Can I backtest a strategy?',
+        a: 'Yes. A Pine strategy places simulated trades on the chart’s candles, and the Report tab shows its figures, equity curve and trade list. A Monte Carlo simulation then draws your closed trades at random, repeats allowed, to show how far the result could move if the wins and losses had come out differently. Backtests use candles only, with no margin model, so they are a way to study a strategy, not a promise of results.',
       },
       {
         q: 'Does the AI assistant send my code anywhere?',

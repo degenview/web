@@ -32,6 +32,7 @@ export const pineStudio: Dict['pineStudio'] = {
       'इनपुट कंट्रोल के साथ लाइव प्रीव्यू chart',
       'ब्रेकपॉइंट, watch और call stack वाला step debugger',
       'हर लाइन का profiler',
+      'Equity curve, trade list और Monte Carlo simulation के साथ strategy backtesting',
       'Ask, Plan और Edit मोड वाला AI असिस्टेंट',
       'MCP सर्वर, ताकि दूसरे AI असिस्टेंट script पढ़, एडिट और लागू कर सकें',
       'कस्टमाइज़ होने वाली एडिटर थीम',
@@ -339,6 +340,10 @@ export const pineStudio: Dict['pineStudio'] = {
       {
         q: 'क्या Pine Script profiler है?',
         a: 'हाँ। Profiler चालू करें और DegenView प्रीव्यू chart के bar पर आपकी script का समय नापता है। यह हर लाइन के बगल में एक bar और हिस्सेदारी बनाता है और सबसे भारी लाइनों, ब्लॉक और function को क्रम से रखता है, ताकि आप देख सकें कि पहले क्या ठीक करना है।',
+      },
+      {
+        q: 'क्या strategy का backtest किया जा सकता है?',
+        a: 'हाँ। Pine strategy chart की candles पर simulated trades रखती है, और Report टैब उसके आँकड़े, equity curve और trade list दिखाता है। Monte Carlo simulation फिर आपके बंद trades को random तरीके से, दोहराव की छूट के साथ, खींचता है, ताकि दिखे कि अगर जीत और हार अलग तरह से आतीं तो नतीजा कितना बदल सकता था। Backtest सिर्फ़ candles इस्तेमाल करते हैं और इनमें margin मॉडल नहीं है, इसलिए ये strategy को परखने का औज़ार हैं, नतीजों का वादा नहीं।',
       },
       {
         q: 'क्या AI असिस्टेंट मेरा कोड कहीं भेजता है?',

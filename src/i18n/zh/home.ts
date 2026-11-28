@@ -60,6 +60,7 @@ export const home: Dict['home'] = {
         '通过 MCP 和 AI 助手一起 vibe coding',
         '支持断点和监视的单步调试器',
         '内置性能分析器，看清时间花在哪',
+        '策略回测，附权益曲线和蒙特卡洛模拟',
       ],
       alt: 'DegenView Pine Studio，包含 Pine Script 编辑器和实时预览图表',
       linkLabel: '了解 Pine Studio',

@@ -30,6 +30,7 @@ export const pineStudio: Dict['pineStudio'] = {
       'Live-Vorschau-Chart mit Eingabereglern',
       'Schritt-Debugger mit Breakpoints, Watches und Call Stack',
       'Profiler pro Zeile',
+      'Strategie-Backtests mit Equity-Kurve, Trade-Liste und Monte-Carlo-Simulation',
       'KI-Assistent mit den Modi Ask, Plan und Edit',
       'MCP-Server, damit andere KI-Assistenten Skripte lesen, bearbeiten und anwenden können',
       'Anpassbare Editor-Themes',
@@ -323,6 +324,10 @@ export const pineStudio: Dict['pineStudio'] = {
       {
         q: 'Gibt es einen Pine-Script-Profiler?',
         a: 'Ja. Schalte den Profiler ein, und DegenView misst die Laufzeit deines Skripts über die Bars des Vorschau-Charts. Er zeichnet neben jede Zeile einen Balken und einen Anteil und ordnet die heißesten Zeilen, Blöcke und Funktionen nach Rang, sodass du siehst, was du zuerst beheben solltest.',
+      },
+      {
+        q: 'Kann ich eine Strategie backtesten?',
+        a: 'Ja. Eine Pine-Strategie platziert simulierte Trades auf den Kerzen des Charts, und der Tab Report zeigt Kennzahlen, Equity-Kurve und Trade-Liste. Eine Monte-Carlo-Simulation zieht deine abgeschlossenen Trades anschließend zufällig mit Zurücklegen, um zu zeigen, wie stark das Ergebnis schwanken könnte, wenn Gewinne und Verluste anders ausgefallen wären. Backtests nutzen nur Kerzen und haben kein Margin-Modell. Sie sind ein Werkzeug, um eine Strategie zu untersuchen, kein Ergebnisversprechen.',
       },
       {
         q: 'Schickt der KI-Assistent meinen Code irgendwohin?',

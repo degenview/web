@@ -58,6 +58,7 @@ export const home = {
         'Vibe code with your AI assistant over MCP',
         'Step debugger with breakpoints and watches',
         'Built-in profiler shows where time goes',
+        'Backtest strategies with an equity curve and a Monte Carlo simulation',
       ],
       alt: 'DegenView Pine Studio with a Pine Script editor and live preview chart',
       linkLabel: 'Explore Pine Studio',

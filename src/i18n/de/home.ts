@@ -59,6 +59,7 @@ export const home: Dict['home'] = {
         'Vibe-Coding mit deinem KI-Assistenten per MCP',
         'Schritt-Debugger mit Breakpoints und Watches',
         'Eingebauter Profiler für die Laufzeit deiner Skripte',
+        'Backtests für Strategien mit Equity-Kurve und Monte-Carlo-Simulation',
       ],
       alt: 'DegenView Pine Studio mit einem Pine-Script-Editor und Live-Vorschau-Chart',
       linkLabel: 'Pine Studio entdecken',
