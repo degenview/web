@@ -34,7 +34,7 @@ const parts = (q: string, hl?: string): [string, string, string] => {
 
                 <div class:list={['relative flex items-center justify-between gap-3', q.featured ? 'p-6 pb-0 sm:p-8 sm:pb-0 lg:p-10 lg:pb-0' : 'p-5 pb-0 sm:p-6 sm:pb-0']}>
                   <span class="card-index">{String(i + 1).padStart(2, '0')}</span>
-                  {q.tag && <span class="tag">{t.tags[q.tag]}</span>}
+                  <span class="tag">{t.tags[q.tag]}</span>
                 </div>
 
                 <blockquote lang="en" class:list={['relative flex-1', q.featured ? 'p-6 sm:p-8 lg:flex lg:flex-col lg:justify-center lg:p-10 lg:pt-8' : 'p-5 sm:p-6']}>
